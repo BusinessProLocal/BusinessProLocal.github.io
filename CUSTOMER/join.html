@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Join Business Pro Local</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
+
+  <style>
+
+    @font-face {
+      font-family: "Playfair Display";
+      font-weight: 800;
+      src: url("../fonts/playfair-800.ttf") format("truetype");
+    }
+
+    @font-face {
+      font-family: "Inter";
+      font-weight: 400 700;
+      src: url("../fonts/inter.ttf") format("truetype");
+    }
+
+    :root {
+      --black: #050505;
+      --panel: #111110;
+      --line: #2b2820;
+      --gold: #d4af37;
+      --gold-hi: #f3d77a;
+      --ink: #f4efe2;
+      --muted: #c9c1ab;
+      --display: "Playfair Display", Georgia, serif;
+      --ui: "Inter", system-ui, "Segoe UI", Arial, sans-serif;
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      font-family: var(--ui);
+      background: var(--black);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: var(--display);
+      font-weight: 800;
+      color: var(--gold);
+      text-wrap: balance;
+    }
+
+    .test-bar {
+      background: var(--gold);
+      color: #111;
+      text-align: center;
+      font-weight: 700;
+      font-size: .85rem;
+      padding: 6px 12px;
+      letter-spacing: .06em;
+    }
+
+    header {
+      background: var(--black);
+      text-align: center;
+      padding: 32px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    header h1 {
+      font-size: 38px;
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 7px;
+      font-size: 18px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 50px 20px 70px;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section-heading h2 {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-bottom: 55px;
+    }
+
+    .plan-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 28px 22px;
+      cursor: pointer;
+
+      transition:
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--gold);
+    }
+
+    .plan-card.selected {
+      border-color: var(--gold);
+
+      box-shadow:
+        0 0 0 1px var(--gold);
+    }
+
+    .plan-card input {
+      width: auto;
+      margin-right: 7px;
+    }
+
+    .plan-card h3 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .setup-price {
+      font-size: 25px;
+      font-weight: 700;
+    }
+
+    .monthly-price {
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .first-month-free {
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .setup-installments {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+
+    .plan-card ul {
+      color: var(--muted);
+      padding-left: 20px;
+      margin-top: 15px;
+    }
+
+    .plan-card li {
+      margin-bottom: 7px;
+    }
+
+    .signup-section {
+      background: var(--panel);
+      padding: 34px;
+      margin-bottom: 35px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+    }
+
+    .signup-section h2 {
+      font-size: 29px;
+      margin-bottom: 7px;
+    }
+
+    .signup-section > p {
+      color: var(--muted);
+      margin-bottom: 22px;
+      font-size: 17px;
+    }
+
+    .setup-payment-choice {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .setup-payment-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .setup-payment-option:hover {
+      border-color: var(--gold);
+    }
+
+    .setup-payment-option input {
+      width: auto;
+      margin-top: 5px;
+    }
+
+    .setup-payment-option span {
+      display: grid;
+      gap: 5px;
+    }
+
+    .setup-payment-amount {
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 400;
+    }
+
+    .advertising-choice {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .advertising-option {
+      display: block;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .advertising-option:hover {
+      border-color: var(--gold);
+    }
+
+    .setup-payment-option:has(input:checked),
+    .advertising-option:has(input:checked) {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px var(--gold);
+    }
+
+    .advertising-option p {
+      color: var(--muted);
+    }
+
+    .advertising-option input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .advertising-option strong {
+      font-size: 20px;
+    }
+
+    .ad-details {
+      display: none;
+      margin-top: 25px;
+      padding: 22px;
+      background: var(--black);
+      color: var(--muted);
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--gold);
+    }
+
+    .ad-details.visible {
+      display: block;
+    }
+
+    .ad-rate {
+      color: var(--gold);
+      font-size: 24px;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .network-rules {
+      margin-top: 15px;
+      padding-left: 20px;
+    }
+
+    .network-rules li {
+      margin-bottom: 6px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: .92rem;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #0c0c0b;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    input {
+      accent-color: var(--gold);
+    }
+
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 1px;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .agreement-preview {
+      background: var(--black);
+      color: var(--muted);
+      border: 1px solid var(--line);
+      padding: 20px;
+      border-radius: 9px;
+      margin-top: 15px;
+    }
+
+    .agreement-preview p {
+      margin-bottom: 10px;
+    }
+
+    .agreement-preview p:last-child {
+      margin-bottom: 0;
+    }
+
+    .agreement-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .agreement-checkbox input {
+      width: auto;
+      margin-top: 5px;
+    }
+
+    .continue-button {
+      display: block;
+      width: 100%;
+      padding: 16px 24px;
+      background: var(--gold);
+      color: #111;
+      border: 2px solid var(--gold);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      cursor: pointer;
+    }
+
+    .payment-return-message {
+      padding: 16px 20px;
+      border: 2px solid var(--gold);
+      border-radius: 6px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .continue-button:hover {
+      background: var(--gold-hi);
+      border-color: var(--gold-hi);
+    }
+
+    .continue-button:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
+
+    .continue-button:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    .next-step-note {
+      color: var(--muted);
+      text-align: center;
+      margin-top: 15px;
+      font-size: 15px;
+    }
+
+    footer {
+      margin-top: 70px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      text-align: center;
+      padding: 30px 16px;
+      font-size: .92rem;
+    }
+
+    footer .brand {
+      font-family: var(--display);
+      font-weight: 800;
+      color: var(--gold);
+      font-size: 1.3rem;
+    }
+
+    footer p {
+      margin: 1em 0;
+    }
+
+    @media (max-width: 850px) {
+
+      .plan-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .advertising-choice {
+        grid-template-columns: 1fr;
+      }
+
+      .setup-payment-choice {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    @media (max-width: 600px) {
+
+      header h1 {
+        font-size: 30px;
+      }
+
+      main {
+        padding:
+          35px 14px
+          55px;
+      }
+
+      .signup-section {
+        padding: 24px 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-field.full-width {
+        grid-column: auto;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <header>
+
+    <h1>
+      BUSINESS PRO LOCAL
+    </h1>
+
+    <p>
+      Build Your Local Business Online
+    </p>
+
+  </header>
+
+
+  <main>
+    <p id="payment-return-message" class="payment-return-message" role="status" hidden></p>
+
+
+    <section>
+
+      <div class="section-heading">
+
+        <h2>
+          Choose Your Website
+        </h2>
+
+        <p>
+          Select the package that best fits your business.
+        </p>
+
+      </div>
+
+
+      <div class="plan-grid">
+
+
+        <label
+          class="plan-card"
+          data-plan-card="basic"
+        >
+
+          <div>
+
+            <input
+              type="radio"
+              name="website-plan"
+              value="basic"
+            >
+
+            <strong>
+              SELECT BASIC
+            </strong>
+
+          </div>
+
+          <h3>
+            Basic
+          </h3>
+
+          <p class="setup-price">
+            $995 Setup
+          </p>
+
+          <p class="setup-installments" hidden>
+            or 3 monthly payments of $331.67
+          </p>
+
+          <p class="monthly-price">
+            $49/month
+          </p>
+
+          <p class="first-month-free">
+            First month free
+          </p>
+
+          <ul>
+
+            <li>
+              Mobile-friendly business website
+            </li>
+
+            <li>
+              Business information
+            </li>
+
+            <li>
+              Services
+            </li>
+
+            <li>
+              Business photos
+            </li>
+
+            <li>
+              Contact information
+            </li>
+
+            <li>
+              Business hours
+            </li>
+
+            <li>
+              Google Maps and directions
+            </li>
+
+            <li>
+              Links to existing social media accounts
+            </li>
+
+            <li>
+              Hosting
+            </li>
+
+            <li>
+              Security and backups
+            </li>
+
+            <li>
+              Technical support
+            </li>
+
+            <li>
+              Website maintenance
+            </li>
+
+          </ul>
+
+        </label>
+
+
+        <label
+          class="plan-card"
+          data-plan-card="professional"
+        >
+
+          <div>
+
+            <input
+              type="radio"
+              name="website-plan"
+              value="professional"
+            >
+
+            <strong>
+              SELECT PROFESSIONAL
+            </strong>
+
+          </div>
+
+          <h3>
+            Professional
+          </h3>
+
+          <p class="setup-price">
+            $1,495 Setup
+          </p>
+
+          <p class="setup-installments" hidden>
+            or 3 monthly payments of $498.33
+          </p>
+
+          <p class="monthly-price">
+            $79/month
+          </p>
+
+          <p class="first-month-free">
+            First month free
+          </p>
+
+          <ul>
+
+            <li>
+              Everything included in Basic
+            </li>
+
+            <li>
+              Interactive customer features
+            </li>
+
+            <li>
+              Appointment booking
+            </li>
+
+            <li>
+              Service or employee selection
+            </li>
+
+            <li>
+              Quote or estimate requests
+            </li>
+
+            <li>
+              Customer intake forms
+            </li>
+
+            <li>
+              Restaurant takeout or order-ahead options
+            </li>
+
+            <li>
+              Photo galleries
+            </li>
+
+            <li>
+              Owner management interface
+            </li>
+
+            <li>
+              Manage schedules and availability
+            </li>
+
+            <li>
+              Block vacation days or days off
+            </li>
+
+            <li>
+              Update business photos and information
+            </li>
+
+          </ul>
+
+        </label>
+
+
+        <label
+          class="plan-card"
+          data-plan-card="business-pro"
+        >
+
+          <div>
+
+            <input
+              type="radio"
+              name="website-plan"
+              value="business-pro"
+            >
+
+            <strong>
+              SELECT BUSINESS PRO
+            </strong>
+
+          </div>
+
+          <h3>
+            Business Pro
+          </h3>
+
+          <p class="setup-price">
+            $2,495 Setup
+          </p>
+
+          <p class="setup-installments" hidden>
+            or 3 monthly payments of $831.67
+          </p>
+
+          <p class="monthly-price">
+            $149/month
+          </p>
+
+          <p class="first-month-free">
+            First month free
+          </p>
+
+          <ul>
+
+            <li>
+              Everything included in Professional
+            </li>
+
+            <li>
+              Mobile storefront
+            </li>
+
+            <li>
+              Product listings
+            </li>
+
+            <li>
+              Product photos and pricing
+            </li>
+
+            <li>
+              Shopping cart
+            </li>
+
+            <li>
+              Customer ordering
+            </li>
+
+            <li>
+              Online purchasing where appropriate
+            </li>
+
+            <li>
+              Pickup, delivery, or shipping options
+            </li>
+
+            <li>
+              Inventory management
+            </li>
+
+            <li>
+              Order management
+            </li>
+
+            <li>
+              Promotions
+            </li>
+
+          </ul>
+
+        </label>
+
+
+      </div>
+
+    </section>
+
+    <section class="signup-section" hidden>
+
+      <h2>
+        Choose Your Setup Fee Payment
+      </h2>
+
+      <p>
+        Your setup fee is paid in full up front.
+      </p>
+
+      <div class="setup-payment-choice">
+
+        <label class="setup-payment-option">
+          <input
+            type="radio"
+            name="setup-payment"
+            value="full"
+            checked
+          >
+          <span>
+            <strong>Pay in full</strong>
+            <span
+              class="setup-payment-amount"
+              id="setup-full-amount"
+              aria-live="polite"
+            >Choose a website package to see the amount.</span>
+          </span>
+        </label>
+
+        <label class="setup-payment-option" hidden>
+          <input
+            type="radio"
+            name="setup-payment"
+            value="installments"
+            disabled
+          >
+          <span>
+            <strong>3 monthly payments</strong>
+            <span
+              class="setup-payment-amount"
+              id="setup-installments-amount"
+              aria-live="polite"
+            >Choose a website package to see the amount.</span>
+          </span>
+        </label>
+
+      </div>
+
+    </section>
+
+
+    <section class="signup-section">
+
+      <h2>
+        Business Pro Local Advertising Network
+      </h2>
+
+      <p>
+        Would you like your business advertised on other
+        participating local Business Pro Local websites?
+      </p>
+
+
+      <div class="advertising-choice">
+
+
+        <label class="advertising-option">
+
+          <input
+            type="radio"
+            name="advertising"
+            value="off"
+            checked
+          >
+
+          <strong>
+            OFF
+          </strong>
+
+          <p>
+            I do not want local network advertising.
+          </p>
+
+        </label>
+
+
+        <label class="advertising-option">
+
+          <input
+            type="radio"
+            name="advertising"
+            value="on"
+          >
+
+          <strong>
+            ON
+          </strong>
+
+          <p>
+            Advertise my business on other participating
+            local Business Pro Local websites.
+          </p>
+
+        </label>
+
+
+      </div>
+
+
+      <div
+        id="ad-details"
+        class="ad-details"
+      >
+
+        <h3>
+          Your Advertising Plan
+        </h3>
+
+        <p
+          id="ad-rate"
+          class="ad-rate"
+        >
+        </p>
+
+        <p>
+          Your advertisement will only appear on other
+          participating local Business Pro Local websites.
+        </p>
+
+        <ul class="network-rules">
+
+          <li>
+            Local Business Pro Local network only
+          </li>
+
+          <li>
+            Not Google Ads
+          </li>
+
+          <li>
+            Not Facebook or social media advertising
+          </li>
+
+          <li>
+            No direct competitor advertising
+          </li>
+
+          <li>
+            You pay according to your selected
+            Business Pro Local website package
+          </li>
+
+        </ul>
+
+      </div>
+
+    </section>
+
+
+    <section class="signup-section">
+
+      <h2>
+        Tell Us About Your Business
+      </h2>
+
+      <p>
+        Enter the information we need to begin your website.
+      </p>
+
+
+      <div class="form-grid">
+
+
+        <div class="form-field">
+
+          <label for="business-name">
+            Business Name
+          </label>
+
+          <input
+            type="text"
+            id="business-name"
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="owner-name">
+            Owner / Contact Name
+          </label>
+
+          <input
+            type="text"
+            id="owner-name"
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="business-phone">
+            Phone Number
+          </label>
+
+          <input
+            type="tel"
+            id="business-phone"
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="business-email">
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            id="business-email"
+          >
+
+        </div>
+
+
+        <div class="form-field full-width">
+
+          <label for="business-address">
+            Business Address
+          </label>
+
+          <input
+            type="text"
+            id="business-address"
+          >
+
+        </div>
+
+
+        <div class="form-field full-width">
+
+          <label for="business-notes">
+            Tell Us About Your Business
+          </label>
+
+          <textarea
+            id="business-notes"
+            placeholder="Services, products, website ideas, special requests, or anything else you would like us to know."
+          ></textarea>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+    <section class="signup-section">
+
+      <p id="setup-fee-summary" aria-live="polite">
+        Choose a website package to see your setup fee. Your first month of service is free.
+      </p>
+
+      <h2>
+        Business Pro Local Service Agreement
+      </h2>
+
+
+      <div class="agreement-preview">
+
+        <p>
+          <strong>
+            Business Pro Local Service Agreement
+          </strong>
+        </p>
+
+        <p>
+          By selecting a Business Pro Local website package, you authorize Business Pro Local to design, host, maintain, and support a website for your business.
+        </p>
+
+        <p>
+          Your selected package determines your one-time setup fee and monthly website service fee. Major redesigns, custom systems, or services outside your selected package may require a separate quote.
+        </p>
+
+        <p>
+          Monthly service includes website hosting, routine maintenance, technical support, security assistance, backups, and reasonable minor website updates.
+        </p>
+
+        <p>
+          If you choose Business Pro Local Advertising, you authorize your business to be advertised on participating non-competing Business Pro Local websites according to the advertising rate and minimum associated with your selected package.
+        </p>
+
+        <p>
+          Business Pro Local does not guarantee website traffic, advertising clicks, leads, customers, or sales.
+        </p>
+
+        <p>
+          Website development normally begins after this agreement is accepted and payment requirements are completed. Please allow 5 to 7 business days for development of the initial website.
+        </p>
+
+        <p>
+          Your website is built on the Business Pro design and customized with your logo, colors, photos, hours, services and contact details. Custom features or design changes beyond these can be quoted separately as an add-on.
+        </p>
+
+        <p>
+          Your first month of monthly service is free. After that, monthly service is billed in advance. You may cancel at any time by email or text. If you cancel partway through a paid month, you will receive a prorated refund for the unused days of that month.
+        </p>
+
+        <p>
+          The setup fee is non-refundable once website development has begun.
+        </p>
+
+        <p>
+          If a monthly payment is not received, Business Pro Local may pause or turn off your website until your account is brought up to date.
+        </p>
+
+        <p>
+          You keep ownership of your logo, photos, and business content. The Business Pro design, platform, and software remain the property of Business Pro Local.
+        </p>
+
+      </div>
+
+
+      <label class="agreement-checkbox">
+
+        <input
+          type="checkbox"
+          id="agreement-ready"
+        >
+
+        <span>
+          I have read and agree to the
+          Business Pro Local Service Agreement above.
+        </span>
+
+      </label>
+
+    </section>
+
+
+    <button
+      type="button"
+      id="continue-button"
+      class="continue-button"
+    >
+      Continue to Payment
+    </button>
+
+
+    <p
+      class="next-step-note"
+      id="save-status"
+      role="status"
+      aria-live="polite"
+    >
+      Your information will be saved in this browser, then you will continue to secure checkout to pay your setup fee.
+    </p>
+
+
+  </main>
+
+
+  <footer>
+
+    <div class="brand">Business Pro Local</div>
+    <p>Sanford, Maine · 207-408-7983 · businessprolocal207@gmail.com</p>
+
+  </footer>
+
+
+  <link rel="stylesheet" href="form-helpers.css">
+  <script src="form-helpers.js"></script>
+  <script>
+
+    const CHECKOUT_ENDPOINT =
+      "https://village-barber-sms.onrender.com/create-checkout-session";
+
+
+    const SIGNUP_STORAGE_KEY =
+      "businessProSignups";
+
+
+    const setupPaymentRates = {
+
+      basic: {
+        setupFee: 995,
+        full: "$995",
+        installment: "$331.67",
+        installmentAmount: 331.67
+      },
+
+      professional: {
+        setupFee: 1495,
+        full: "$1,495",
+        installment: "$498.33",
+        installmentAmount: 498.33
+      },
+
+      "business-pro": {
+        setupFee: 2495,
+        full: "$2,495",
+        installment: "$831.67",
+        installmentAmount: 831.67
+      }
+
+    };
+
+
+    const planRates = {
+
+      basic: {
+        clickRate: "$0.75 per click",
+        minimum: "$25 monthly minimum"
+      },
+
+      professional: {
+        clickRate: "$1.25 per click",
+        minimum: "$50 monthly minimum"
+      },
+
+      "business-pro": {
+        clickRate: "$2.00 per click",
+        minimum: "$75 monthly minimum"
+      }
+
+    };
+
+
+    const planInputs =
+      document.querySelectorAll(
+        'input[name="website-plan"]'
+      );
+
+
+    const planCards =
+      document.querySelectorAll(
+        "[data-plan-card]"
+      );
+
+
+    const advertisingInputs =
+      document.querySelectorAll(
+        'input[name="advertising"]'
+      );
+
+    const setupPaymentInputs =
+      document.querySelectorAll(
+        'input[name="setup-payment"]'
+      );
+
+
+    const setupFullAmount =
+      document.getElementById(
+        "setup-full-amount"
+      );
+
+
+    const setupInstallmentsAmount =
+      document.getElementById(
+        "setup-installments-amount"
+      );
+
+    const setupFeeSummary =
+      document.getElementById(
+        "setup-fee-summary"
+      );
+
+    const adDetails =
+      document.getElementById(
+        "ad-details"
+      );
+
+
+    const adRate =
+      document.getElementById(
+        "ad-rate"
+      );
+
+
+    const continueButton =
+      document.getElementById(
+        "continue-button"
+      );
+
+
+    let selectedPlan =
+      "";
+
+
+    function selectPlan(
+      plan
+    ) {
+
+      if (!planRates[plan]) {
+        return;
+      }
+
+
+      selectedPlan =
+        plan;
+
+
+      planInputs.forEach(
+        input => {
+
+          input.checked =
+            input.value === plan;
+
+        }
+      );
+
+
+      planCards.forEach(
+        card => {
+
+          card.classList.toggle(
+            "selected",
+            card.dataset.planCard === plan
+          );
+
+        }
+      );
+
+
+      updateAdvertisingRate();
+      updateSetupPaymentAmounts();
+
+    }
+
+
+    function updateSetupPaymentAmounts() {
+
+      const rate =
+        setupPaymentRates[selectedPlan];
+
+
+      if (!rate) {
+
+        setupFullAmount.textContent =
+          "Choose a website package to see the amount.";
+
+        setupInstallmentsAmount.textContent =
+          "Choose a website package to see the amount.";
+
+        setupFeeSummary.textContent =
+          "Choose a website package to see your setup fee. Your first month of service is free.";
+
+        return;
+
+      }
+
+
+      setupFullAmount.textContent =
+        rate.full;
+
+      setupInstallmentsAmount.textContent =
+        `3 payments of ${rate.installment}`;
+
+      setupFeeSummary.textContent =
+        `Setup fee: ${rate.full}, paid in full today. Your first month of service is free.`;
+
+    }
+
+
+    function updateAdvertisingRate() {
+
+      const selectedAdvertising =
+        document.querySelector(
+          'input[name="advertising"]:checked'
+        );
+
+
+      const advertisingOn =
+        selectedAdvertising &&
+        selectedAdvertising.value === "on";
+
+
+      if (!advertisingOn) {
+
+        adDetails.classList.remove(
+          "visible"
+        );
+
+        return;
+
+      }
+
+
+      adDetails.classList.add(
+        "visible"
+      );
+
+
+      if (!selectedPlan) {
+
+        adRate.textContent =
+          "Choose a website package to see your advertising rate.";
+
+        return;
+
+      }
+
+
+      const rate =
+        planRates[
+          selectedPlan
+        ];
+
+
+      adRate.textContent =
+        `${rate.clickRate} • ${rate.minimum}`;
+
+    }
+
+
+    planInputs.forEach(
+      input => {
+
+        input.addEventListener(
+          "change",
+          () => {
+
+            selectPlan(
+              input.value
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+    advertisingInputs.forEach(
+      input => {
+
+        input.addEventListener(
+          "change",
+          updateAdvertisingRate
+        );
+
+      }
+    );
+
+    setupPaymentInputs.forEach(
+      input => {
+
+        input.addEventListener(
+          "change",
+          updateSetupPaymentAmounts
+        );
+
+      }
+    );
+
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const requestedPlan =
+      params.get(
+        "plan"
+      );
+
+
+    if (
+      requestedPlan &&
+      planRates[
+        requestedPlan
+      ]
+    ) {
+
+      selectPlan(
+        requestedPlan
+      );
+
+    }
+
+
+    updateSetupPaymentAmounts();
+
+
+    const paymentStatus =
+      params.get(
+        "payment"
+      );
+
+
+    const paymentReturnMessage =
+      document.getElementById("payment-return-message");
+
+    if (paymentStatus === "success") {
+      paymentReturnMessage.textContent =
+        "Payment received, welcome to Business Pro Local! Check your email.";
+      paymentReturnMessage.hidden = false;
+    } else if (paymentStatus === "canceled" || paymentStatus === "cancelled") {
+      paymentReturnMessage.textContent =
+        "Payment canceled, nothing was charged";
+      paymentReturnMessage.hidden = false;
+    }
+
+
+    continueButton.addEventListener(
+      "click",
+      async () => {
+
+        const businessName =
+          document.getElementById(
+            "business-name"
+          ).value.trim();
+
+
+        const ownerName =
+          document.getElementById(
+            "owner-name"
+          ).value.trim();
+
+
+        const phone =
+          document.getElementById(
+            "business-phone"
+          ).value.trim();
+
+
+        const email =
+          document.getElementById(
+            "business-email"
+          ).value.trim();
+
+
+        const businessAddress =
+          document.getElementById(
+            "business-address"
+          ).value.trim();
+
+
+        const businessNotes =
+          document.getElementById(
+            "business-notes"
+          ).value.trim();
+
+
+        const selectedAdvertising =
+          document.querySelector(
+            'input[name="advertising"]:checked'
+          );
+
+
+        const advertising =
+          selectedAdvertising
+            ? selectedAdvertising.value
+            : "off";
+
+        const selectedSetupPayment =
+          document.querySelector(
+            'input[name="setup-payment"]:checked'
+          );
+
+
+        const agreementReady =
+          document.getElementById(
+            "agreement-ready"
+          ).checked;
+
+
+        if (!selectedPlan) {
+
+          alert(
+            "Please choose a website package."
+          );
+
+          return;
+
+        }
+
+
+        if (
+          !businessName ||
+          !ownerName ||
+          !phone ||
+          !email
+        ) {
+
+          alert(
+            "Please complete your business name, contact name, phone number, and email address."
+          );
+
+          return;
+
+        }
+
+
+        const emailInput = document.getElementById("business-email");
+        if (!emailInput.checkValidity()) {
+          document.getElementById("save-status").textContent =
+            "Please enter a valid email address.";
+          emailInput.focus();
+          return;
+        }
+
+        if (!agreementReady) {
+
+          alert(
+            "Please read and agree to the Business Pro Local Service Agreement."
+          );
+
+          return;
+
+        }
+
+        if (!selectedSetupPayment) {
+
+          alert(
+            "Please choose how to pay the setup fee."
+          );
+
+          return;
+
+        }
+
+
+        const paymentRate =
+          setupPaymentRates[selectedPlan];
+
+        const setupPaymentAmount =
+          selectedSetupPayment.value === "full"
+            ? paymentRate.setupFee
+            : paymentRate.installmentAmount;
+
+        const signup = {
+          plan: selectedPlan,
+          setupFee: paymentRate.setupFee,
+          setupPaymentMethod: selectedSetupPayment.value,
+          setupPaymentAmount,
+          setupInstallmentAmount:
+            selectedSetupPayment.value === "installments"
+              ? paymentRate.installmentAmount
+              : null,
+          advertising,
+          businessName,
+          ownerName,
+          phone,
+          email,
+          businessAddress,
+          businessNotes,
+          agreementAccepted: agreementReady,
+          savedAt: new Date().toISOString()
+        };
+
+
+        try {
+
+          const savedSignups =
+            JSON.parse(
+              localStorage.getItem(SIGNUP_STORAGE_KEY) || "[]"
+            );
+
+          if (!Array.isArray(savedSignups)) {
+
+            throw new Error(
+              "Saved signup data is not in the expected format."
+            );
+
+          }
+
+          savedSignups.push(signup);
+
+          localStorage.setItem(
+            SIGNUP_STORAGE_KEY,
+            JSON.stringify(savedSignups)
+          );
+
+          document.getElementById(
+            "save-status"
+          ).textContent =
+            "Signup information saved in this browser. Connecting to secure checkout...";
+
+
+        } catch (error) {
+
+          console.error(
+            "Signup save error:",
+            error
+          );
+
+
+          document.getElementById(
+            "save-status"
+          ).textContent =
+            "Unable to save signup information in this browser. Check browser storage settings and try again.";
+          return;
+
+        }
+
+
+        continueButton.disabled =
+          true;
+
+        continueButton.textContent =
+          "Opening Secure Payment...";
+
+
+        try {
+
+          const response =
+            await fetch(
+              CHECKOUT_ENDPOINT,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  plan: selectedPlan,
+                  advertising,
+                  businessName,
+                  ownerName,
+                  phone,
+                  email,
+                  businessAddress,
+                  businessNotes,
+                  setupPaymentMethod: selectedSetupPayment.value,
+                  setupPaymentAmount,
+                  setupFee: paymentRate.setupFee,
+                  setupInstallmentAmount:
+                    selectedSetupPayment.value === "installments"
+                      ? paymentRate.installmentAmount
+                      : null
+                })
+              }
+            );
+
+          const result = await response.json();
+          if (!response.ok || !result.success || !result.url) {
+            throw new Error(
+              result.error || "Stripe checkout could not be started."
+            );
+          }
+
+          window.location.href = result.url;
+
+        } catch (error) {
+
+          console.error("Checkout error:", error);
+          document.getElementById(
+            "save-status"
+          ).textContent =
+            "Your signup is saved on this device, but we couldn't connect to secure checkout. Please check your internet connection and try again, or contact us at businessprolocal207@gmail.com or 207-408-7983.";
+
+          continueButton.disabled =
+            false;
+
+          continueButton.textContent =
+            "Continue to Payment";
+
+        }
+
+      }
+    );
+
+  </script>
+
+
+</body>
+
+</html>

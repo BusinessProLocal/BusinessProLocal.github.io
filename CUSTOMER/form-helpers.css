@@ -1,0 +1,5 @@
+.email-choices { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0; }
+.email-choices[hidden], .test-fill[hidden] { display: none !important; }
+.email-choices button, .test-fill { border: 1px solid #d4af37; border-radius: 6px; background: #050505; color: #d4af37; padding: 9px 12px; font: inherit; cursor: pointer; }
+.email-choices button:hover, .email-choices button:focus-visible, .test-fill:hover { background: #d4af37; color: #050505; }
+.test-fill { justify-self: start; margin-bottom: 12px; }

@@ -1,0 +1,985 @@
+/* Owner rules copied from OWNER/owner.html, scoped to the offline preview. */
+body.demo-owner-open { background: #fff; }
+body.demo-owner-open #demo-app { max-width: none; }
+body.demo-owner-open .test-bar, body.demo-owner-open .demo-ribbon,
+body.demo-owner-open .demo-notice, body.demo-owner-open #demo-app > footer { display: none; }
+body.demo-owner-open #demo-status:empty, body.demo-owner-open #demo-error:empty { display: none; }
+#daily-dashboard { padding: 0; margin: 0; max-width: none; font: 16px Arial, Helvetica, sans-serif; color-scheme: light; }
+#daily-dashboard * { all: revert; box-sizing: border-box; margin: 0; padding: 0; font-family: inherit; line-height: inherit; }
+#daily-dashboard [hidden] { display: none !important; }
+#daily-dashboard .sidebar { flex-shrink: 0; }
+#daily-dashboard .brand .business-name strong { white-space: normal; overflow-wrap: anywhere; text-align: center; }
+#daily-dashboard .owner-grid-heading { padding: 10px 6px; text-align: center; font-weight: bold; background: #f5f5f5; border-right: 1px solid #ccc; border-bottom: 2px solid #000; }
+#daily-dashboard .owner-grid-time { padding: 10px 6px; font-weight: bold; font-size: 12px; text-align: right; background: #f5f5f5; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+#daily-dashboard .owner-grid-slot { min-height: 78px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; background: #fff; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+#daily-dashboard .month-appointment { width: 100%; text-align: left; }
+#daily-dashboard .address { white-space: pre-wrap; }
+#daily-dashboard .packing-item { display: flex; align-items: start; justify-content: center; gap: 12px; margin: 14px auto; width: fit-content; max-width: 100%; }
+#daily-dashboard .packing-item input { width: auto; margin-top: 6px; }
+#daily-dashboard .ship-box, #daily-dashboard .shipping-label { border: 1px solid #d4af37; padding: 14px 18px; margin: 20px auto; }
+#daily-dashboard .ship-box p, #daily-dashboard .shipping-label p { margin: 8px 0; }
+#daily-dashboard .shipping-label select { padding: 10px; margin: 8px 0; }
+#daily-dashboard .owner-order .panel-header { flex-direction: column; gap: 12px; text-align: center; }
+#daily-dashboard .owner-order .panel-body { text-align: center; }
+#daily-dashboard .owner-order .panel-body > p, #daily-dashboard .owner-order .panel-body > h3 { margin: 16px 0; }
+#daily-dashboard .owner-order .action-btn { display: block; margin: 20px auto; }
+#daily-dashboard .ship-box { max-width: 420px; text-align: center; }
+#daily-dashboard .shipping-label { width: 384px; max-width: 100%; padding: 0; background: #fff; color: #000; text-align: left; display: grid; grid-template-columns: minmax(0, 1fr); }
+#daily-dashboard .shipping-label::before { content: ""; grid-area: 1 / 1; width: 100%; min-width: 0; align-self: start; aspect-ratio: 2 / 3; }
+#daily-dashboard .shipping-label-content { grid-area: 1 / 1; min-width: 0; padding: 14px 18px; }
+#daily-dashboard .shipping-label p { margin: 12px 0; }
+#daily-dashboard .shipping-label .label-address { margin: 20px 0; }
+#daily-dashboard .shipping-label .label-address p { margin: 6px 0; }
+#daily-dashboard .shipping-label h3 { color: #000; text-align: left; }
+#daily-dashboard .shipping-label label, #daily-dashboard .shipping-label select { display: block; max-width: 100%; }
+#daily-dashboard .shipping-label .tracking { overflow-wrap: anywhere; }
+@media (max-width:760px) {
+  #daily-dashboard .shipping-label { font-size: 12px; line-height: 1.25; }
+  #daily-dashboard .shipping-label-content { padding: 12px; }
+  #daily-dashboard .shipping-label h3 { font-size: 16px; }
+  #daily-dashboard .shipping-label select { padding: 6px; margin: 4px 0; }
+}
+#daily-dashboard .end-of-demo { text-align: center; margin: 32px auto; }
+#daily-dashboard .end-of-demo p { font-size: 20px; margin-bottom: 16px; }
+#daily-dashboard .book-button { display: inline-block; background: #d4af37; color: #000; border: 2px solid #d4af37; padding: 12px 16px; font-weight: bold; text-decoration: none; }
+#daily-dashboard .photo-control { margin-top: 20px; }
+#daily-dashboard .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+#daily-dashboard .photo-button { padding: 16px 22px; font-size: 1.1rem; border: 2px solid #d4af37; background: #000; color: #d4af37; cursor: pointer; }
+#daily-dashboard .photo-control img { display: block; max-width: 100%; max-height: 400px; }
+#daily-dashboard .owner-order { overflow-wrap: anywhere; }
+#daily-dashboard .panel-body.card-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+@media (max-width:760px) {
+  #daily-dashboard .month-toolbar { grid-template-columns: 1fr; }
+  #daily-dashboard .month-navigation { flex-wrap: wrap; }
+  #daily-dashboard .calendar-filter { justify-content: flex-start; }
+  #daily-dashboard .calendar-legend { flex-wrap: wrap; }
+  #daily-dashboard .appointments-topbar { flex-wrap: wrap; gap: 10px; }
+  #daily-dashboard .appointments-title { flex: 1 1 calc(100% - 70px); }
+  #daily-dashboard .topbar { flex-wrap: wrap; gap: 12px; }
+  #daily-dashboard .access-controls { justify-content: flex-start; }
+  #daily-dashboard .panel-body.card-grid { grid-template-columns: 1fr; }
+}
+#daily-dashboard * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+#daily-dashboard {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      color: #111;
+    }
+#daily-dashboard .app {
+      display: flex;
+      min-height: 100vh;
+    }
+#daily-dashboard .sidebar {
+      width: 260px;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px;
+      border-right: 4px solid #fff;
+    }
+#daily-dashboard .brand {
+      margin-bottom: 30px;
+    }
+#daily-dashboard .brand .business-name {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+#daily-dashboard .brand .business-name strong {
+      color: var(--bp-accent-text, var(--bp-white, #fff));
+      font-size: 24px;
+      letter-spacing: 1px;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+#daily-dashboard .brand h1 {
+      font-size: 16px;
+      letter-spacing: 1px;
+      color: var(--bp-gold, #d4af37);
+      margin-top: 6px;
+    }
+#daily-dashboard .brand p {
+      color: #fff;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+#daily-dashboard .brand h1,
+#daily-dashboard .section-heading h2,
+#daily-dashboard .topbar h2 {
+      font-family: var(--bp-heading-font, "Playfair Display"), Georgia, serif;
+      font-weight: 800;
+    }
+#daily-dashboard .business-name {
+      border: 1px solid #444;
+      padding: 14px;
+      margin-bottom: 24px;
+    }
+#daily-dashboard .business-name small {
+      color: #aaa;
+      display: block;
+      margin-bottom: 4px;
+    }
+#daily-dashboard .business-name strong {
+      font-size: 16px;
+    }
+#daily-dashboard .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+#daily-dashboard .nav button {
+      width: 100%;
+      background: transparent;
+      color: #fff;
+      border: none;
+      text-align: left;
+      padding: 13px 14px;
+      font-size: 15px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      position: relative;
+      overflow: hidden;
+      transition: background .22s ease, color .22s ease, border-color .22s ease, transform .22s ease;
+    }
+#daily-dashboard .nav button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.22) 48%, transparent 100%);
+      transform: translateX(-120%);
+      transition: transform .45s ease;
+      pointer-events: none;
+    }
+#daily-dashboard .nav button:hover::after,
+#daily-dashboard .nav button.active::after {
+      transform: translateX(120%);
+    }
+#daily-dashboard .nav button:hover,
+#daily-dashboard .nav button.active {
+      background: #171717;
+      border-left-color: #fff;
+    }
+#daily-dashboard .nav-caret {
+      float: right;
+      font-size: 12px;
+      transition: transform 0.2s ease;
+    }
+#daily-dashboard .nav-caret.open {
+      transform: rotate(180deg);
+    }
+#daily-dashboard .nav button:hover {
+      transform: translate3d(4px, -3px, 0);
+      z-index: 2;
+      box-shadow: 0 8px 0 rgba(0, 0, 0, .72), 0 12px 18px rgba(0, 0, 0, .38);
+    }
+#daily-dashboard .nav button.active {
+      transform: translate3d(2px, -2px, 0);
+      z-index: 1;
+      box-shadow: inset 4px 0 0 var(--bp-gold, #d4af37), 0 6px 0 rgba(0, 0, 0, .72), 0 10px 16px rgba(0, 0, 0, .32);
+      font-weight: 800;
+    }
+#daily-dashboard .support-box {
+      margin-top: auto;
+      padding-top: 25px;
+    }
+#daily-dashboard .support-box h3 {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+#daily-dashboard .support-box p {
+      font-size: 12px;
+      color: #bbb;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+#daily-dashboard .support-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+#daily-dashboard .support-buttons button {
+      padding: 11px 6px;
+      border: 1px solid #000;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+#daily-dashboard .support-buttons button:hover {
+      background: #000;
+color: #fff;
+    }
+#daily-dashboard .main {
+      flex: 1;
+      min-width: 0;
+    }
+#daily-dashboard .topbar {
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 22px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+#daily-dashboard .topbar h2 {
+      font-size: 25px;
+    }
+#daily-dashboard .topbar .date {
+      font-size: 14px;
+      color: #666;
+    }
+#daily-dashboard .content {
+      padding: 28px 30px;
+    }
+#daily-dashboard .page {
+      display: none;
+    }
+#daily-dashboard .page.active {
+      display: block;
+    }
+#daily-dashboard .section-heading {
+      margin-bottom: 20px;
+    }
+#daily-dashboard .section-heading h2 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+#daily-dashboard .section-heading p {
+      color: #666;
+    }
+#daily-dashboard .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+#daily-dashboard .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-top: 4px solid #000;
+      padding: 20px;
+    }
+#daily-dashboard .card span {
+      display: block;
+      color: #666;
+      font-size: 13px;
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+#daily-dashboard .card strong {
+      font-size: 27px;
+    }
+#daily-dashboard .card small {
+      display: block;
+      margin-top: 7px;
+      color: #777;
+    }
+#daily-dashboard .panel {
+      background: #fff;
+      border: 1px solid #ddd;
+      margin-bottom: 25px;
+    }
+#daily-dashboard .panel-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+#daily-dashboard .panel-header h3 {
+      font-size: 18px;
+    }
+#daily-dashboard .panel-body {
+      padding: 20px;
+    }
+#daily-dashboard table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+#daily-dashboard th {
+      text-align: left;
+      background: #f5f5f5;
+      padding: 13px;
+      font-size: 13px;
+      border-bottom: 1px solid #ddd;
+    }
+#daily-dashboard td {
+      padding: 14px 13px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+#daily-dashboard .status {
+      display: inline-block;
+      border: 1px solid #000;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+#daily-dashboard .action-btn {
+      border: 1px solid #222;
+      background: #fff;
+      padding: 7px 11px;
+      cursor: pointer;
+    }
+#daily-dashboard .action-btn:hover {
+      background: #000;
+      color: #fff;
+    }
+#daily-dashboard .appointments-workspace {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #fff;
+  padding: 24px;
+  overflow-y: auto;
+}
+#daily-dashboard .appointments-topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+#daily-dashboard .close-appointments {
+  width: 46px;
+  height: 46px;
+  border: 2px solid #000;
+  background: #fff;
+  color: #000;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
+#daily-dashboard .close-appointments:hover {
+  background: #000;
+  color: #fff;
+}
+#daily-dashboard .appointments-title h2 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+#daily-dashboard .appointments-title p {
+  color: #666;
+}
+#daily-dashboard .month-toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+#daily-dashboard .month-navigation {
+  display: flex;
+  gap: 8px;
+}
+#daily-dashboard .calendar-btn {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  padding: 10px 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+#daily-dashboard .calendar-btn:hover {
+  background: #000;
+  color: #fff;
+}
+#daily-dashboard .calendar-month-title {
+  text-align: center;
+  font-size: 32px;
+}
+#daily-dashboard .calendar-filter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+}
+#daily-dashboard .calendar-filter select {
+  padding: 10px 12px;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+}
+#daily-dashboard .calendar-legend {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+#daily-dashboard .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#daily-dashboard .legend-box {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #000;
+}
+#daily-dashboard .month-calendar {
+  border: 2px solid #000;
+  background: #fff;
+}
+#daily-dashboard .calendar-top-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 16px;
+  border-bottom: 1px solid #ccc;
+  background: #f5f5f5;
+}
+#daily-dashboard .calendar-top-scroll-inner {
+  height: 1px;
+}
+#daily-dashboard .month-grid-scroll {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+#daily-dashboard .month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+#daily-dashboard .month-appointment {
+  color: #fff;
+  padding: 7px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  border: 1px solid #000;
+}
+#daily-dashboard .month-appointment.confirmed {
+  background: green;
+}
+#daily-dashboard .month-appointment.completed {
+  opacity: 0.72;
+}
+#daily-dashboard .completion-status {
+  margin-top: 4px;
+  font-weight: bold;
+  letter-spacing: 0.4px;
+}
+#daily-dashboard .month-appointment strong,
+#daily-dashboard .month-appointment span,
+#daily-dashboard .month-appointment small {
+  display: block;
+}
+#daily-dashboard .month-appointment strong {
+  margin-bottom: 3px;
+}
+#daily-dashboard .month-appointment span {
+  margin-bottom: 2px;
+}
+@media (max-width: 1000px) {
+#daily-dashboard .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+}
+@media (max-width: 760px) {
+#daily-dashboard .app {
+        display: block;
+      }
+#daily-dashboard .sidebar {
+        width: 100%;
+      }
+#daily-dashboard .cards {
+        grid-template-columns: 1fr;
+      }
+#daily-dashboard .topbar,
+#daily-dashboard .content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+}
+#daily-dashboard .appointment-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 30px;
+  overflow-y: auto;
+}
+#daily-dashboard .appointment-modal.open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#daily-dashboard .appointment-modal-box {
+  width: 100%;
+  max-width: 620px;
+  background: #fff;
+  border: 3px solid #000;
+  padding: 24px;
+}
+#daily-dashboard .appointment-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+#daily-dashboard .appointment-modal-header h2 {
+  font-size: 25px;
+}
+#daily-dashboard .modal-close {
+  width: 42px;
+  height: 42px;
+  border: 2px solid #000;
+  background: #fff;
+  color: #000;
+  font-size: 26px;
+  cursor: pointer;
+}
+#daily-dashboard .modal-close:hover {
+  background: #000;
+  color: #fff;
+}
+#daily-dashboard .appointment-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+#daily-dashboard .appointment-detail {
+  border: 1px solid #ccc;
+  padding: 12px;
+}
+#daily-dashboard .appointment-detail label {
+  display: block;
+  font-size: 11px;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+#daily-dashboard .appointment-form-group {
+  margin-bottom: 15px;
+}
+#daily-dashboard .appointment-form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+#daily-dashboard .appointment-form-group input,
+#daily-dashboard .appointment-form-group select,
+#daily-dashboard .appointment-form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #000;
+  font: inherit;
+}
+#daily-dashboard .appointment-form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+#daily-dashboard .modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+#daily-dashboard .modal-action-btn {
+  padding: 11px 16px;
+  border: 2px solid #000;
+  background: #fff;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+#daily-dashboard .modal-action-btn:hover {
+  background: #000;
+  color: #fff;
+}
+#daily-dashboard #completeAppointment {
+  background: #15803d;
+  color: #fff;
+  border-color: #15803d;
+}
+#daily-dashboard #completeAppointment:hover {
+  background: #fff;
+  color: #000;
+  border-color: #000;
+}
+#daily-dashboard #completeAppointment:disabled {
+  background: #15803d;
+  color: #fff;
+  border-color: #15803d;
+  opacity: 1;
+}
+#daily-dashboard #completeAppointment:disabled:hover {
+  background: #fff;
+  color: #000;
+  border-color: #000;
+}
+#daily-dashboard .modal-action-btn.cancel-btn {
+  background: #b00000;
+  color: #fff;
+  border-color: #b00000;
+}
+#daily-dashboard .access-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#daily-dashboard .signed-in-badge {
+  border: 1px solid #000;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  background: #fff;
+}
+#daily-dashboard .lock-btn {
+  border: 1px solid #000;
+  background: #000;
+  color: #fff;
+  padding: 8px 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+@media (max-width: 760px) {
+#daily-dashboard #appointments .appointments-topbar { flex-wrap: wrap; gap: 10px; }
+#daily-dashboard #appointments .appointments-topbar .appointments-title { flex: 1 1 calc(100% - 70px); }
+}
+@media (max-width: 760px) {
+#daily-dashboard .access-controls { flex-wrap: wrap; justify-content: flex-end; }
+}
+#daily-dashboard .page#dashboard {
+      padding: 20px;
+      background: #080808;
+      color: var(--bp-gold);
+    }
+#daily-dashboard .page#dashboard .section-heading h2,
+#daily-dashboard .page#dashboard .section-heading p {
+      color: var(--bp-gold);
+    }
+#daily-dashboard .page#dashboard .card,
+#daily-dashboard .page#dashboard .panel {
+      background: var(--bp-black);
+      color: var(--bp-gold);
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard .page#dashboard .cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+#daily-dashboard .page#dashboard .completed-owner-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      gap: 14px;
+    }
+#daily-dashboard .page#dashboard .completed-barber-block {
+      padding: 12px;
+      background: var(--bp-black);
+      color: var(--bp-gold);
+    }
+#daily-dashboard .page#dashboard .compact-barber-name-btn,
+#daily-dashboard .page#dashboard .completed-barber-totals {
+      color: var(--bp-gold);
+    }
+#daily-dashboard .page#dashboard .completed-time-btn.next-barber-appointment {
+      background: var(--bp-gold);
+      color: var(--bp-black);
+      box-shadow: 0 0 16px rgba(212, 175, 55, .45);
+    }
+#daily-dashboard .page#dashboard .card span,
+#daily-dashboard .page#dashboard .card small,
+#daily-dashboard .page#dashboard .panel-header h3 {
+      color: var(--bp-gold);
+    }
+#daily-dashboard .page#dashboard .panel-header {
+      background: var(--bp-black);
+      border-color: var(--bp-gold);
+    }
+@media (max-width: 760px) {
+#daily-dashboard .page#dashboard {
+        padding: 14px;
+      }
+#daily-dashboard .page#dashboard .cards,
+#daily-dashboard .page#dashboard .completed-owner-grid {
+        grid-template-columns: 1fr;
+      }
+}
+#daily-dashboard {
+      --bp-black: #000;
+      --bp-gold: #d4af37;
+      --bp-white: #fff;
+    }
+#daily-dashboard,
+#daily-dashboard .main,
+#daily-dashboard .content,
+#daily-dashboard .topbar,
+#daily-dashboard .appointments-workspace,
+#daily-dashboard .panel,
+#daily-dashboard .card,
+#daily-dashboard .appointment-modal-box,
+#daily-dashboard .appointment-detail,
+#daily-dashboard .month-calendar {
+      background: var(--bp-white);
+      color: var(--bp-black);
+    }
+#daily-dashboard .sidebar {
+      background: var(--bp-black);
+      border-right-color: var(--bp-gold);
+    }
+#daily-dashboard .business-name {
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard .brand p,
+#daily-dashboard .business-name small,
+#daily-dashboard .support-box p {
+      color: var(--bp-gold);
+    }
+#daily-dashboard .nav button {
+      color: var(--bp-white);
+    }
+#daily-dashboard .nav button:hover,
+#daily-dashboard .nav button.active {
+      background: var(--bp-gold);
+      color: var(--bp-black);
+      border-left-color: var(--bp-gold);
+    }
+#daily-dashboard .nav button:hover {
+      transform: translate3d(4px, -3px, 0);
+      z-index: 2;
+      box-shadow: 0 8px 0 rgba(0, 0, 0, .72), 0 12px 18px rgba(0, 0, 0, .38);
+    }
+#daily-dashboard .nav button.active {
+      transform: translate3d(2px, -2px, 0);
+      z-index: 1;
+      box-shadow: inset 4px 0 0 var(--bp-gold), 0 6px 0 rgba(0, 0, 0, .72), 0 10px 16px rgba(0, 0, 0, .32);
+    }
+#daily-dashboard .topbar,
+#daily-dashboard .panel,
+#daily-dashboard .card,
+#daily-dashboard .appointment-modal-box,
+#daily-dashboard .appointment-detail,
+#daily-dashboard .month-calendar,
+#daily-dashboard th,
+#daily-dashboard td {
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard th {
+      background: var(--bp-gold);
+      color: var(--bp-black);
+    }
+#daily-dashboard .section-heading p,
+#daily-dashboard .topbar .date,
+#daily-dashboard .card span,
+#daily-dashboard .card small,
+#daily-dashboard .appointments-title p,
+#daily-dashboard .appointment-detail label {
+      color: var(--bp-black);
+    }
+#daily-dashboard input,
+#daily-dashboard select,
+#daily-dashboard textarea,
+#daily-dashboard .calendar-filter select {
+      background: var(--bp-white);
+      color: var(--bp-black);
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard .support-buttons button,
+#daily-dashboard .action-btn,
+#daily-dashboard .calendar-btn,
+#daily-dashboard .close-appointments,
+#daily-dashboard .modal-close,
+#daily-dashboard .modal-action-btn,
+#daily-dashboard .lock-btn {
+      background: var(--bp-black);
+      color: var(--bp-gold);
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard .support-buttons button:hover,
+#daily-dashboard .action-btn:hover,
+#daily-dashboard .calendar-btn:hover,
+#daily-dashboard .close-appointments:hover,
+#daily-dashboard .modal-close:hover,
+#daily-dashboard .modal-action-btn:hover,
+#daily-dashboard .lock-btn:hover {
+      background: var(--bp-gold);
+      color: var(--bp-black);
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard .month-appointment {
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard .month-appointment.confirmed {
+      background: var(--bp-black);
+    }
+#daily-dashboard .modal-action-btn.cancel-btn,
+#daily-dashboard .modal-action-btn.cancel-btn:hover {
+      background: var(--bp-gold);
+      color: var(--bp-black);
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard .panel-header {
+      border-color: var(--bp-gold);
+    }
+#daily-dashboard #completeAppointment,
+#daily-dashboard #completeAppointment:disabled {
+      background: var(--bp-gold) !important;
+      color: var(--bp-black) !important;
+      border-color: var(--bp-gold) !important;
+    }
+#daily-dashboard #completeAppointment:hover {
+      background: var(--bp-black) !important;
+      color: var(--bp-gold) !important;
+      border-color: var(--bp-gold) !important;
+    }
+#daily-dashboard .completed-owner-grid {
+      display: grid;
+      gap: 20px;
+    }
+#daily-dashboard .completed-barber-block {
+      background: var(--bp-white);
+      border: 2px solid var(--bp-gold);
+      border-top: 7px solid var(--bp-gold);
+      padding: 18px;
+    }
+#daily-dashboard .completed-barber-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-bottom: 15px;
+    }
+#daily-dashboard .completed-barber-name {
+      font-size: 23px;
+      color: var(--bp-black);
+    }
+#daily-dashboard .completed-barber-totals {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--bp-black);
+    }
+#daily-dashboard .completed-time-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+#daily-dashboard .completed-time-btn {
+      min-width: 84px;
+      padding: 10px 13px;
+      border: 2px solid var(--bp-gold);
+      background: var(--bp-black);
+      color: var(--bp-gold);
+      font-weight: 900;
+      cursor: pointer;
+    }
+#daily-dashboard .completed-time-btn:hover {
+      background: var(--bp-gold);
+      color: var(--bp-black);
+    }
+#daily-dashboard .completed-barber-empty {
+      border-top: 1px solid var(--bp-gold);
+      padding-top: 14px;
+      color: var(--bp-black);
+    }
+@media (max-width: 760px) {
+#daily-dashboard .completed-barber-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+#daily-dashboard .completed-time-btn {
+        min-width: 78px;
+      }
+}
+#daily-dashboard .compact-barber-name-btn {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      font: inherit;
+      font-size: 23px;
+      font-weight: 900;
+      color: var(--bp-black);
+      cursor: pointer;
+      text-align: left;
+      text-decoration: underline;
+      text-decoration-color: var(--bp-gold);
+      text-underline-offset: 4px;
+    }
+#daily-dashboard .compact-barber-name-btn:hover {
+      background: transparent;
+      color: var(--bp-gold);
+    }
+#daily-dashboard .completed-barber-totals {
+      display: none;
+    }
+#daily-dashboard .completed-barber-block.show-income
+    .completed-barber-totals {
+      display: block;
+    }
+@media (max-width: 760px) {
+#daily-dashboard .completed-barber-block {
+        padding: 14px;
+      }
+#daily-dashboard .compact-barber-name-btn {
+        font-size: 20px;
+      }
+#daily-dashboard .completed-time-list {
+        gap: 7px;
+      }
+#daily-dashboard .completed-time-btn {
+        min-width: 72px;
+        padding: 9px 10px;
+      }
+}
+#daily-dashboard .nav > button {
+      background: transparent !important;
+      color: var(--bp-gold, #d4af37) !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+      transform: translate3d(0, 0, 0);
+    }
+#daily-dashboard .nav > button:hover {
+      background: #000 !important;
+      color: var(--bp-gold, #d4af37) !important;
+      border-color: transparent !important;
+      border-radius: 10px;
+      transform: translate3d(4px, -3px, 0);
+      z-index: 2;
+      box-shadow: 0 0 14px 5px rgba(212, 175, 55, .28), 0 0 30px 12px rgba(212, 175, 55, .14), 0 12px 20px rgba(0, 0, 0, .5) !important;
+    }
+#daily-dashboard .nav > button.active {
+      background: #000 !important;
+      color: var(--bp-gold, #d4af37) !important;
+      border-color: transparent !important;
+      border-radius: 10px;
+      transform: translate3d(2px, -2px, 0);
+      z-index: 1;
+      box-shadow: 0 0 16px 6px rgba(212, 175, 55, .38), 0 0 36px 15px rgba(212, 175, 55, .18), 0 10px 18px rgba(0, 0, 0, .52) !important;
+    }
+#daily-dashboard .brand .business-name strong { white-space: normal; overflow-wrap: anywhere; text-align: center; }
+#daily-dashboard .month-navigation { flex-wrap: wrap; }
+#daily-dashboard .appointment-detail strong { overflow-wrap: anywhere; }
+#daily-dashboard button[aria-disabled="true"] { cursor: default; }
+#daily-dashboard button:disabled { opacity: .5; cursor: not-allowed; }
+#daily-dashboard .appointments-workspace { position: relative; inset: auto; z-index: auto; width: 100%; min-width: 0; max-width: 100%; padding: 0; overflow: visible; }
+#daily-dashboard #owner-calendar { min-width: 0; max-width: 100%; }
+#daily-dashboard .month-calendar { min-width: 0; max-width: 100%; overflow: hidden; }
+#daily-dashboard .month-grid-scroll { width: 100%; max-width: 100%; overflow: auto; position: relative; isolation: isolate; }
+#daily-dashboard .owner-grid-heading { height: 48px; overflow: hidden; }
+#daily-dashboard .owner-grid-slot, #daily-dashboard .owner-grid-time { height: 90px; min-height: 90px; max-height: 90px; overflow: hidden; }
+#daily-dashboard .owner-grid-slot { display: block; padding: 4px; }
+#daily-dashboard .owner-grid-slot .month-appointment { display: flex; flex-direction: column; gap: 3px; width: 100%; height: 100%; max-height: 100%; min-width: 0; padding: 5px; margin: 0; overflow: hidden; border: 1px solid #000; font-size: 11px; line-height: 1.2; }
+#daily-dashboard .owner-grid-slot .month-appointment:has([data-calendar-status="Finished"]) { border: 3px solid #d4af37; }
+#daily-dashboard .calendar-card-summary { display: flex; flex-direction: column; min-width: 0; }
+#daily-dashboard .calendar-card-summary strong, #daily-dashboard .calendar-card-summary span, #daily-dashboard .calendar-card-barber { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#daily-dashboard .calendar-card-summary strong { font-size: 13px; }
+#daily-dashboard .calendar-card-barber { font-size: 10px; }
+#daily-dashboard .calendar-card-actions { margin-top: auto; }
+#daily-dashboard .calendar-card-actions button { padding: 2px 6px; font-size: 11px; line-height: 1.2; cursor: pointer; }
+#daily-dashboard .month-toolbar { grid-template-columns: minmax(0, 1fr); }
+#daily-dashboard .calendar-filter { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; min-width: 0; max-width: 100%; }
+@media (max-width:760px) {
+  #daily-dashboard .topbar { flex-wrap: wrap; gap: 12px; }
+  #daily-dashboard .access-controls { justify-content: flex-start; }
+  #daily-dashboard .appointment-detail-grid { grid-template-columns: 1fr; }
+}

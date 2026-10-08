@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business Pro Local</title>
+<meta name="description" content="Websites, booking and online stores for Maine small businesses. Local support from Sanford, Maine. Your first month of service is free.">
+<meta property="og:title" content="Business Pro Local">
+<meta property="og:description" content="Websites, booking and online stores for Maine small businesses. Local support from Sanford, Maine. Your first month of service is free.">
+<meta property="og:image" content="https://businessprolocal.com/images/hero.jpg">
+<link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
+<link rel="stylesheet" href="CUSTOMER/form-helpers.css">
+<style>
+/* TEST PAGE — opens by double-click. Fonts load from ../fonts, demos from ../DEMOS */
+@font-face { font-family:"Playfair Display"; font-weight:800; src:url("fonts/playfair-800.ttf") format("truetype"); }
+@font-face { font-family:"Inter"; font-weight:400 700; src:url("fonts/inter.ttf") format("truetype"); }
+:root{
+  --black:#050505; --panel:#111110; --line:#2b2820;
+  --gold:#d4af37; --gold-hi:#f3d77a; --gold-lo:#9c7a1c;
+  --ink:#f4efe2; --muted:#c9c1ab;
+  --display:"Playfair Display",Georgia,serif;
+  --ui:"Inter",system-ui,"Segoe UI",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--black);color:var(--ink);font-family:var(--ui);line-height:1.6}
+a{color:var(--gold)}
+.intro-splash{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:0;background:rgba(0,0,0,.88);cursor:pointer;overflow:hidden;opacity:1;transition:opacity .35s ease}
+.intro-splash span{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,8vw,9rem);line-height:1.2;white-space:nowrap;color:var(--gold);text-shadow:0 0 24px rgba(212,175,55,.3);transform:rotate(-20deg);pointer-events:none}
+.intro-splash.is-fading{opacity:0;pointer-events:none}
+.intro-splash:focus-visible{outline:3px solid var(--gold);outline-offset:-6px}
+@media(prefers-reduced-motion:reduce){.intro-splash{transition:none}}
+.test-bar{background:var(--gold);color:#111;text-align:center;font-weight:700;font-size:.85rem;padding:6px 12px;letter-spacing:.06em}
+nav{position:sticky;top:0;z-index:5;background:rgba(5,5,5,.92);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:center;gap:4px 22px;padding:10px 16px}
+nav a{color:var(--muted);text-decoration:none;font-size:.92rem;letter-spacing:.05em}
+nav a:hover,nav a:focus-visible{color:var(--gold)}
+.hero{position:relative;width:100%;aspect-ratio:1672/941;max-height:92vh;min-height:380px;background:#000 url("images/hero.jpg") center/cover no-repeat;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 55% 45% at 50% 22%,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)}
+.titleimg{display:block;width:min(62%,900px);height:auto;filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 10px #000) drop-shadow(0 0 22px rgba(0,0,0,.85))}
+@media (max-width:700px){.titleimg{width:94%}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.card .fine{margin-top:8px;font-size:.8rem;opacity:.75}
+.title{position:absolute;z-index:1;left:0;right:0;top:1%;display:grid;justify-items:center;gap:6px;text-align:center;padding-inline:16px}
+.word{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,8vw,6.6rem);line-height:1;letter-spacing:.02em;
+  background:linear-gradient(180deg,var(--gold-hi),var(--gold) 45%,var(--gold-lo));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 18px rgba(212,175,55,.35)) drop-shadow(0 2px 2px rgba(0,0,0,.9))}
+.rule{width:min(260px,40vw);height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.tag{margin:0;font-size:clamp(.95rem,2vw,1.35rem);letter-spacing:.06em;text-shadow:0 2px 8px #000}
+.tag2{margin:0;font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(1rem,2.4vw,1.6rem);text-shadow:0 2px 10px #000}
+section.block{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:64px 20px}
+h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(1.7rem,4vw,2.6rem);text-align:center;margin:0 0 10px;text-wrap:balance}
+.lead{text-align:center;color:var(--muted);max-width:62ch;margin:0 auto 34px}
+.service-offer{margin:0 0 14px;text-align:center;color:var(--gold);font-weight:700}
+.section-copy{max-width:760px;margin:0 auto 34px;color:var(--muted)}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px}
+.card h3{margin:0 0 6px;color:var(--ink);font-size:1.1rem}
+.card p{margin:0;color:var(--muted);font-size:.95rem}
+.tiers{display:grid;gap:20px;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+@media(max-width:850px){.tiers{grid-template-columns:1fr}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.tier{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 22px;display:flex;flex-direction:column;gap:12px}
+.tier.top{border:2px solid var(--gold)}
+.tier h3{margin:0;font-family:var(--display);font-weight:800;font-size:1.8rem;color:var(--gold)}
+.price{font-size:1.05rem}
+.price b{font-size:1.6rem;color:var(--ink)}
+.tier .first-month-free{margin:0;color:var(--gold);font-weight:700}
+.tier .split-price{margin-top:-8px;color:var(--muted);font-size:.82rem}
+.tier ul{margin:0;padding-left:20px;color:var(--muted);font-size:.95rem;flex:1}
+.tier li{margin-bottom:4px}
+.btns{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.btn{display:block;text-align:center;padding:12px 10px;border-radius:6px;font-weight:700;letter-spacing:.05em;text-decoration:none;font-size:.9rem}
+.btn.solid{background:var(--gold);color:#111;border:2px solid var(--gold)}
+.btn.ghost{border:2px solid var(--gold);color:var(--gold)}
+.btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.story{max-width:760px;margin:0 auto;background:var(--panel);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:26px 28px}
+.story p{margin:0 0 14px;color:var(--muted)}
+.story .sig{margin:0;color:var(--ink);font-weight:700}
+form{max-width:640px;margin:0 auto;display:grid;gap:14px}
+label{display:grid;gap:6px;font-weight:600;font-size:.92rem}
+input,textarea,select{width:100%;padding:12px;border-radius:6px;border:1px solid var(--line);background:#0c0c0b;color:var(--ink);font:inherit}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px}
+.two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+#formMsg{text-align:center;color:var(--gold);min-height:1.4em;margin:0}
+#plans[hidden]{display:none}
+.question-field textarea{min-height:74px;resize:vertical}
+[hidden]{display:none !important}
+.plans-thanks{text-align:center;color:var(--gold);font-weight:700;margin:0 auto 18px}
+footer{margin-top:70px;border-top:1px solid var(--line);padding:30px 16px;text-align:center;color:var(--muted);font-size:.92rem}
+footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-size:1.3rem}
+</style>
+</head>
+<body>
+<button type="button" id="introSplash" class="intro-splash" aria-label="First month free. Click or press Escape to skip introduction." hidden>
+  <span aria-hidden="true">FIRST MONTH FREE</span>
+</button>
+<script>
+(() => {
+  const splash = document.getElementById("introSplash");
+  const visitKey = "businessProIntroSeen";
+  try {
+    if (sessionStorage.getItem(visitKey)) return;
+    sessionStorage.setItem(visitKey, "true");
+  } catch (error) {
+    console.warn("Intro skipped: visit storage is unavailable.", error);
+    return;
+  }
+
+  const previousFocus = document.activeElement;
+  let fadeTimer;
+  let hideTimer;
+  function dismiss() {
+    clearTimeout(fadeTimer);
+    clearTimeout(hideTimer);
+    splash.hidden = true;
+    if (document.activeElement === splash) previousFocus.focus({ preventScroll: true });
+    document.removeEventListener("keydown", skipWithKeyboard);
+    window.removeEventListener("pagehide", dismiss);
+  }
+  function skipWithKeyboard(event) {
+    if (event.key === "Escape") dismiss();
+  }
+  splash.hidden = false;
+  splash.focus({ preventScroll: true });
+  splash.addEventListener("click", dismiss);
+  document.addEventListener("keydown", skipWithKeyboard);
+  window.addEventListener("pagehide", dismiss);
+  fadeTimer = setTimeout(() => {
+    splash.classList.add("is-fading");
+    hideTimer = setTimeout(dismiss, 350);
+  }, 750);
+})();
+</script>
+<nav>
+  <a href="#why-online">Why Online</a><a href="#what">What You Get</a><a href="#who">Who It's For</a><a href="#story">My Story</a><a href="#start">Get Started</a>
+</nav>
+
+<section class="hero" aria-label="Business Pro">
+  <div class="title">
+    <h1 class="sr">Business Pro</h1>
+    <img class="titleimg" src="images/title2.png" width="1400" height="344" alt="Business Pro. Start small, grow big, join the Business Pro family. Bring your shop to every customer's couch.">
+  </div>
+</section>
+
+<section class="block" id="why-online">
+  <h2>Why Your Business Needs to Be Online</h2>
+  <p class="lead"><strong>Your customers are already looking for you, on their phones.</strong></p>
+  <div class="section-copy">
+    <p>When someone needs a haircut, a gift or an oil change, they don't drive around town looking. They search "near me." If your business doesn't show up with a real website, they find the shop down the road that does.</p>
+    <p>Your website never closes. Whether you're closed on Sundays or shut down for the whole off-season, your website keeps working 24 hours a day, 365 days a year: taking bookings, selling products and letting customers know you're still here.</p>
+    <p>And it's not just about being found. It's about being chosen. Customers compare shops on their phones in seconds. The business with real photos, clear prices and a "Book now" button gets the customer.</p>
+  </div>
+  <div class="grid">
+    <div class="card"><h3>Found on Google</h3><p>Show up when people search "near me" in your area.</p></div>
+    <div class="card"><h3>Open 24/7, 365 days a year</h3><p>Customers can book or buy even after you close for the night.</p></div>
+    <div class="card"><h3>Looks professional</h3><p>A real website builds trust a Facebook page can't.</p></div>
+    <div class="card"><h3>Less phone tag</h3><p>Customers book themselves, so you keep working instead of answering calls.</p></div>
+    <div class="card"><h3>Sell year-round</h3><p>Seasonal shops keep selling online after the summer crowd goes home.</p></div>
+    <div class="card"><h3>Get chosen, not just found</h3><p>Real photos, clear prices and a Book button win the customer.</p></div>
+  </div>
+</section>
+
+<section class="block" id="what">
+  <h2>One local company for your whole business</h2>
+  <p class="service-offer">Your first month of service is free.</p>
+  <p class="lead">Business Pro connects Main Street shops with their customers online, and handles the busywork behind the counter, so you can get back to the work you love.</p>
+  <div class="grid">
+    <div class="card"><h3>Your website</h3><p>Built for you with your logo, colors, photos and services. Ready in about a week. Works on every phone.</p></div>
+    <div class="card"><h3>Online booking</h3><p>Customers book, cancel and reschedule themselves. You get the text.</p></div>
+    <div class="card"><h3>Owner portal</h3><p>Your calendar, staff, time off and daily totals in one place.</p></div>
+    <div class="card"><h3>Point of sale</h3><p>Ring up services and tips right from your phone or tablet.</p></div>
+    <div class="card"><h3>Local support</h3><p>A real person in Sanford, Maine who answers when you need help.</p></div>
+    <div class="card"><h3>Get seen locally</h3><p>Optional ads for your business on other Business Pro sites in your area, never next to a competitor.</p></div>
+  </div>
+</section>
+
+<section class="block" id="who">
+  <h2>Built for local businesses</h2>
+  <p class="lead">Set up for the way your business works, with new industries added all the time.</p>
+  <div class="grid">
+    <div class="card"><h3>Barbershops</h3><p>Booking, chairs, tips and chair renters.</p></div>
+    <div class="card"><h3>Hair salons</h3><p>Stylists, services and appointments.</p></div>
+    <div class="card"><h3>Retail &amp; gift shops</h3><p>An online storefront that keeps selling after the season ends.</p></div>
+    <div class="card"><h3>Auto shops</h3><p>Service menus, estimates and scheduling.</p></div>
+    <div class="card"><h3>Tattoo &amp; piercing shops</h3><p>Artist booking, deposits and portfolio photos.</p></div>
+    <div class="card"><h3>Home services</h3><p>Cleaning, landscaping and snow plowing, with estimates and scheduling.</p></div>
+    <div class="card"><h3>Pet services</h3><p>Grooming, boarding and vet visits, with pet details and reminders.</p></div>
+    <div class="card"><h3>Nail salons &amp; spas</h3><p>Manicures, massages and treatments, booked online.</p></div>
+  </div>
+</section>
+
+<section class="block" id="story">
+  <h2>My Story</h2>
+  <div class="story">
+    <p>Business Pro started from the basement. I've spent most of my life working with my hands. I started as a laborer on construction sites and worked my way up to running heavy machinery. When I moved to a roof truss company, I started at the bottom again and worked my way back up to running the loader and driving truck. In 2012, a head-on collision changed everything. What followed were some of the darkest years of my life. With the help of my doctors and modern medicine, I found my way back.</p>
+    <p>For years, the dream of building my own company sat on a shelf. With only some high school, no business degree and no business training, I had no idea where to begin. The only way I could build a business was from home. I knew computers well enough to build my own from the parts up, but knowing computers isn't the same as knowing how to start a business. Still, I figured it out, one step at a time. I built Business Pro the same way I built my life: from the ground up. I know what it takes to build something from nothing, and that's who Business Pro is for: the people who unlock the doors every morning and keep their town running.</p>
+    <p>I'm a Maine guy who knows hard work and answers my own phone. When you join, you're not an account number. You're a neighbor. I built mine from the ground up, and now I want to help you do the same. Let's build yours together. Start small, grow big, and join the Business Pro family.</p>
+    <p class="sig">Tom, Founder</p>
+  </div>
+</section>
+
+<section class="block" id="start">
+  <h2>Get started</h2>
+  <p class="lead">Tell us about your business and we'll reach out.</p>
+  <form id="startForm">
+    <div class="two">
+      <label for="fName">Your name<input id="fName" required maxlength="200" spellcheck="true" lang="en-US"></label>
+      <label for="fBiz">Business name<input id="fBiz" required maxlength="200" spellcheck="true" lang="en-US"></label>
+    </div>
+    <div class="two">
+      <label for="fPhone">Phone<input id="fPhone" type="tel" maxlength="100" spellcheck="false"></label>
+      <label for="fEmail">Email<input id="fEmail" type="email" required maxlength="320" spellcheck="false"></label>
+    </div>
+    <label for="fAddress">Business address<input id="fAddress" required maxlength="500" autocomplete="street-address" spellcheck="true" lang="en-US"></label>
+    <label for="fType">Type of business<select id="fType" required>
+      <option value="">Choose your business type</option>
+      <option>Barbershop</option><option>Hair salon</option><option>Retail &amp; gift shop</option>
+      <option>Auto shop</option><option>Tattoo &amp; piercing</option><option>Home services</option>
+      <option>Pet services</option><option>Nail salon &amp; spa</option><option>Custom</option>
+    </select><input id="fCustomType" maxlength="80" placeholder="Type your business (bakery, florist...)" spellcheck="true" lang="en-US" hidden disabled></label>
+    <label class="question-field" for="fMsg">Questions? (optional)<textarea id="fMsg" rows="2" maxlength="2000" spellcheck="true" lang="en-US"></textarea></label>
+    <div hidden aria-hidden="true"><label for="fWebsite">Leave this blank<input id="fWebsite" name="website" tabindex="-1" autocomplete="off"></label></div>
+    <p class="service-offer">Your first month of service is free.</p>
+    <button class="btn solid" type="submit">Next: See Your Plans</button>
+    <p id="formMsg" role="status"></p>
+  </form>
+</section>
+
+<section class="block" id="plans" hidden>
+  <h2>Plans &amp; demos</h2>
+  <p class="lead">Prices are the same for every business.</p>
+  <p id="plansThanks" class="plans-thanks" role="status" hidden></p>
+  <p class="lead">Try a demo to see exactly what your customers will see.</p>
+  <div class="tiers">
+    <div class="tier">
+      <h3>Basic</h3>
+      <div class="price"><b>$995</b> setup · <b>$49</b>/month</div>
+      <p class="first-month-free">First month free</p>
+      <p class="split-price" hidden>or 3 monthly payments of $331.67</p>
+      <ul><li>Mobile-friendly website</li><li>Services, hours and photos</li><li>Map and directions</li><li>Hosting, security and backups</li><li>Support and maintenance</li></ul>
+      <div class="btns"><a class="btn ghost" href="DEMOS/basic/index.html">SEE DEMO</a><a class="btn solid" href="CUSTOMER/join.html?plan=basic">SELECT</a></div>
+    </div>
+    <div class="tier">
+      <h3>Professional</h3>
+      <div class="price"><b>$1,495</b> setup · <b>$79</b>/month</div>
+      <p class="first-month-free">First month free</p>
+      <p class="split-price" hidden>or 3 monthly payments of $498.33</p>
+      <ul><li>Everything in Basic</li><li>Online appointment booking</li><li>Pick a service and staff member</li><li>Owner portal and schedules</li><li>Block days off and vacations</li></ul>
+      <div class="btns"><a class="btn ghost" href="DEMOS/professional/index.html">SEE DEMO</a><a class="btn solid" href="CUSTOMER/join.html?plan=professional">SELECT</a></div>
+    </div>
+    <div class="tier top">
+      <h3>Business Pro</h3>
+      <div class="price"><b>$2,495</b> setup · <b>$149</b>/month</div>
+      <p class="first-month-free">First month free</p>
+      <p class="split-price" hidden>or 3 monthly payments of $831.67</p>
+      <ul><li>Everything in Professional</li><li>Online storefront and shopping cart</li><li>Product photos and pricing</li><li>Orders, packing and shipping</li><li>Inventory and promotions</li></ul>
+      <div class="btns"><a class="btn ghost" href="DEMOS/business-pro/index.html">SEE DEMO</a><a class="btn solid" href="CUSTOMER/join.html?plan=business-pro">SELECT</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Business Pro Local</div>
+  <p>Sanford, Maine · 207-408-7983 · businessprolocal207@gmail.com</p>
+</footer>
+
+<script>
+// Custom: the dropdown turns into a typing box in the same spot. Leave it empty to get the list back.
+const typeSelect = document.getElementById("fType");
+const customType = document.getElementById("fCustomType");
+function showCustomType(on) {
+  typeSelect.hidden = on;
+  customType.hidden = !on;
+  customType.disabled = !on;
+  customType.required = on;
+  typeSelect.parentElement.htmlFor = on ? "fCustomType" : "fType";
+}
+typeSelect.addEventListener("change", function (event) {
+  showCustomType(this.value === "Custom");
+  if (this.value === "Custom" && event.isTrusted) customType.focus();
+});
+customType.addEventListener("blur", function () {
+  if (!this.value.trim()) { typeSelect.value = ""; showCustomType(false); }
+});
+function showSavedPlans() {
+  if (location.hash !== "#plans") return;
+  try {
+    const leads = JSON.parse(localStorage.getItem("businessProLeads") || "[]");
+    if (!Array.isArray(leads)) throw new Error("Saved Get Started information is invalid.");
+    if (!leads.length) return;
+    document.getElementById("plans").hidden = false;
+    document.getElementById("plans").scrollIntoView({ block: "start" });
+  } catch (error) {
+    console.error("Plans load error:", error);
+    document.getElementById("formMsg").textContent = "We couldn't load your saved information. Please fill Get Started again.";
+  }
+}
+window.addEventListener("hashchange", showSavedPlans);
+showSavedPlans();
+async function sendLeadAlert(lead, website) {
+  const payload = JSON.stringify({ ...lead, website, requestId: crypto.randomUUID() });
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch("https://village-barber-sms.onrender.com/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+        signal: AbortSignal.timeout(60000)
+      });
+      if (!response.ok) throw new Error(`Lead alert failed (${response.status}).`);
+      const result = await response.json();
+      if (result.ok !== true) throw new Error("Lead alert was not accepted.");
+      return;
+    } catch (error) {
+      console.warn(`Lead alert attempt ${attempt + 1} failed:`, error);
+      if (attempt === 0) {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      } else {
+        document.getElementById("plansThanks").textContent +=
+          " Your information is saved on this device, but we couldn't send the email alert. Please contact businessprolocal207@gmail.com.";
+      }
+    }
+  }
+}
+document.getElementById("startForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const name = document.getElementById("fName").value.trim();
+  const lead = {
+    name,
+    business: document.getElementById("fBiz").value.trim(),
+    phone: document.getElementById("fPhone").value.trim(),
+    email: document.getElementById("fEmail").value.trim(),
+    address: document.getElementById("fAddress").value.trim(),
+    businessType: document.getElementById("fType").value === "Custom"
+      ? document.getElementById("fCustomType").value.trim() : document.getElementById("fType").value,
+    questions: document.getElementById("fMsg").value.trim(),
+    dateTime: new Date().toISOString()
+  };
+
+  if (!lead.businessType) {
+    document.getElementById("formMsg").textContent = "Please enter your type of business.";
+    document.getElementById("fCustomType").focus();
+    return;
+  }
+  try {
+    const leads = JSON.parse(localStorage.getItem("businessProLeads") || "[]");
+    if (!Array.isArray(leads)) {
+      throw new Error("Saved lead data is not in the expected format.");
+    }
+    leads.push(lead);
+    localStorage.setItem("businessProLeads", JSON.stringify(leads));
+  } catch (error) {
+    console.error("Lead save error:", error);
+    document.getElementById("formMsg").textContent =
+      "We couldn't save your information in this browser. Please check your browser storage settings and try again.";
+    return;
+  }
+
+  document.getElementById("formMsg").textContent = "";
+  const plans = document.getElementById("plans");
+  const thanks = document.getElementById("plansThanks");
+  thanks.textContent = `Thanks for joining us, ${name.split(/\s+/)[0]}! Here are your plans.`;
+  thanks.hidden = false;
+  plans.hidden = false;
+  plans.scrollIntoView({ behavior: "smooth", block: "start" });
+  void sendLeadAlert(lead, document.getElementById("fWebsite").value);
+});
+</script>
+<script src="CUSTOMER/form-helpers.js"></script>
+</body>
+</html>
