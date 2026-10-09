@@ -22,7 +22,10 @@ platform and check phone, tablet and desktop layouts:
   Tier cards stack on phones. Get Started remains
   in its original location and keeps its lead-saving and signup flow.
 - Ads use centered cover pictures with a dark, gold-edged business-name/Shop now
-  strip. Phones show approximately 2:1 banners, two per row below the shop photo.
+  strip, a top-left Sponsored pill, a thin silver border and a soft shadow.
+  Barber ads at 1024px and above mirror Seaside Treasures and Northway Auto Care
+  on the left/right of Customer Demo with equal size and vertical alignment.
+  Phones show approximately 2:1 banners, two per row below the shop photo.
   Desktop/tablet side rails are removed. A single eligible-ad pool is distributed
   one at a time into measured open rectangles beside the hero text/button,
   menu, cards (including empty row ends), booking/checkout forms, contact details,

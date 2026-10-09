@@ -88,12 +88,16 @@
       icon: '<path d="M24 40c-7-6-7-18 0-28 7 10 7 22 0 28z"/><path d="M24 40c-9 0-17-5-18-14 7-1 14 4 18 14zM24 40c9 0 17-5 18-14-7-1-14 4-18 14z"/>' }
   ];
   function adCard(ad, fullSize = false, banner = false) {
+    const sponsored = '<span class="ad-sponsored">Sponsored</span>';
     if (ad.photo && banner) return `<span class="ad-card ad-banner">
+      ${sponsored}
       ${image(ad.photo, `${ad.name} - ${ad.tagline}`, "ad-photo")}
       <span class="ad-banner-strip"><span class="ad-name">${escape(ad.name)}</span><span class="ad-banner-cta">Shop now</span></span></span>`;
     if (ad.photo && !banner) return `<span class="ad-card ad-photo-card${fullSize ? " ad-card-full" : ""}">
+      ${sponsored}
       ${image(ad.photo, `${ad.name} - ${ad.tagline}`, "ad-photo")}</span>`;
     return `<span class="ad-card${fullSize ? " ad-card-full" : ""}${banner ? " ad-banner" : ""}" style="--bg:${ad.bg};--accent:${ad.accent};--glow:${ad.glow}">
+      ${sponsored}
       <span class="ad-art"><span class="ad-badge"><svg viewBox="0 0 48 48" aria-hidden="true">${ad.icon}</svg></span></span>
       <span class="ad-text"><span class="ad-type">${escape(ad.type)}</span>
       <span class="ad-name"${fullSize ? ' id="ad-popup-name"' : ""}>${escape(ad.name)}</span>
@@ -183,6 +187,9 @@
     if (window.innerWidth <= 600) return;
     buttons.forEach(button => button.classList.add("ad-gap"));
     const appBounds = app.getBoundingClientRect();
+    const appStyles = getComputedStyle(app);
+    const borderLeft = parseFloat(appStyles.borderLeftWidth);
+    const borderTop = parseFloat(appStyles.borderTopWidth);
     const obstacles = [];
     document.querySelectorAll(".hero-photo, #demo-content .card, #demo-content .demo-gallery, #services .menu, #booking .demo-form, #checkout .demo-form, #checkout .demo-summary, .hero-content > button, .hero-content > a").forEach(el => {
       const rect = el.getBoundingClientRect();
@@ -224,6 +231,18 @@
     // One ad per region per pass: use independent open spots before returning
     // to a second side. Never convert a long gutter into a stack of ads.
     const usedSpots = new Set();
+    if (bookingEnabled && window.innerWidth >= 1024) {
+      const buttonBounds = callToAction.getBoundingClientRect();
+      const center = buttonBounds.left + buttonBounds.width / 2;
+      const pair = symmetricAdSpots(regions[0], obstacles, center);
+      if (pair.length) {
+        placements.push(...pair.map((spot, index) => ({
+          ...spot, label: `${regions[0].label}, ${index ? "right" : "left"}`
+        })));
+        usedSpots.add(`${regions[0].label}/left`);
+        usedSpots.add(`${regions[0].label}/right`);
+      }
+    }
     for (let pass = 0; pass < 2 && placements.length < buttons.length; pass++) {
       for (const region of regions) {
         const spot = emptyAdSpots(region, [...obstacles, ...placements.map(slot => ({
@@ -249,12 +268,24 @@
       button.hidden = !slot;
       if (!slot) return;
       button.classList.toggle("ad-compact", slot.width < 170 || slot.height < 100);
-      button.style.left = `${slot.left - appBounds.left - app.clientLeft}px`;
-      button.style.top = `${slot.top - appBounds.top - app.clientTop}px`;
+      button.style.left = `${slot.left - appBounds.left - borderLeft}px`;
+      button.style.top = `${slot.top - appBounds.top - borderTop}px`;
       button.style.width = `${slot.width}px`;
       button.style.height = `${slot.height}px`;
       button.dataset.placement = slot.label;
     });
+  }
+  function symmetricAdSpots(bounds, obstacles, center) {
+    const leftSpots = emptyAdSpots({ ...bounds, right: center }, obstacles);
+    for (const left of leftSpots) {
+      const right = { ...left, left: 2 * center - left.left - left.width };
+      if (right.left + right.width > bounds.right) continue;
+      if (obstacles.some(rect => right.left < rect.right + 10 &&
+        right.left + right.width > rect.left - 10 &&
+        right.top < rect.bottom + 10 && right.top + right.height > rect.top - 10)) continue;
+      return [left, right];
+    }
+    return [];
   }
   function renderHome() {
     document.body.classList.remove("demo-owner-open");
