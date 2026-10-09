@@ -10,6 +10,7 @@
 <meta property="og:image" content="https://businessprolocal.com/images/hero.jpg">
 <link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
 <link rel="stylesheet" href="CUSTOMER/form-helpers.css">
+<script src="CUSTOMER/gold-word.js" defer></script>
 <style>
 /* TEST PAGE — opens by double-click. Fonts load from ../fonts, demos from ../DEMOS */
 @font-face { font-family:"Playfair Display"; font-weight:800; src:url("fonts/playfair-800.ttf") format("truetype"); }
@@ -27,7 +28,7 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--black);color:var(--ink);font-family:var(--ui);line-height:1.6}
 a{color:var(--gold)}
 .intro-splash{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:0;background:rgba(0,0,0,.88);cursor:pointer;overflow:hidden;opacity:1;transition:opacity .35s ease}
-.intro-splash span{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,8vw,9rem);line-height:1.2;white-space:nowrap;color:var(--gold);text-shadow:0 0 24px rgba(212,175,55,.3);transform:rotate(-20deg);pointer-events:none}
+.intro-splash > span{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,8vw,9rem);line-height:1.2;white-space:nowrap;color:var(--gold);text-shadow:0 0 24px rgba(212,175,55,.3);transform:rotate(-20deg);pointer-events:none}
 .intro-splash.is-fading{opacity:0;pointer-events:none}
 .intro-splash:focus-visible{outline:3px solid var(--gold);outline-offset:-6px}
 @media(prefers-reduced-motion:reduce){.intro-splash{transition:none}}
@@ -86,14 +87,17 @@ h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(
 .btn.solid{background:var(--gold);color:#111;border:2px solid var(--gold)}
 .btn.ghost{border:2px solid var(--gold);color:var(--gold)}
 .btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.hero-demos{position:absolute;z-index:2;left:40%;bottom:6%;transform:translateX(-50%);width:300px;max-width:calc(100% - 32px);padding:16px 20px;font-size:1.15rem;box-shadow:0 4px 20px rgba(0,0,0,.7)}
+.hero-demos{position:absolute;z-index:2;left:50%;bottom:6%;transform:translateX(-50%);width:36%;max-width:520px;display:block;background:none;border:0;transition:transform .2s ease,filter .2s ease}
+.hero-demos img{display:block;width:100%;height:auto}
+.hero-demos:hover{transform:translate(-50%,-4px);filter:brightness(1.08)}
+.hero-demos:focus-visible{outline:2px solid #fff;outline-offset:4px}
 #demos,#plans{scroll-margin-top:70px}
 @media(max-width:700px){
   .hero{background-position:left center}
-  .hero-demos{left:16px;right:16px;bottom:16px;transform:none;width:auto}
+  .hero-demos{bottom:16px;width:80%}
   #demos,#plans{scroll-margin-top:120px}
 }
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-demos{transition:none}}
 .story{max-width:760px;margin:0 auto;background:var(--panel);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:26px 28px}
 .story p{margin:0 0 14px;color:var(--muted)}
 .story .sig{margin:0;color:var(--ink);font-weight:700}
@@ -160,7 +164,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
     <h1 class="sr">Business Pro</h1>
     <img class="titleimg" src="images/title2.png" width="1400" height="344" alt="Business Pro. Start small, grow big, join the Business Pro family. Bring your shop to every customer's couch.">
   </div>
-  <a class="btn solid hero-demos" href="#demos">View Demos</a>
+  <a class="hero-demos" href="#demos"><img src="images/view-demos-goldbar.png" alt="View Demos" width="880" height="310"></a>
 </section>
 
 <section class="block" id="why-online">

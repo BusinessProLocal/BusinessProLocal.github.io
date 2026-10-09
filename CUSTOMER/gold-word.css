@@ -1,0 +1,7 @@
+@font-face { font-family: "Cinzel"; src: url("../fonts/cinzel.ttf") format("truetype"); font-display: swap; }
+.gold-word { position: relative; }
+.gold-word-text { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip-path: inset(50%); white-space: nowrap; border: 0 !important; }
+.gold-word-visual { display: inline-flex; flex-wrap: wrap; justify-content: inherit; align-items: baseline; column-gap: .35em; row-gap: 0; max-width: 100%; vertical-align: baseline; text-shadow: none; letter-spacing: 0; }
+.gold-word-piece { display: inline-flex; flex: 0 0 auto; align-items: baseline; gap: .04em; white-space: nowrap; line-height: 1.42; }
+.gold-word .gold-letter { display: inline-block !important; flex: 0 0 auto; height: 1.42em !important; width: auto !important; max-width: none !important; aspect-ratio: auto !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; object-fit: contain !important; box-shadow: none !important; filter: none !important; vertical-align: baseline; }
+.gold-word-fallback { display: inline-block; font-family: "Cinzel", Georgia, serif; color: #d4af37; line-height: 1; }

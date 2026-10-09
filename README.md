@@ -9,9 +9,9 @@ The build also retains three public-site snapshots and preserves the root
 Before publishing, run `node --test CUSTOMER/demo-core.test.js` from the source
 platform and check phone, tablet and desktop layouts:
 
-- The homepage's gold `View Demos` button sits near the bottom of the hero
-  picture, away from the man. On phones the photo is left-aligned and the button
-  fills the available width with equal side margins. It scrolls to public
+- The homepage's supplied gold-bar `View Demos` image link sits centered near
+  the bottom of the hero: 36% width (maximum 520px), 80% on phones, with a subtle
+  hover lift/brightness and no CSS background or border. It scrolls to public
   `See It In Action`: three shop-picture `Try Demo` cards plus a gold
   `Your Business Here` card linking to Get Started. The grid is four across
   at 1024px and above, two across on tablets, and stacked at 600px and below.
@@ -21,6 +21,14 @@ platform and check phone, tablet and desktop layouts:
   bottom pointing to the homepage's `#plans`; owner portals stay unchanged.
   Tier cards stack on phones. The section order after My Story is demos,
   Get Started, then pricing; the lead-saving and signup flow is unchanged.
+- Gold-colored headings/button labels use the shared gold-word image renderer
+  on the homepage, signup page, and demo customer pages. Black button labels
+  and body text stay unchanged; owner portals and advertisement strips are
+  excluded. Real text remains
+  accessible/searchable, words wrap only between words, and unsupported
+  characters use local Cinzel. The 43 original glyph PNGs live only in
+  `WEBSITE/images/gold-letters` in source; the build publishes them and rewrites
+  their URL for the public site. Marketing retains the original alphabet sheet.
 - Ads use centered cover pictures with a dark, gold-edged business-name/Shop now
   strip, a top-left Sponsored pill, a thin silver border and a soft shadow.
   Barber ads at 1024px and above mirror Seaside Treasures and Northway Auto Care

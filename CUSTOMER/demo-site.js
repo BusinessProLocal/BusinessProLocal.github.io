@@ -17,6 +17,10 @@
   ownerStyles.rel = "stylesheet";
   ownerStyles.href = "../../CUSTOMER/demo-owner.css";
   document.head.appendChild(ownerStyles);
+  const goldWords = document.createElement("script");
+  goldWords.src = "../../CUSTOMER/gold-word.js";
+  document.head.appendChild(goldWords);
+  window.addEventListener("goldwordschange", layoutAds);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
   const photoMessages = {};
