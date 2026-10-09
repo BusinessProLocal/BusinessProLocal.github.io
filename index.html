@@ -69,17 +69,29 @@ h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(
 .tier .split-price{margin-top:-8px;color:var(--muted);font-size:.82rem}
 .tier ul{margin:0;padding-left:20px;color:var(--muted);font-size:.95rem;flex:1}
 .tier li{margin-bottom:4px}
-.btns{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.demo-grid{display:grid;gap:20px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.demo-card{display:flex;flex-direction:column;overflow:hidden;background:var(--panel);border:1px solid var(--gold);border-radius:14px}
+.demo-card img,.demo-placeholder{width:100%;aspect-ratio:4/3;object-fit:cover}
+.demo-placeholder{display:grid;place-items:center;background:var(--gold);color:#111;font-family:var(--display);font-size:2rem;text-align:center;padding:20px}
+.demo-card-body{display:flex;flex-direction:column;gap:12px;padding:20px;flex:1}
+.demo-card h3{margin:0;font-family:var(--display);color:var(--gold);font-size:1.4rem}
+.demo-card p{margin:0;color:var(--muted)}
+.demo-card .btn{margin-top:auto}
+.demo-card.your-business{background:var(--gold)}
+.demo-card.your-business h3,.demo-card.your-business p{color:#111}
+.demo-card.your-business .btn{background:#111;border-color:#111;color:var(--gold)}
+@media(max-width:1023px){.demo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.demo-grid{grid-template-columns:1fr}}
 .btn{display:block;text-align:center;padding:12px 10px;border-radius:6px;font-weight:700;letter-spacing:.05em;text-decoration:none;font-size:.9rem}
 .btn.solid{background:var(--gold);color:#111;border:2px solid var(--gold)}
 .btn.ghost{border:2px solid var(--gold);color:var(--gold)}
 .btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .hero-demos{position:absolute;z-index:2;left:40%;bottom:6%;transform:translateX(-50%);width:300px;max-width:calc(100% - 32px);padding:16px 20px;font-size:1.15rem;box-shadow:0 4px 20px rgba(0,0,0,.7)}
-#plans{scroll-margin-top:70px}
+#demos,#plans{scroll-margin-top:70px}
 @media(max-width:700px){
   .hero{background-position:left center}
   .hero-demos{left:16px;right:16px;bottom:16px;transform:none;width:auto}
-  #plans{scroll-margin-top:120px}
+  #demos,#plans{scroll-margin-top:120px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .story{max-width:760px;margin:0 auto;background:var(--panel);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:26px 28px}
@@ -148,7 +160,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
     <h1 class="sr">Business Pro</h1>
     <img class="titleimg" src="images/title2.png" width="1400" height="344" alt="Business Pro. Start small, grow big, join the Business Pro family. Bring your shop to every customer's couch.">
   </div>
-  <a class="btn solid hero-demos" href="#plans">View Demos</a>
+  <a class="btn solid hero-demos" href="#demos">View Demos</a>
 </section>
 
 <section class="block" id="why-online">
@@ -235,11 +247,33 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
   </form>
 </section>
 
+<section class="block" id="demos">
+  <h2>See It In Action</h2>
+  <p class="lead">Try a demo to see exactly what your customers will see. No signup required.</p>
+  <div class="demo-grid">
+    <article class="demo-card">
+      <img src="DEMOS/assets/bakery-case.jpg" alt="Fresh bakery treats in the display case" loading="lazy">
+      <div class="demo-card-body"><h3>Bakery demo</h3><p>Basic</p><a class="btn solid" href="DEMOS/basic/index.html">Try Demo</a></div>
+    </article>
+    <article class="demo-card">
+      <img src="CUSTOMER/images/barber-shop-hero.jpg" alt="Inside Classic Cuts Barbershop" loading="lazy">
+      <div class="demo-card-body"><h3>Barbershop demo</h3><p>Professional</p><a class="btn solid" href="DEMOS/professional/index.html">Try Demo</a></div>
+    </article>
+    <article class="demo-card">
+      <img src="DEMOS/assets/gift-shop.jpg" alt="Coastal gifts on display" loading="lazy">
+      <div class="demo-card-body"><h3>Gift shop demo</h3><p>Business Pro</p><a class="btn solid" href="DEMOS/business-pro/index.html">Try Demo</a></div>
+    </article>
+    <article class="demo-card your-business">
+      <div class="demo-placeholder" aria-hidden="true">Your Business Here</div>
+      <div class="demo-card-body"><h3>Your Business Here</h3><p>Let's build yours together.</p><a class="btn solid" href="#start">Get Started</a></div>
+    </article>
+  </div>
+</section>
+
 <section class="block" id="plans">
-  <h2>Plans &amp; demos</h2>
+  <h2>Plans &amp; Pricing</h2>
   <p class="lead">Prices are the same for every business.</p>
   <p id="plansThanks" class="plans-thanks" role="status" hidden></p>
-  <p class="lead">Try a demo to see exactly what your customers will see.</p>
   <div class="tiers">
     <div class="tier">
       <h3>Basic</h3>
@@ -247,7 +281,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
       <p class="first-month-free">First month free</p>
       <p class="split-price" hidden>or 3 monthly payments of $331.67</p>
       <ul><li>Mobile-friendly website</li><li>Services, hours and photos</li><li>Map and directions</li><li>Hosting, security and backups</li><li>Support and maintenance</li></ul>
-      <div class="btns"><a class="btn ghost" href="DEMOS/basic/index.html">Try Demo</a><a class="btn solid" href="CUSTOMER/join.html?plan=basic">SELECT</a></div>
+      <a class="btn solid" href="CUSTOMER/join.html?plan=basic">SELECT</a>
     </div>
     <div class="tier">
       <h3>Professional</h3>
@@ -255,7 +289,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
       <p class="first-month-free">First month free</p>
       <p class="split-price" hidden>or 3 monthly payments of $498.33</p>
       <ul><li>Everything in Basic</li><li>Online appointment booking</li><li>Pick a service and staff member</li><li>Owner portal and schedules</li><li>Block days off and vacations</li></ul>
-      <div class="btns"><a class="btn ghost" href="DEMOS/professional/index.html">Try Demo</a><a class="btn solid" href="CUSTOMER/join.html?plan=professional">SELECT</a></div>
+      <a class="btn solid" href="CUSTOMER/join.html?plan=professional">SELECT</a>
     </div>
     <div class="tier top">
       <h3>Business Pro</h3>
@@ -263,7 +297,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
       <p class="first-month-free">First month free</p>
       <p class="split-price" hidden>or 3 monthly payments of $831.67</p>
       <ul><li>Everything in Professional</li><li>Online storefront and shopping cart</li><li>Product photos and pricing</li><li>Orders, packing and shipping</li><li>Inventory and promotions</li></ul>
-      <div class="btns"><a class="btn ghost" href="DEMOS/business-pro/index.html">Try Demo</a><a class="btn solid" href="CUSTOMER/join.html?plan=business-pro">SELECT</a></div>
+      <a class="btn solid" href="CUSTOMER/join.html?plan=business-pro">SELECT</a>
     </div>
   </div>
 </section>

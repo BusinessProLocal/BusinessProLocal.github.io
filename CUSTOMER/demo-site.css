@@ -7,6 +7,9 @@ html { scroll-padding-top: 16px; }
 #demo-app.has-customer-ads { padding-inline: 0; }
 #demo-app.barber-customer-demo { border: 2px solid var(--gold); }
 .customer-demo-banner { background: var(--gold); color: #111; padding: 12px 16px; text-align: center; font-weight: 700; }
+.demo-pricing { display: flex; justify-content: center; padding: 16px; }
+.demo-pricing .book-button { max-width: 100%; text-align: center; }
+body.demo-owner-open .demo-pricing { display: none; }
 body.demo-owner-open .customer-demo-banner { display: none; }
 #demo-app:not(.has-customer-ads) main > section { max-width: none; }
 .shipping-label { border: 2px solid var(--gold); border-radius: 10px; padding: 20px; margin-top: 20px; text-align: left; }

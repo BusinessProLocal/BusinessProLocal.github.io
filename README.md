@@ -12,8 +12,14 @@ platform and check phone, tablet and desktop layouts:
 - The homepage's gold `View Demos` button sits near the bottom of the hero
   picture, away from the man. On phones the photo is left-aligned and the button
   fills the available width with equal side margins. It scrolls to public
-  `Plans & demos`: all three prices and `Try Demo` links work without Get Started,
-  stored leads, or JavaScript. Tier cards stack on phones. Get Started remains
+  `See It In Action`: three shop-picture `Try Demo` cards plus a gold
+  `Your Business Here` card linking to Get Started. The grid is four across
+  at 1024px and above, two across on tablets, and stacked at 600px and below.
+  The separate `Plans & Pricing` section below contains prices, features and
+  Select/signup links only. Both sections work without Get Started, stored leads,
+  or JavaScript. Each customer demo has gold pricing links near its top and
+  bottom pointing to the homepage's `#plans`; owner portals stay unchanged.
+  Tier cards stack on phones. Get Started remains
   in its original location and keeps its lead-saving and signup flow.
 - Ads use centered cover pictures with a dark, gold-edged business-name/Shop now
   strip. Phones show approximately 2:1 banners, two per row below the shop photo.

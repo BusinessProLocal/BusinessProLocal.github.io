@@ -111,9 +111,12 @@
       ${extraPhotos.length && !storeEnabled ? '<a href="index.html#photos">Photos</a>' : ""}<a href="index.html#contact">Contact</a>
       ${bookingEnabled ? '<a href="index.html#booking">Book an appointment</a>' : ""}
       ${storeEnabled ? '<a id="cart-link" href="index.html#checkout">Cart</a>' : ""}</nav></header>
+      <div class="demo-pricing"><a class="book-button" href="../../index.html#plans">Like what you see? See Plans &amp; Pricing &rarr;</a></div>
       <p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
-      <main id="demo-content"></main><footer>${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo by Business Pro</footer>`;
+      <main id="demo-content"></main>
+      <div class="demo-pricing"><a class="book-button" href="../../index.html#plans">Like what you see? See Plans &amp; Pricing &rarr;</a></div>
+      <footer>${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo by Business Pro</footer>`;
     if (pageName === "home") renderAds();
   }
   function updateCartLink() {
