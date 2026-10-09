@@ -15,12 +15,12 @@ platform and check phone, tablet and desktop layouts:
   `See It In Action`: three shop-picture `Try Demo` cards plus a gold
   `Your Business Here` card linking to Get Started. The grid is four across
   at 1024px and above, two across on tablets, and stacked at 600px and below.
-  The separate `Plans & Pricing` section below contains prices, features and
+  The separate `Plans & Pricing` section contains prices, features and
   Select/signup links only. Both sections work without Get Started, stored leads,
   or JavaScript. Each customer demo has gold pricing links near its top and
   bottom pointing to the homepage's `#plans`; owner portals stay unchanged.
-  Tier cards stack on phones. Get Started remains
-  in its original location and keeps its lead-saving and signup flow.
+  Tier cards stack on phones. The section order after My Story is demos,
+  Get Started, then pricing; the lead-saving and signup flow is unchanged.
 - Ads use centered cover pictures with a dark, gold-edged business-name/Shop now
   strip, a top-left Sponsored pill, a thin silver border and a soft shadow.
   Barber ads at 1024px and above mirror Seaside Treasures and Northway Auto Care
