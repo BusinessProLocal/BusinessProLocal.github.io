@@ -136,56 +136,121 @@
     $("close-ad").addEventListener("click", () => $("ad-popup").close());
     $("ad-popup").addEventListener("click", event => { if (event.target === $("ad-popup")) $("ad-popup").close(); });
   }
-  function adGapSlots(width, height) {
-    if (width < 120 || height < 100) return [];
-    const adHeight = Math.min(width * 1.5, 200, height - 16);
-    const count = Math.min(4, Math.floor((height + 16) / (adHeight + 24)));
-    const spacing = (height - count * adHeight) / (count + 1);
-    return Array.from({ length: count }, (_, index) => ({
-      top: spacing + index * (adHeight + spacing), height: adHeight
-    }));
+  function emptyAdSpots(bounds, obstacles) {
+    const levels = [...new Set([bounds.top, bounds.bottom, ...obstacles.flatMap(rect =>
+      [Math.max(bounds.top, rect.top - 10), Math.min(bounds.bottom, rect.bottom + 10)])])]
+      .filter(y => y >= bounds.top && y <= bounds.bottom).sort((a, b) => a - b);
+    const spots = [];
+    for (let start = 0; start < levels.length - 1; start++) {
+      for (let end = start + 1; end < levels.length; end++) {
+        const top = levels[start], bottom = levels[end];
+        if (bottom - top < 56) continue;
+        const blocked = obstacles.filter(rect => rect.top - 10 < bottom && rect.bottom + 10 > top)
+          .map(rect => [Math.max(bounds.left, rect.left - 10), Math.min(bounds.right, rect.right + 10)])
+          .filter(([left, right]) => right > left).sort((a, b) => a[0] - b[0]);
+        let left = bounds.left;
+        const gaps = [];
+        for (const [begin, finish] of blocked) {
+          if (begin > left) gaps.push([left, begin]);
+          left = Math.max(left, finish);
+        }
+        if (left < bounds.right) gaps.push([left, bounds.right]);
+        for (const [begin, finish] of gaps) {
+          if (finish - begin < 100) continue;
+          const height = Math.min(bottom - top, 260);
+          const width = Math.min(finish - begin, height < 100 ? 300 : 260);
+          spots.push({ left: begin + (finish - begin - width) / 2,
+            top: top + (bottom - top - height) / 2, width, height });
+        }
+      }
+    }
+    return spots.sort((a, b) => b.width * b.height - a.width * a.height);
   }
   function layoutAds() {
     const row = document.querySelector(".ad-mobile-row");
     if (!row || document.body.classList.contains("demo-owner-open")) return;
     const buttons = [...row.querySelectorAll("[data-ad]")];
     buttons.forEach(button => {
-      button.classList.remove("ad-gap");
+      button.classList.remove("ad-gap", "ad-compact");
+      button.hidden = false;
       button.removeAttribute("style");
       button.dataset.placement = "below shop photo";
     });
-    row.classList.remove("all-ads-placed");
+    if ($("demo-error").textContent.startsWith("Some sample ads cannot fit safely")) $("demo-error").textContent = "";
     if (window.innerWidth <= 600) return;
-    const anchors = [...document.querySelectorAll("#services .menu, #booking .demo-form, #checkout .demo-form, #contact .contact-details")];
+    buttons.forEach(button => button.classList.add("ad-gap"));
+    const appBounds = app.getBoundingClientRect();
+    const obstacles = [];
+    document.querySelectorAll(".hero-photo, #demo-content .card, #demo-content .demo-gallery, #services .menu, #booking .demo-form, #checkout .demo-form, #checkout .demo-summary, .hero-content > button, .hero-content > a").forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width && rect.height) obstacles.push(rect);
+    });
+    // Text blocks often span the whole column, but their actual lettering does not.
+    document.querySelectorAll("#demo-content > section > h2, #demo-content > section > p, .hero-content > h2, .hero-content > p, .contact-details > *, .shop-header h1, .shop-header nav a").forEach(el => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      for (const rect of range.getClientRects()) {
+        if (rect.width && rect.height) obstacles.push(rect);
+      }
+    });
+    const regions = [];
+    const addRegion = (element, label, top, bottom) => {
+      if (!element) return;
+      const rect = element.getBoundingClientRect();
+      regions.push({ label, left: appBounds.left + 24, right: appBounds.right - 24,
+        top: top ?? rect.top, bottom: bottom ?? rect.bottom });
+    };
+    const hero = document.querySelector(".hero-content");
+    const callToAction = hero.querySelector("button, a");
+    addRegion(callToAction, `home, beside ${callToAction.textContent.trim()} button`,
+      Math.max(hero.querySelector("p").getBoundingClientRect().bottom + 10, callToAction.getBoundingClientRect().top - 6),
+      document.querySelector("#home").getBoundingClientRect().bottom - 8);
+    addRegion(hero, "home, beside hero text", hero.getBoundingClientRect().top + 20,
+      callToAction.getBoundingClientRect().top - 10);
+    document.querySelectorAll("#services .menu, #services .card-grid, #barbers .card-grid, #store .card-grid, #booking .demo-form, #checkout .demo-form, .contact-details").forEach(el =>
+      addRegion(el, `${el.closest("section").id}, beside ${el.classList.contains("menu") ? "menu" : el.classList.contains("card-grid") ? "cards / open row end" : el.classList.contains("contact-details") ? "contact details" : "form"}`));
+    document.querySelectorAll("#demo-content > section:not(#home)").forEach(section => {
+      const heading = section.querySelector("h2");
+      addRegion(heading, `${section.id}, beside section heading`,
+        section.getBoundingClientRect().top + 8, heading.getBoundingClientRect().bottom + 12);
+    });
+    const header = document.querySelector(".shop-header");
+    addRegion(header, "shop header, beside title / navigation",
+      header.getBoundingClientRect().top + 10, header.getBoundingClientRect().bottom - 8);
     const placements = [];
-    for (const anchor of anchors) {
-      const section = anchor.closest("section");
-      const bounds = anchor.getBoundingClientRect(), outer = section.getBoundingClientRect();
-      for (const side of ["left", "right"]) {
-        const width = Math.floor((side === "left" ? bounds.left - outer.left : outer.right - bounds.right) - 32);
-        for (const slot of adGapSlots(width, bounds.height)) {
-          placements.push({ anchor, side, width, ...slot,
-            top: slot.top + (side === "right" ? Math.min(18, slot.top / 2) : 0),
-            section: section.id });
-        }
+    // One ad per region per pass: use independent open spots before returning
+    // to a second side. Never convert a long gutter into a stack of ads.
+    const usedSpots = new Set();
+    for (let pass = 0; pass < 2 && placements.length < buttons.length; pass++) {
+      for (const region of regions) {
+        const spot = emptyAdSpots(region, [...obstacles, ...placements.map(slot => ({
+          left: slot.left - 32, right: slot.left + slot.width + 32,
+          top: slot.top - 40, bottom: slot.top + slot.height + 40
+        }))]).find(slot => {
+          const side = slot.left + slot.width / 2 < appBounds.left + appBounds.width / 2 ? "left" : "right";
+          return !usedSpots.has(`${region.label}/${side}`);
+        });
+        if (!spot) continue;
+        const side = spot.left + spot.width / 2 < appBounds.left + appBounds.width / 2 ? "left" : "right";
+        usedSpots.add(`${region.label}/${side}`);
+        placements.push({ ...spot, label: `${region.label}, ${side}` });
+        if (placements.length === buttons.length) break;
       }
     }
-    // Alternate sections and sides instead of filling one long gutter first.
-    placements.sort((a, b) => a.top - b.top || a.side.localeCompare(b.side));
-    let placementCount = Math.min(buttons.length, placements.length);
-    if ((buttons.length - placementCount) % 2) placementCount--;
-    const assigned = buttons.slice(0, placementCount);
-    assigned.forEach(button => button.classList.add("ad-gap"));
-    row.classList.toggle("all-ads-placed", assigned.length === buttons.length);
-    const appBounds = app.getBoundingClientRect();
-    assigned.forEach((button, index) => {
-      const slot = placements[index], bounds = slot.anchor.getBoundingClientRect();
-      const x = slot.side === "left" ? bounds.left - slot.width - 16 : bounds.right + 16;
-      button.style.left = `${x - appBounds.left - app.clientLeft}px`;
-      button.style.top = `${bounds.top - appBounds.top - app.clientTop + slot.top}px`;
+    if (placements.length < buttons.length) {
+      $("demo-error").textContent = "Some sample ads cannot fit safely at this size. They are hidden to keep shop content clear.";
+      console.error("Not enough safe individual ad spots.", { width: window.innerWidth, placed: placements.length, total: buttons.length });
+    }
+    buttons.forEach((button, index) => {
+      const slot = placements[index];
+      button.hidden = !slot;
+      if (!slot) return;
+      button.classList.toggle("ad-compact", slot.width < 170 || slot.height < 100);
+      button.style.left = `${slot.left - appBounds.left - app.clientLeft}px`;
+      button.style.top = `${slot.top - appBounds.top - app.clientTop}px`;
       button.style.width = `${slot.width}px`;
       button.style.height = `${slot.height}px`;
-      button.dataset.placement = `${slot.section}, ${slot.side} gutter`;
+      button.dataset.placement = slot.label;
     });
   }
   function renderHome() {
@@ -229,7 +294,7 @@
     if (mobileAds) document.querySelector(".hero-photo").insertAdjacentElement("afterend", mobileAds);
     adLayoutObserver?.disconnect();
     adLayoutObserver = new ResizeObserver(layoutAds);
-    document.querySelectorAll("#demo-content > section, .hero-photo, #booking .demo-form, #checkout .demo-form, .contact-details").forEach(el => adLayoutObserver.observe(el));
+    document.querySelectorAll(".shop-header, #demo-content > section, .hero-photo, #booking .demo-form, #checkout .demo-form, .contact-details").forEach(el => adLayoutObserver.observe(el));
     document.querySelectorAll("#demo-content img").forEach(img => img.addEventListener("load", layoutAds));
     document.fonts.ready.then(layoutAds);
     layoutAds();
