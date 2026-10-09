@@ -104,14 +104,10 @@ main > section { max-width: 1100px; padding: 40px 16px; margin: auto; }
 .demo-gallery.single { display: block; }
 .demo-gallery.single img { max-height: 380px; aspect-ratio: auto; }
 .text-logo { font-family: "Playfair Display", Georgia, serif; font-size: 1.3rem; color: var(--gold); }
-.ad-label { font-size: .85rem; color: var(--muted); text-align: center; max-width: 850px; margin: 16px auto; padding-inline: 16px; }
 .ad-tab { position: absolute; display: block; width: 100%; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; font-weight: 400; transform: rotate(var(--ad-tilt, 0deg)); }
 .ad-tab:hover, .ad-tab:focus-visible { background: transparent; filter: drop-shadow(0 0 8px rgba(212,175,55,.4)); }
-.ad-mobile-row { position: relative; display: block; padding: 0; margin-top: 20px; }
-.ad-mobile-row .ad-tab { aspect-ratio: 4 / 3; }
-.ad-mobile-row.ad-desktop { display: block; height: 0; padding: 0; }
-.ad-mobile-row.ad-desktop { position: static; margin-top: 0; }
-.ad-desktop .ad-tab { position: absolute; max-width: none; }
+.ad-mobile-row { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; margin: 0; padding: 0; pointer-events: none; }
+.ad-mobile-row .ad-tab { aspect-ratio: 4 / 3; pointer-events: auto; }
 .contact-details { max-width: 650px; margin-inline: auto; text-align: center; }
 body.demo-owner-open .ad-mobile-row, .ad-mobile-row[hidden] { display: none; }
 dialog { width: min(430px, calc(100% - 32px)); max-height: calc(100vh - 40px); overflow: auto; padding: 24px; background: var(--panel); color: var(--ink); border: 2px solid var(--gold); border-radius: 12px; text-align: center; }
@@ -173,13 +169,14 @@ legend { color: var(--gold); padding: 0 6px; }
 #booking-form legend + * { clear: both; }
 #booking-form .booking-date-calendar, #booking-form .demo-summary { border: 0; background: transparent; }
 .ad-bullethole { --hole-scale: 1; --hole-width: 56%; position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; container-type: inline-size; }
+.ad-hole-small { --hole-width: 76%; }
 .ad-hole-medium { --hole-scale: 1.06; --hole-width: 59%; }
 .ad-hole-large { --hole-scale: 1.12; --hole-width: 62%; }
 .ad-bullethole-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 15%; clip-path: ellipse(43% 44% at 50% 50%); }
 .ad-bullethole-frame { position: relative; display: block; width: 100%; height: 100%; transform: scale(var(--hole-scale)); }
 .ad-bullethole-copy { position: absolute; left: 50%; bottom: 26%; transform: translateX(-50%); width: var(--hole-width); display: flex; flex-direction: column; align-items: center; gap: 3px; color: #fff; text-align: center; background: none; text-shadow: 0 1px 3px #000, 0 0 7px #000; }
-.ad-bullethole-copy .ad-name { color: var(--gold-hi); font: 800 clamp(11px, 4.2cqi, 17px)/1.2 "Playfair Display", Georgia, serif; white-space: nowrap; }
-.ad-bullethole-copy .ad-phone, .ad-bullethole-copy .ad-email { font: 600 clamp(10px, 3.6cqi, 13px)/1.25 "Inter", system-ui, sans-serif; white-space: nowrap; }
+.ad-bullethole-copy .ad-name { color: var(--gold-hi); font: 800 clamp(4px, 4.2cqi, 17px)/1.2 "Playfair Display", Georgia, serif; white-space: nowrap; }
+.ad-bullethole-copy .ad-phone, .ad-bullethole-copy .ad-email { font: 600 clamp(4px, 3.6cqi, 13px)/1.25 "Inter", system-ui, sans-serif; white-space: nowrap; }
 .ad-card-full { max-width: 380px; margin-inline: auto; }
 .photo-control { text-align: center; margin-top: 20px; }
 .photo-button { padding: 16px 22px; font-size: 1.1rem; max-width: 100%; }

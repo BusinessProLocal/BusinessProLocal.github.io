@@ -138,9 +138,7 @@
   function renderAds() {
     const excluded = bookingEnabled ? [0, 1, 2] : storeEnabled ? [2, 5] : [];
     const selected = ads.map((ad, index) => ({ ad, index })).filter(item => !excluded.includes(item.index));
-    $("demo-content").insertAdjacentHTML("beforebegin", `<div id="sample-ads"><p class="ad-label">Sample ads: Business Pro customers can choose to be featured on other local Business Pro websites.</p>
-      </div>
-      <div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
+    $("demo-content").insertAdjacentHTML("beforebegin", `<div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
         `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad, ${escape(ad.phone)}, ${escape(ad.email)}" aria-haspopup="dialog">${adCard(ad)}</button>`).join("")}</div>
       <dialog id="ad-popup" aria-label="Sample business ad"><div id="ad-popup-content"></div>
       <button type="button" id="close-ad">Close ad</button></dialog>`);
@@ -154,15 +152,15 @@
   }
   function emptyAdSpots(bounds, obstacles, minimumWidth = 100, aspectRatio = 0) {
     const levels = [...new Set([bounds.top, bounds.bottom, ...obstacles.flatMap(rect =>
-      [Math.max(bounds.top, rect.top - 10), Math.min(bounds.bottom, rect.bottom + 10)])])]
+      [Math.max(bounds.top, rect.top - 3), Math.min(bounds.bottom, rect.bottom + 3)])])]
       .filter(y => y >= bounds.top && y <= bounds.bottom).sort((a, b) => a - b);
     const spots = [];
     for (let start = 0; start < levels.length - 1; start++) {
       for (let end = start + 1; end < levels.length; end++) {
         const top = levels[start], bottom = levels[end];
-        if (bottom - top < 56) continue;
-        const blocked = obstacles.filter(rect => rect.top - 10 < bottom && rect.bottom + 10 > top)
-          .map(rect => [Math.max(bounds.left, rect.left - 10), Math.min(bounds.right, rect.right + 10)])
+        if (bottom - top < (aspectRatio ? minimumWidth / aspectRatio : 56)) continue;
+        const blocked = obstacles.filter(rect => rect.top - 3 < bottom && rect.bottom + 3 > top)
+          .map(rect => [Math.max(bounds.left, rect.left - 14), Math.min(bounds.right, rect.right + 14)])
           .filter(([left, right]) => right > left).sort((a, b) => a[0] - b[0]);
         let left = bounds.left;
         const gaps = [];
@@ -184,36 +182,14 @@
     }
     return spots.sort((a, b) => b.width * b.height - a.width * a.height);
   }
-  function scatteredAdSpots(width, count) {
-    const columns = Math.max(1, Math.min(3, Math.floor(width / 340)));
-    const laneWidth = width / columns;
-    const levels = [24, 91, 53].slice(0, columns);
-    const spots = [];
-    for (let index = 0; index < count; index++) {
-      const lane = levels.indexOf(Math.min(...levels));
-      const adWidth = Math.min([318, 292, 334, 306][index % 4], laneWidth - 32);
-      const height = adWidth * 3 / 4;
-      const slack = laneWidth - adWidth - 28;
-      const left = lane * laneWidth + 14 + slack * [0, 1, .3, .8][index % 4];
-      const top = levels[lane];
-      spots.push({ left, top, width: adWidth, height });
-      levels[lane] = top + height + [43, 68, 37, 57][index % 4];
-    }
-    return { spots, height: Math.max(...levels) };
+  function adHoleSize(width) {
+    return width < 160 ? "small" : width < 260 ? "medium" : "large";
   }
-  function layoutScatteredAds(row, buttons) {
-    row.classList.remove("ad-desktop");
-    const layout = scatteredAdSpots(row.clientWidth, buttons.length);
-    row.style.height = `${layout.height}px`;
-    buttons.forEach((button, index) => {
-      const slot = layout.spots[index];
-      button.style.left = `${slot.left}px`;
-      button.style.top = `${slot.top}px`;
-      button.style.width = `${slot.width}px`;
-      button.style.height = `${slot.height}px`;
-      button.style.setProperty("--ad-tilt", `${[-2.5, 1.8, -1.2, 2.8, -.8, 2.2, -1.8, .9][index % 8]}deg`);
-      button.dataset.placement = "staggered space below shop photo";
-    });
+  function reserveAdSpacing(bounds, placements) {
+    return placements.map(slot => ({
+      left: bounds.left, right: bounds.right,
+      top: slot.top - 40, bottom: slot.top + slot.height + 40
+    }));
   }
   function layoutAds() {
     const row = document.querySelector(".ad-mobile-row");
@@ -221,84 +197,69 @@
     const buttons = [...row.querySelectorAll("[data-ad]")];
     buttons.forEach(button => {
       button.removeAttribute("style");
-      button.dataset.placement = "below shop photo";
     });
-    row.style.removeProperty("height");
-    row.classList.toggle("ad-desktop", window.innerWidth > 1280);
-    if (window.innerWidth <= 1280) { layoutScatteredAds(row, buttons); return; }
     const appBounds = app.getBoundingClientRect();
     const appStyles = getComputedStyle(app);
     const borderLeft = parseFloat(appStyles.borderLeftWidth);
     const borderTop = parseFloat(appStyles.borderTopWidth);
     const obstacles = [];
-    document.querySelectorAll(".hero-photo, #demo-content .card, #demo-content .demo-gallery, #services .menu, #booking .demo-form, #checkout .demo-form, #checkout .demo-summary, .hero-content > button, .hero-content > a").forEach(el => {
+    app.querySelectorAll(".test-bar, .demo-ribbon, .shop-header, .demo-notice, .customer-demo-banner, .hero-photo, img:not(.ad-bullethole-photo):not(.ad-bullethole-frame), .card, .demo-gallery, .demo-form, .demo-summary, button:not(.ad-tab), a:not(.ad-tab), input, select, textarea, video, canvas, iframe").forEach(el => {
       const rect = el.getBoundingClientRect();
       if (rect.width && rect.height) obstacles.push(rect);
     });
-    // Text blocks often span the whole column, but their actual lettering does not.
-    document.querySelectorAll("#demo-content > section > h2, #demo-content > section > p, .hero-content > h2, .hero-content > p, .contact-details > *, .shop-header h1, .shop-header nav a, .demo-notice, .ad-label, #demo-error, #demo-status").forEach(el => {
+    const textNodes = document.createTreeWalker(app, NodeFilter.SHOW_TEXT);
+    while (textNodes.nextNode()) {
+      const node = textNodes.currentNode;
+      if (!node.textContent.trim() || node.parentElement.closest(".ad-tab, #ad-popup")) continue;
       const range = document.createRange();
-      range.selectNodeContents(el);
+      range.selectNodeContents(node);
       for (const rect of range.getClientRects()) {
         if (rect.width && rect.height) obstacles.push(rect);
       }
-    });
-    const regions = [];
-    const addRegion = (element, label, top, bottom) => {
-      if (!element) return;
-      const rect = element.getBoundingClientRect();
-      regions.push({ label, left: appBounds.left + 24, right: appBounds.right - 24,
-        top: top ?? rect.top, bottom: bottom ?? rect.bottom });
-    };
-    const hero = document.querySelector(".hero-content");
-    const callToAction = hero.querySelector("button, a");
-    addRegion(callToAction, `home, beside ${callToAction.textContent.trim()} button`,
-      Math.max(hero.querySelector("p").getBoundingClientRect().bottom + 10, callToAction.getBoundingClientRect().top - 6),
-      document.querySelector("#home").getBoundingClientRect().bottom - 8);
-    addRegion(hero, "home, beside hero text", hero.getBoundingClientRect().top + 20,
-      callToAction.getBoundingClientRect().top - 10);
-    document.querySelectorAll("#services .menu, #services .card-grid, #barbers .card-grid, #store .card-grid, #booking .demo-form, #checkout .demo-form, .contact-details").forEach(el =>
-      addRegion(el, `${el.closest("section").id}, beside ${el.classList.contains("menu") ? "menu" : el.classList.contains("card-grid") ? "cards / open row end" : el.classList.contains("contact-details") ? "contact details" : "form"}`));
-    document.querySelectorAll("#demo-content > section:not(#home)").forEach(section => {
-      const heading = section.querySelector("h2");
-      addRegion(heading, `${section.id}, beside section heading`,
-        section.getBoundingClientRect().top + 8, heading.getBoundingClientRect().bottom + 12);
-    });
-    const header = document.querySelector(".shop-header");
-    addRegion(header, "shop header, beside title / navigation",
-      header.getBoundingClientRect().top + 10, header.getBoundingClientRect().bottom - 8);
-    if (bookingEnabled) addRegion($("demo-content"), "remaining customer-page gap");
-    const placements = [];
-    // One ad per region per pass: use independent open spots before returning
-    // to a second side. Never convert a long gutter into a stack of ads.
-    const usedSpots = new Set();
-    for (let pass = 0; pass < 2 && placements.length < buttons.length; pass++) {
-      for (const region of regions) {
-        const spot = emptyAdSpots(region, [...obstacles, ...placements.filter(Boolean).map(slot => ({
-          left: slot.left - 32, right: slot.left + slot.width + 32,
-          top: slot.top - 40, bottom: slot.top + slot.height + 40
-        }))], 280, 4 / 3).find(slot => {
-          const side = slot.left + slot.width / 2 < appBounds.left + appBounds.width / 2 ? "left" : "right";
-          return !usedSpots.has(`${region.label}/${side}`);
-        });
-        if (!spot) continue;
-        const side = spot.left + spot.width / 2 < appBounds.left + appBounds.width / 2 ? "left" : "right";
-        usedSpots.add(`${region.label}/${side}`);
-        placements.push({ ...spot, label: `${region.label}, ${side}` });
-        if (placements.length === buttons.length) break;
-      }
     }
-    if (placements.length < buttons.length) {
-      layoutScatteredAds(row, buttons);
-      return;
+    const bounds = { left: appBounds.left + 16, right: appBounds.right - 16,
+      top: appBounds.top + 8, bottom: appBounds.bottom - 8 };
+    const minimumWidth = window.innerWidth <= 760 ? 64 :
+      Math.min(280, Math.max(96, (bounds.right - bounds.left) * .3));
+    const placements = [];
+    const sections = [...app.querySelectorAll("#demo-content > section")];
+    for (let index = 0; index < buttons.length; index++) {
+      const blockers = [...obstacles, ...reserveAdSpacing(bounds, placements)];
+      let spots = [];
+      for (let candidateWidth = minimumWidth; candidateWidth >= 64 && !spots.length;
+        candidateWidth = Math.floor(candidateWidth * .75)) {
+        spots = emptyAdSpots(bounds, blockers, candidateWidth, 4 / 3);
+      }
+      if (!spots.length) {
+        const width = Math.min(minimumWidth, bounds.right - bounds.left);
+        const height = width * 3 / 4;
+        placements.push({ left: bounds.left, top: bounds.bottom + 48 +
+          placements.reduce((offset, item) => offset + item.height + 48, 0), width, height, label: "after customer content" });
+        continue;
+      }
+      const targetY = bounds.top + (bounds.bottom - bounds.top) * (index + .5) / buttons.length;
+      const slot = spots.reduce((best, candidate) =>
+        Math.abs(candidate.top + candidate.height / 2 - targetY) <
+          Math.abs(best.top + best.height / 2 - targetY) ? candidate : best);
+      placements.push(slot);
+      const section = sections.find(element => {
+        const rect = element.getBoundingClientRect();
+        const centerY = slot.top + slot.height / 2;
+        return centerY >= rect.top && centerY <= rect.bottom;
+      });
+      slot.label = section ? `${section.id || "customer content"} section` : "page gap";
     }
     buttons.forEach((button, index) => {
       const slot = placements[index];
+      button.hidden = false;
       button.style.left = `${slot.left - appBounds.left - borderLeft}px`;
       button.style.top = `${slot.top - appBounds.top - borderTop}px`;
       button.style.width = `${slot.width}px`;
       button.style.height = `${slot.height}px`;
       button.style.setProperty("--ad-tilt", `${[-2.5, 1.8, -1.2, 2.8, -.8, 2.2, -1.8, .9][index % 8]}deg`);
+      const hole = button.querySelector(".ad-bullethole");
+      hole.classList.remove("ad-hole-small", "ad-hole-medium", "ad-hole-large");
+      hole.classList.add(`ad-hole-${adHoleSize(slot.width)}`);
       button.dataset.placement = slot.label;
     });
   }
@@ -842,7 +803,7 @@
       dashboardOpen = false;
       document.body.classList.remove("demo-owner-open");
       app.classList.toggle("has-customer-ads", pageName === "home");
-      document.querySelector(".shop-header").hidden = false; document.querySelectorAll("#sample-ads, .ad-mobile-row").forEach(el => { el.hidden = false; });
+      document.querySelector(".shop-header").hidden = false; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = false; });
       $("demo-content").innerHTML = `<section><h2>Customer first</h2><p>Complete a demo ${bookingEnabled ? "booking" : "checkout"} before building your daily dashboard.</p><a class="book-button" href="index.html">Back to the customer site</a></section>`;
       return;
     }
@@ -854,7 +815,7 @@
     const preview = activeTab && !activeTab.live;
     document.body.classList.add("demo-owner-open");
     adLayoutObserver?.disconnect();
-    document.querySelector(".shop-header").hidden = true; document.querySelectorAll("#sample-ads, .ad-mobile-row").forEach(el => { el.hidden = true; });
+    document.querySelector(".shop-header").hidden = true; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = true; });
     document.title = `${visitor?.business || config.shop.name} | ${title} Demo`;
     setDemoIndexing(true);
     const records = [own];
