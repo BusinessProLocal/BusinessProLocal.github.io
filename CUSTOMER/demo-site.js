@@ -131,7 +131,6 @@
       ${extraPhotos.length && !storeEnabled ? '<a href="index.html#photos">Photos</a>' : ""}<a href="index.html#contact">Contact</a>
       ${bookingEnabled ? '<a href="index.html#booking">Book an appointment</a>' : ""}
       ${storeEnabled ? '<a id="cart-link" href="index.html#checkout">Cart</a>' : ""}</nav></header>
-      <div class="demo-pricing"><a class="book-button" href="../../index.html#plans">Like what you see? See Plans &amp; Pricing &rarr;</a></div>
       <p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
       <main id="demo-content"></main>
@@ -148,7 +147,7 @@
     $("demo-content").insertAdjacentHTML("beforebegin", `<div id="sample-ads"><p class="ad-label">Sample ads: Business Pro customers can choose to be featured on other local Business Pro websites.</p>
       </div>
       <div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
-        `<button type="button" class="ad-tab${bookingEnabled && index === 2 ? " ad-bullethole" : ""}" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${bookingEnabled && index === 2 ? image("../assets/ads/ad-seaside-bullethole.png", "Seaside Treasures sponsored sample ad", "ad-bullethole-image") : adCard(ad, false, true)}</button>`).join("")}</div>
+        `<button type="button" class="ad-tab${bookingEnabled && index === 2 ? " ad-bullethole" : ""}" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${bookingEnabled && index === 2 ? `${image("../assets/ads/ad-seaside-bullethole.png", "", "ad-bullethole-image")}<span class="ad-bullethole-copy"><strong>Seaside Treasures</strong><span>seasidetreasures.<wbr>businessprolocal.com</span></span>` : adCard(ad, false, true)}</button>`).join("")}</div>
       <dialog id="ad-popup" aria-label="Sample business ad"><div id="ad-popup-content"></div>
       <button type="button" id="close-ad">Close ad</button></dialog>`);
     document.querySelectorAll("[data-ad]").forEach(button => button.addEventListener("click", () => {
@@ -191,6 +190,15 @@
     }
     return spots.sort((a, b) => b.width * b.height - a.width * a.height);
   }
+  function fixedAdSpot(bounds, obstacles, width, height) {
+    const tops = [...new Set([bounds.top, ...obstacles.map(rect => rect.bottom + 10)])]
+      .filter(top => top >= bounds.top && top + height <= bounds.bottom).sort((a, b) => a - b);
+    for (const top of tops) {
+      const spot = emptyAdSpots({ ...bounds, top, bottom: top + height }, obstacles, width, width / height)[0];
+      if (spot) return { ...spot, top, width, height };
+    }
+    return null;
+  }
   function layoutAds() {
     const row = document.querySelector(".ad-mobile-row");
     if (!row || document.body.classList.contains("demo-owner-open")) return;
@@ -202,7 +210,7 @@
       button.dataset.placement = "below shop photo";
     });
     if ($("demo-error").textContent.startsWith("Some sample ads cannot fit safely") ||
-      $("demo-error").textContent === "The Seaside test ad cannot fit safely at this size.") $("demo-error").textContent = "";
+      $("demo-error").textContent === "The 334 x 250 Seaside sample ad is hidden because no safe full-size gap fits at this screen width.") $("demo-error").textContent = "";
     if (window.innerWidth <= 600) return;
     buttons.forEach(button => button.classList.add("ad-gap"));
     const appBounds = app.getBoundingClientRect();
@@ -215,7 +223,7 @@
       if (rect.width && rect.height) obstacles.push(rect);
     });
     // Text blocks often span the whole column, but their actual lettering does not.
-    document.querySelectorAll("#demo-content > section > h2, #demo-content > section > p, .hero-content > h2, .hero-content > p, .contact-details > *, .shop-header h1, .shop-header nav a").forEach(el => {
+    document.querySelectorAll("#demo-content > section > h2, #demo-content > section > p, .hero-content > h2, .hero-content > p, .contact-details > *, .shop-header h1, .shop-header nav a, .demo-notice, .ad-label, #demo-error, #demo-status").forEach(el => {
       const range = document.createRange();
       range.selectNodeContents(el);
       for (const rect of range.getClientRects()) {
@@ -255,10 +263,20 @@
       const bounds = { left: appBounds.left + 24, right: appBounds.right - 24,
         top: document.querySelector(".hero-photo").getBoundingClientRect().bottom + 12,
         bottom: document.querySelector("#services").getBoundingClientRect().top - 8 };
-      const spot = emptyAdSpots(bounds, obstacles, 100, 4 / 3)[0];
+      const bulletWidth = 334, bulletHeight = 250;
+      const findBulletSpot = region => fixedAdSpot(region, obstacles, bulletWidth, bulletHeight);
+      const spot = findBulletSpot(bounds);
+      const upperBounds = { ...bounds, top: header.getBoundingClientRect().top + 10,
+        bottom: document.querySelector(".hero-photo").getBoundingClientRect().top - 10 };
+      const alternative = spot ? null : findBulletSpot(upperBounds) ||
+        regions.map(region => ({ spot: findBulletSpot(region), label: region.label }))
+          .filter(region => region.spot).sort((a, b) => a.spot.top - b.spot.top)[0];
       if (spot) placements.push({ ...spot, label: "home, existing open gap below shop photo" });
+      else if (alternative) placements.push(alternative.spot ?
+        { ...alternative.spot, label: alternative.label } :
+        { ...alternative, label: "shop header, open gap above shop photo" });
       else {
-        $("demo-error").textContent = "The Seaside test ad cannot fit safely at this size.";
+        $("demo-error").textContent = "The 334 x 250 Seaside sample ad is hidden because no safe full-size gap fits at this screen width.";
         console.error("No safe 4:3 Seaside test ad spot.", { width: window.innerWidth });
         placements.push(null);
       }

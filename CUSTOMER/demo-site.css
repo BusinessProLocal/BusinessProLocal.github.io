@@ -203,8 +203,12 @@ legend { color: var(--gold); padding: 0 6px; }
 #booking-form legend { float: left; width: 100%; padding: 0 0 12px; }
 #booking-form legend + * { clear: both; }
 #booking-form .booking-date-calendar, #booking-form .demo-summary { border: 0; background: transparent; }
-.ad-mobile-row .ad-bullethole { grid-column: 1 / -1; aspect-ratio: 4 / 3; border: 0; border-radius: 0; background: #000; box-shadow: none; }
+.ad-mobile-row .ad-bullethole { position: relative; grid-column: 1 / -1; width: min(334px, 100%); justify-self: center; aspect-ratio: 334 / 250; border: 0; border-radius: 0; background: #000; box-shadow: none; container-type: inline-size; }
+@media(min-width:601px) { .ad-mobile-row .ad-bullethole { position: absolute; } }
 .ad-bullethole .ad-bullethole-image { display: block; width: 100%; height: 100%; object-fit: contain; }
+.ad-bullethole-copy { position: absolute; left: 30%; top: 34%; width: 40%; height: 34%; display: flex; flex-direction: column; justify-content: center; gap: 4px; background: #080705; color: var(--gold-hi); text-align: center; }
+.ad-bullethole-copy strong { font: 800 clamp(14px, 5.4cqi, 18px)/1.1 "Playfair Display", Georgia, serif; }
+.ad-bullethole-copy > span { font: 600 10px/1.25 "Inter", system-ui, sans-serif; overflow-wrap: anywhere; }
 .ad-bullethole:hover, .ad-bullethole:focus-visible { background: #000; box-shadow: none; }
 .photo-control { text-align: center; margin-top: 20px; }
 .photo-button { padding: 16px 22px; font-size: 1.1rem; max-width: 100%; }
