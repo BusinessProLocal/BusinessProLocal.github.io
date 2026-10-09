@@ -136,7 +136,7 @@
     $("demo-content").insertAdjacentHTML("beforebegin", `<div id="sample-ads"><p class="ad-label">Sample ads: Business Pro customers can choose to be featured on other local Business Pro websites.</p>
       </div>
       <div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
-        `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${adCard(ad, false, true)}</button>`).join("")}</div>
+        `<button type="button" class="ad-tab${bookingEnabled && index === 2 ? " ad-bullethole" : ""}" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${bookingEnabled && index === 2 ? image("../assets/ads/ad-seaside-bullethole.png", "Seaside Treasures sponsored sample ad", "ad-bullethole-image") : adCard(ad, false, true)}</button>`).join("")}</div>
       <dialog id="ad-popup" aria-label="Sample business ad"><div id="ad-popup-content"></div>
       <button type="button" id="close-ad">Close ad</button></dialog>`);
     document.querySelectorAll("[data-ad]").forEach(button => button.addEventListener("click", () => {
@@ -147,7 +147,7 @@
     $("close-ad").addEventListener("click", () => $("ad-popup").close());
     $("ad-popup").addEventListener("click", event => { if (event.target === $("ad-popup")) $("ad-popup").close(); });
   }
-  function emptyAdSpots(bounds, obstacles) {
+  function emptyAdSpots(bounds, obstacles, minimumWidth = 100, aspectRatio = 0) {
     const levels = [...new Set([bounds.top, bounds.bottom, ...obstacles.flatMap(rect =>
       [Math.max(bounds.top, rect.top - 10), Math.min(bounds.bottom, rect.bottom + 10)])])]
       .filter(y => y >= bounds.top && y <= bounds.bottom).sort((a, b) => a - b);
@@ -167,9 +167,11 @@
         }
         if (left < bounds.right) gaps.push([left, bounds.right]);
         for (const [begin, finish] of gaps) {
-          if (finish - begin < 100) continue;
-          const height = Math.min(bottom - top, 260);
-          const width = Math.min(finish - begin, height < 100 ? 300 : 260);
+          if (finish - begin < minimumWidth) continue;
+          const width = aspectRatio ? Math.min(finish - begin, (bottom - top) * aspectRatio, 640) :
+            Math.min(finish - begin, Math.min(bottom - top, 260) < 100 ? 300 : 260);
+          if (width < minimumWidth) continue;
+          const height = aspectRatio ? width / aspectRatio : Math.min(bottom - top, 260);
           spots.push({ left: begin + (finish - begin - width) / 2,
             top: top + (bottom - top - height) / 2, width, height });
         }
@@ -187,7 +189,8 @@
       button.removeAttribute("style");
       button.dataset.placement = "below shop photo";
     });
-    if ($("demo-error").textContent.startsWith("Some sample ads cannot fit safely")) $("demo-error").textContent = "";
+    if ($("demo-error").textContent.startsWith("Some sample ads cannot fit safely") ||
+      $("demo-error").textContent === "The Seaside test ad cannot fit safely at this size.") $("demo-error").textContent = "";
     if (window.innerWidth <= 600) return;
     buttons.forEach(button => button.classList.add("ad-gap"));
     const appBounds = app.getBoundingClientRect();
@@ -231,25 +234,36 @@
     const header = document.querySelector(".shop-header");
     addRegion(header, "shop header, beside title / navigation",
       header.getBoundingClientRect().top + 10, header.getBoundingClientRect().bottom - 8);
+    if (bookingEnabled) addRegion($("demo-content"), "remaining customer-page gap");
     const placements = [];
     // One ad per region per pass: use independent open spots before returning
     // to a second side. Never convert a long gutter into a stack of ads.
     const usedSpots = new Set();
+    if (bookingEnabled) {
+      const bounds = { left: appBounds.left + 24, right: appBounds.right - 24,
+        top: document.querySelector(".hero-photo").getBoundingClientRect().bottom + 12,
+        bottom: document.querySelector("#contact").getBoundingClientRect().bottom - 8 };
+      const spot = emptyAdSpots(bounds, obstacles, window.innerWidth >= 1024 ? 420 : Math.min(300, (appBounds.width - 72) / 2), 4 / 3)[0];
+      if (spot) placements.push({ ...spot, label: "largest open customer-page spot" });
+      else {
+        $("demo-error").textContent = "The Seaside test ad cannot fit safely at this size.";
+        console.error("No safe 4:3 Seaside test ad spot.", { width: window.innerWidth });
+        placements.push(null);
+      }
+    }
     if (bookingEnabled && window.innerWidth >= 1024) {
       const buttonBounds = callToAction.getBoundingClientRect();
       const center = buttonBounds.left + buttonBounds.width / 2;
       const pair = symmetricAdSpots(regions[0], obstacles, center);
       if (pair.length) {
-        placements.push(...pair.map((spot, index) => ({
-          ...spot, label: `${regions[0].label}, ${index ? "right" : "left"}`
-        })));
+        placements.push({ ...pair[1], label: `${regions[0].label}, right` });
         usedSpots.add(`${regions[0].label}/left`);
         usedSpots.add(`${regions[0].label}/right`);
       }
     }
     for (let pass = 0; pass < 2 && placements.length < buttons.length; pass++) {
       for (const region of regions) {
-        const spot = emptyAdSpots(region, [...obstacles, ...placements.map(slot => ({
+        const spot = emptyAdSpots(region, [...obstacles, ...placements.filter(Boolean).map(slot => ({
           left: slot.left - 32, right: slot.left + slot.width + 32,
           top: slot.top - 40, bottom: slot.top + slot.height + 40
         }))]).find(slot => {
@@ -310,8 +324,8 @@
       ${extraPhotos.map(photo => image(photo.src, photo.alt)).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="barbers"><h2>Meet the Barbers</h2><div class="card-grid">${config.barbers.map((staff, index) =>
         `<article class="card"><h3>${escape(staff.name)}</h3><p>${escape(staff.cardSpecialty)}</p><p>${escape(staff.bio)}</p>
-        ${index === 0 ? photoControl("barber-photo", "barberPhoto", "Add your barber photo", "Your barber photo", state) : ""}</article>`).join("")}</div></section>
-      <section id="booking"><h2>Book Your Appointment</h2><p>This is exactly how your customers will book an appointment.</p>
+        ${barberPhotoControl(staff, index, state)}</article>`).join("")}</div></section>
+      <section id="booking"><h2>Try Booking Your Customer's Appointment</h2><p>This is exactly how your customers will book an appointment.</p>
       ${bookingForm()}</section>` : ""}
       ${storeEnabled ? `<section id="store"><h2>Shop Coastal Favorites</h2><p>Ship to your address or choose free local pickup.</p>
       <div class="card-grid">${config.products.map(product => {
@@ -339,7 +353,7 @@
     if ($("call-order")) $("call-order").addEventListener("click", () => { $("call-message").textContent = `Call ${shop.phoneDisplay} to order`; });
     if (bookingEnabled) {
       setupBooking();
-      photoInput("barber-photo", "barberPhoto");
+      config.barbers.forEach((staff, index) => photoInput(`barber-photo-${staff.id}`, index === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`));
     }
     if (storeEnabled) setupCheckout();
     document.querySelectorAll("[data-qty]").forEach(select => select.addEventListener("change", () => {
@@ -565,10 +579,17 @@
   }
   function photoControl(id, field, label, alt, state) {
     const src = previewPhotos[field] || state[field];
+    const barber = field.startsWith("barberPhoto");
     return `<div class="photo-control"><button type="button" class="photo-button" data-photo-input="${id}">${label}</button>
       <input type="file" id="${id}" class="sr-only" accept="image/*" aria-label="${label}">
+      ${barber ? '<div class="barber-photo-frame">' : ""}
       <img id="${id}-preview" class="photo-preview" alt="${alt}" ${src ? `src="${escape(src)}"` : "hidden"}>
+      ${barber ? `<div id="${id}-placeholder" class="barber-photo-placeholder"${src ? " hidden" : ""}><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="20" r="12"/><path d="M10 58v-6a22 22 0 0 1 44 0v6z"/></svg><span>Put your picture here</span></div></div>` : ""}
       <p id="${id}-message" class="photo-message" role="status">${escape(photoMessages[field] || "")}</p></div>`;
+  }
+  function barberPhotoControl(staff, index, state) {
+    return photoControl(`barber-photo-${staff.id}`, index === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`,
+      "Add your barber photo", `${staff.name} barber photo`, state);
   }
   function shrinkPhoto(src) {
     return new Promise((resolve, reject) => {
@@ -608,6 +629,7 @@
       const src = URL.createObjectURL(file);
       preview.src = src;
       preview.hidden = false;
+      if ($(id + "-placeholder")) $(id + "-placeholder").hidden = true;
       message.textContent = "Photo selected. Shrinking it for this device...";
       try {
         const compressed = await shrinkPhoto(src);
@@ -627,6 +649,7 @@
         if (current === selection) {
           preview.removeAttribute("src");
           preview.hidden = true;
+          if ($(id + "-placeholder")) $(id + "-placeholder").hidden = false;
           message.textContent = "The photo could not be prepared. Try a JPG or PNG.";
           error(failure);
         }
@@ -871,6 +894,7 @@
       if (dashboardView === "appointments") { setupOwnerCalendar(); return; }
       setupAppointmentDetails();
       photoInput("work-photo", "workPhoto");
+      config.barbers.forEach((staff, index) => photoInput(`barber-photo-${staff.id}`, index === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`));
     } else {
       document.querySelectorAll("[data-packed]").forEach(button => button.addEventListener("click", () => action(() => {
         const order = api.read(localStorage, config).orders.find(item => item.id === button.dataset.packed);
@@ -906,6 +930,7 @@
       ${records[0].date !== api.dates()[0] ? "<p>Your selected booking is included in this preview even if it is on another day.</p>" : ""}
       <div class="completed-owner-grid">${config.barbers.map(staff => `<section class="completed-barber-block" style="border-top-color:${employeeColor(staff.id)}">
       <div class="completed-barber-header"><button type="button" class="completed-barber-name compact-barber-name-btn">${escape(staff.name)}</button></div>
+      ${barberPhotoControl(staff, config.barbers.indexOf(staff), state)}
       <div class="completed-time-list">${records.filter(item => item.staffId === staff.id).map(item =>
         `<button type="button" class="completed-time-btn ${item.status !== "Finished" ? "next-barber-appointment" : ""}" data-calendar-booking="${escape(item.id)}" title="${escape(item.name)} - ${escape(item.status || "Scheduled")}">${api.timeLabel(item.time)}</button>`).join("")}</div></section>`).join("")}</div>
       ${photoControl("work-photo", "workPhoto", "Add a photo of your work", "Your work photo preview", state)}</div></div>`;

@@ -178,6 +178,23 @@ legend { color: var(--gold); padding: 0 6px; }
 .photo-input { margin-top: 16px; }
 .photo-preview { display: block; width: 100%; max-width: 320px; max-height: 240px; object-fit: contain; border-radius: 10px; margin: 14px auto; }
 .card img.photo-preview { aspect-ratio: auto; object-fit: contain; }
+.barber-photo-frame, #daily-dashboard .barber-photo-frame { width: min(240px, 100%); aspect-ratio: 1; margin: 14px auto; background: #080808; border: 1px solid var(--gold); overflow: hidden; }
+.card .barber-photo-frame .photo-preview, #daily-dashboard .barber-photo-frame .photo-preview { width: 100%; height: 100%; max-width: none; max-height: none; aspect-ratio: 1; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
+.barber-photo-placeholder, #daily-dashboard .barber-photo-placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+.barber-photo-placeholder svg, #daily-dashboard .barber-photo-placeholder svg { width: 64px; height: 64px; fill: #888; }
+.barber-photo-placeholder span, #daily-dashboard .barber-photo-placeholder span { color: #ccc; font-size: 14px; }
+#booking-form { padding: 24px; border: 1px solid var(--gold); border-radius: 10px; background: var(--panel); }
+#booking-form fieldset { border: 0; border-radius: 0; padding: 18px 0; margin: 0; min-width: 0; }
+#booking-form fieldset + fieldset { border-top: 1px solid var(--gold); }
+#booking-form legend { float: left; width: 100%; padding: 0 0 12px; }
+#booking-form legend + * { clear: both; }
+#booking-form .booking-date-calendar, #booking-form .demo-summary { border: 0; background: transparent; }
+.ad-mobile-row .ad-bullethole { grid-column: 1 / -1; aspect-ratio: 4 / 3; border: 0; border-radius: 0; background: #000; box-shadow: none; }
+.ad-bullethole .ad-bullethole-image { display: block; width: 100%; height: 100%; object-fit: contain; }
+.ad-bullethole:hover, .ad-bullethole:focus-visible { background: #000; box-shadow: none; }
+@media(min-width:601px) {
+  .barber-customer-demo #contact > h2, .barber-customer-demo #contact .contact-details { width: calc(50% - 24px); margin-left: 0; margin-right: 0; }
+}
 .photo-control { text-align: center; margin-top: 20px; }
 .photo-button { padding: 16px 22px; font-size: 1.1rem; max-width: 100%; }
 .photo-message { font-size: .9rem; color: var(--gold); }

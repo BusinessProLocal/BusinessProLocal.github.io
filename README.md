@@ -31,9 +31,14 @@ platform and check phone, tablet and desktop layouts:
   their URL for the public site. Marketing retains the original alphabet sheet.
 - Ads use centered cover pictures with a dark, gold-edged business-name/Shop now
   strip, a top-left Sponsored pill, a thin silver border and a soft shadow.
-  Barber ads at 1024px and above mirror Seaside Treasures and Northway Auto Care
-  on the left/right of Customer Demo with equal size and vertical alignment.
+  The barber customer page tests Seaside Treasures using its supplied 4:3
+  bullet-hole image, without extra card chrome or a second Sponsored tag.
+  Above phone width it uses the largest safe open rectangle; Contact is arranged
+  on the left to free the right-hand area. Laptop placement is at least 420px
+  wide. Northway Auto Care retains the right-hand Customer Demo banner position.
+  Clicking Seaside still opens its original popup.
   Phones show approximately 2:1 banners, two per row below the shop photo.
+  The barber Seaside test instead spans the full phone row at 4:3.
   Desktop/tablet side rails are removed. A single eligible-ad pool is distributed
   one at a time into measured open rectangles beside the hero text/button,
   menu, cards (including empty row ends), booking/checkout forms, contact details,
@@ -46,7 +51,13 @@ platform and check phone, tablet and desktop layouts:
   Acceptance stays disabled until the bottom is reached; agreement wording is
   unchanged.
 - The barber customer demo has a gold explanatory banner, a continuous outer
-  gold border, and a `Customer Demo` entry button.
+  gold border, and a `Customer Demo` entry button. Customer and owner dashboard
+  barber photos use matching square gold-edged frames, silhouette placeholders,
+  and centered cover-cropped uploaded photos. Each barber has an independent
+  locally saved photo, shared between customer and owner views.
+  `Try Booking Your Customer's Appointment` contains all five booking steps in
+  one continuous gold-bordered panel; steps retain accessible fieldset legends
+  with thin dividers rather than individual boxes.
 - Gift-shop packing specifications appear within orders, not in a separate
   bottom inventory/specifications panel.
 

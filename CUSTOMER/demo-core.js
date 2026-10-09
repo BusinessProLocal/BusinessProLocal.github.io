@@ -415,7 +415,8 @@
       fragile: packages.some(box => box.fragile) };
   }
   function savePhoto(storage, config, field, data) {
-    if (!["barberPhoto", "workPhoto"].includes(field) || typeof data !== "string" ||
+    const barberField = config.barbers?.some(staff => field === `barberPhoto:${staff.id}`);
+    if ((!["barberPhoto", "workPhoto"].includes(field) && !barberField) || typeof data !== "string" ||
         !/^data:image\/(?:jpeg|png|webp);base64,/.test(data) || data.length > 4000000) {
       throw new Error("Choose a JPG, PNG or WebP photo smaller than 3 MB.");
     }
