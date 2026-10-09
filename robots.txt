@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /OWNER/
+Disallow: /ADMIN/
+Disallow: /DEMOS/business-pro/orders.html
+
+Sitemap: https://businessprolocal.com/sitemap.xml

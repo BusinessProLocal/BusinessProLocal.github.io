@@ -6,6 +6,17 @@ pages. Back up changed source files first and retain the newest three backups.
 The build also retains three public-site snapshots and preserves the root
 `CNAME` custom-domain file.
 
+Search discovery files live in source `WEBSITE/sitemap.xml` and `WEBSITE/robots.txt`
+and are copied to the public root. The sitemap lists only the homepage, signup,
+and three customer demo home pages; update each `lastmod` when that page changes,
+not merely when rebuilding. Robots allows public content and excludes OWNER,
+ADMIN and the gift demo's owner-only Orders URL. Standalone owner/admin sources
+and demo Orders have `noindex` metadata; switching a shared demo URL into its
+owner dashboard adds `noindex`, and returning to customer content removes it.
+OWNER and ADMIN are still not published. Robots/noindex control discovery, not
+access permissions. Submit `https://businessprolocal.com/sitemap.xml` in the
+verified Search Console property after publication.
+
 Before publishing, run `node --test CUSTOMER/demo-core.test.js` from the source
 platform and check phone, tablet and desktop layouts:
 

@@ -107,7 +107,19 @@
       <span class="ad-name"${fullSize ? ' id="ad-popup-name"' : ""}>${escape(ad.name)}</span>
       <span class="ad-tagline">${escape(ad.tagline)}</span><span class="ad-cta">${escape(ad.button)}</span></span></span>`;
   }
+  function setDemoIndexing(ownerOnly) {
+    const robots = document.head.querySelector('meta[name="robots"]');
+    if (ownerOnly || pageName === "orders") {
+      const meta = robots || document.createElement("meta");
+      meta.name = "robots";
+      meta.content = "noindex";
+      if (!robots) document.head.appendChild(meta);
+    } else if (robots) {
+      robots.remove();
+    }
+  }
   function renderShell() {
+    setDemoIndexing(false);
     app.classList.toggle("has-customer-ads", pageName === "home");
     app.classList.toggle("barber-customer-demo", bookingEnabled);
     document.title = config.shop.pageTitle;
@@ -859,6 +871,7 @@
     adLayoutObserver?.disconnect();
     document.querySelector(".shop-header").hidden = true; document.querySelectorAll("#sample-ads, .ad-mobile-row").forEach(el => { el.hidden = true; });
     document.title = `${visitor?.business || config.shop.name} | ${title} Demo`;
+    setDemoIndexing(true);
     const records = [own];
     const finished = own.status === "Finished";
     const price = bookingEnabled ? own.status === "Canceled" ? 0 : (config.services.find(service => service.id === own.serviceId)?.price || 0) * 100 : own.totalCents;
