@@ -368,6 +368,25 @@
       padding: 20px;
       border-radius: 9px;
       margin-top: 15px;
+      height: 350px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold) var(--black);
+    }
+
+    .agreement-preview::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .agreement-preview::-webkit-scrollbar-thumb {
+      background: var(--gold);
+      border-radius: 3px;
+    }
+
+    .agreement-scroll-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
     }
 
     .agreement-preview p {
@@ -472,6 +491,10 @@
     }
 
     @media (max-width: 600px) {
+
+      .agreement-preview {
+        height: 250px;
+      }
 
       header h1 {
         font-size: 30px;
@@ -1090,12 +1113,12 @@
         Choose a website package to see your setup fee. Your first month of service is free.
       </p>
 
-      <h2>
+      <h2 id="agreement-title">
         Business Pro Local Service Agreement
       </h2>
 
 
-      <div class="agreement-preview">
+      <div class="agreement-preview" id="agreement-preview" tabindex="0" role="region" aria-labelledby="agreement-title">
 
         <p>
           <strong>
@@ -1155,6 +1178,8 @@
         <input
           type="checkbox"
           id="agreement-ready"
+          disabled
+          aria-describedby="agreement-scroll-note"
         >
 
         <span>
@@ -1163,6 +1188,10 @@
         </span>
 
       </label>
+
+      <p class="agreement-scroll-note" id="agreement-scroll-note">
+        Scroll to the bottom to accept.
+      </p>
 
     </section>
 
@@ -1207,6 +1236,20 @@
 
     const SIGNUP_STORAGE_KEY =
       "businessProSignups";
+
+    const agreementPreview = document.getElementById("agreement-preview");
+    const agreementCheckbox = document.getElementById("agreement-ready");
+    const agreementScrollNote = document.getElementById("agreement-scroll-note");
+    agreementCheckbox.checked = false;
+    agreementCheckbox.disabled = true;
+    agreementPreview.scrollTop = 0;
+    agreementPreview.addEventListener("scroll", () => {
+      if (agreementPreview.scrollTop + agreementPreview.clientHeight >= agreementPreview.scrollHeight - 2) {
+        agreementCheckbox.disabled = false;
+        agreementScrollNote.hidden = true;
+        agreementCheckbox.removeAttribute("aria-describedby");
+      }
+    });
 
 
     const setupPaymentRates = {

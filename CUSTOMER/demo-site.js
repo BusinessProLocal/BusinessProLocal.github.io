@@ -86,10 +86,10 @@
       bg: "#1d3b3a", accent: "#a8e6cf", glow: "#3f7f78", photo: "../assets/ads/ad-sea-glass.jpg",
       icon: '<path d="M24 40c-7-6-7-18 0-28 7 10 7 22 0 28z"/><path d="M24 40c-9 0-17-5-18-14 7-1 14 4 18 14zM24 40c9 0 17-5 18-14-7-1-14 4-18 14z"/>' }
   ];
-  function adCard(ad, fullSize = false) {
-    if (ad.photo) return `<span class="ad-card ad-photo-card${fullSize ? " ad-card-full" : ""}">
+  function adCard(ad, fullSize = false, banner = false) {
+    if (ad.photo && !banner) return `<span class="ad-card ad-photo-card${fullSize ? " ad-card-full" : ""}">
       ${image(ad.photo, `${ad.name} - ${ad.tagline}`, "ad-photo")}</span>`;
-    return `<span class="ad-card${fullSize ? " ad-card-full" : ""}" style="--bg:${ad.bg};--accent:${ad.accent};--glow:${ad.glow}">
+    return `<span class="ad-card${fullSize ? " ad-card-full" : ""}${banner ? " ad-banner" : ""}" style="--bg:${ad.bg};--accent:${ad.accent};--glow:${ad.glow}">
       <span class="ad-art"><span class="ad-badge"><svg viewBox="0 0 48 48" aria-hidden="true">${ad.icon}</svg></span></span>
       <span class="ad-text"><span class="ad-type">${escape(ad.type)}</span>
       <span class="ad-name"${fullSize ? ' id="ad-popup-name"' : ""}>${escape(ad.name)}</span>
@@ -97,8 +97,10 @@
   }
   function renderShell() {
     app.classList.toggle("has-customer-ads", pageName === "home");
+    app.classList.toggle("barber-customer-demo", bookingEnabled);
     document.title = config.shop.pageTitle;
-    app.innerHTML = `<div class="test-bar">TEST PAGE &middot; NOT LIVE</div>
+    app.innerHTML = `${bookingEnabled ? '<div class="customer-demo-banner">Customer Demo &mdash; this is what your customers see when they book an appointment with you.</div>' : ""}
+      <div class="test-bar">TEST PAGE &middot; NOT LIVE</div>
       <div class="demo-ribbon">DEMO MODE &middot; ${storeEnabled ? "Business Pro" : "Business Pro " + escape(config.demo.label)}</div>
       <header class="shop-header"><h1>${escape(config.shop.name)}</h1><nav aria-label="Main navigation">
       <a href="index.html#home">Home</a><a href="index.html#${storeEnabled ? "store" : "services"}">${storeEnabled ? "Shop" : bookingEnabled ? "Services" : "Menu"}</a>
@@ -121,7 +123,8 @@
     $("demo-content").insertAdjacentHTML("beforebegin", `<div id="sample-ads"><p class="ad-label">Sample ads: Business Pro customers can choose to be featured on other local Business Pro websites.</p>
       <aside class="ad-rail ad-rail-left" aria-label="Other local businesses, left">${tabs.slice(0, tabs.length / 2).join("")}</aside>
       <aside class="ad-rail ad-rail-right" aria-label="Other local businesses, right">${tabs.slice(tabs.length / 2).join("")}</aside></div>
-      <div class="ad-mobile-row" aria-label="Other local businesses, swipe to browse">${tabs.join("")}</div>
+      <div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
+        `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${adCard(ad)}${adCard(ad, false, true)}</button>`).join("")}</div>
       <dialog id="ad-popup" aria-label="Sample business ad"><div id="ad-popup-content"></div>
       <button type="button" id="close-ad">Close ad</button></dialog>`);
     document.querySelectorAll("[data-ad]").forEach(button => button.addEventListener("click", () => {
@@ -134,11 +137,12 @@
   }
   function renderHome() {
     document.body.classList.remove("demo-owner-open");
+    app.classList.toggle("barber-customer-demo", bookingEnabled);
     const shop = config.shop, state = api.read(localStorage, config);
     $("demo-content").innerHTML = `<section id="home">${image(config.photos[0].src, config.photos[0].alt, "hero-photo")}
       <div class="hero-content"><h2>${escape(shop.heroTitle)}</h2><p>${escape(shop.heroSubtitle)}</p>
       ${!bookingEnabled && !storeEnabled ? '<button id="call-order" type="button">Call to order</button><p id="call-message" role="status"></p>' :
-        `<a class="book-button" href="#${storeEnabled ? "store" : "booking"}">${storeEnabled ? "Shop coastal gifts" : "Book an appointment"}</a>`}</div></section>
+        `<a class="book-button" href="#${storeEnabled ? "store" : "booking"}">${storeEnabled ? "Shop coastal gifts" : "Customer Demo"}</a>`}</div></section>
       ${config.menu ? `<section id="services"><h2>Our Menu</h2><div class="menu">${config.menu.map(group =>
         `<article><h3>${escape(group.name)}</h3><ul class="menu-items">${group.items.map(item =>
           `<li>${image(item.photo, item.text.split("$")[0].trim(), "menu-thumbnail")}<span>${escape(item.text)}</span></li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
@@ -167,6 +171,8 @@
       <section id="contact"><h2>Hours &amp; Contact</h2><p>${escape(shop.phoneDisplay)} &middot; ${escape(shop.email)}</p>
       <p class="address">${escape([shop.addressLine1, shop.addressLine2].filter(Boolean).join(", "))}</p><h3>Hours</h3>
       ${shop.hours.map(row => `<p><strong>${escape(row.days)}</strong>: ${escape(row.hours)}</p>`).join("")}</section>`;
+    const mobileAds = document.querySelector(".ad-mobile-row");
+    if (mobileAds) document.querySelector(".hero-photo").insertAdjacentElement("afterend", mobileAds);
     if ($("call-order")) $("call-order").addEventListener("click", () => { $("call-message").textContent = `Call ${shop.phoneDisplay} to order`; });
     if (bookingEnabled) {
       setupBooking();
@@ -654,6 +660,7 @@
     }
     const seeded = state;
     app.classList.remove("has-customer-ads");
+    app.classList.remove("barber-customer-demo");
     const activeTab = ownerTabs.flatMap(tab => [tab, ...(tab.children || [])]).find(tab => tab.id === dashboardView);
     const title = activeTab ? ownerTabLabel(activeTab) : "Dashboard";
     const preview = activeTab && !activeTab.live;
@@ -900,9 +907,7 @@
         }).join("")}</section>`).join("")}
       <button type="button" class="action-btn" data-packed="${escape(order.id)}" ${["Packed", "Shipped", "Ready for pickup"].includes(order.status) ? "disabled" : ""}>Packed</button>
       ${shippingLabel(order)}
-      </div></article>`).join("") + `<div class="panel"><div class="panel-header"><h3>Inventory &amp; Shipping Specs</h3></div><div class="panel-body card-grid">
-      ${config.products.map(product => `<article><h3>${escape(product.name)}</h3><p>Exact stock: ${api.stock(config, state, product.id)}<br>
-      ${product.weight} lb &middot; ${product.box.join(" x ")} in${product.fragile ? "<br>Fragile - protective packing required." : ""}</p></article>`).join("")}</div></div>`;
+      </div></article>`).join("");
   }
   function shippingLabel(order) {
     if (api.isPickup(order) || !order.label) return "";
