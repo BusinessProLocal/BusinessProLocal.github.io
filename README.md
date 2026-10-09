@@ -9,6 +9,12 @@ The build also retains three public-site snapshots and preserves the root
 Before publishing, run `node --test CUSTOMER/demo-core.test.js` from the source
 platform and check phone, tablet and desktop layouts:
 
+- The homepage's gold `View Demos` button sits near the bottom of the hero
+  picture, away from the man. On phones the photo is left-aligned and the button
+  fills the available width with equal side margins. It scrolls to public
+  `Plans & demos`: all three prices and `Try Demo` links work without Get Started,
+  stored leads, or JavaScript. Tier cards stack on phones. Get Started remains
+  in its original location and keeps its lead-saving and signup flow.
 - Ads use centered cover pictures with a dark, gold-edged business-name/Shop now
   strip. Phones show approximately 2:1 banners, two per row below the shop photo.
   Desktop/tablet side rails are removed. A single eligible-ad pool is distributed

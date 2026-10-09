@@ -74,6 +74,14 @@ h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(
 .btn.solid{background:var(--gold);color:#111;border:2px solid var(--gold)}
 .btn.ghost{border:2px solid var(--gold);color:var(--gold)}
 .btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.hero-demos{position:absolute;z-index:2;left:40%;bottom:6%;transform:translateX(-50%);width:300px;max-width:calc(100% - 32px);padding:16px 20px;font-size:1.15rem;box-shadow:0 4px 20px rgba(0,0,0,.7)}
+#plans{scroll-margin-top:70px}
+@media(max-width:700px){
+  .hero{background-position:left center}
+  .hero-demos{left:16px;right:16px;bottom:16px;transform:none;width:auto}
+  #plans{scroll-margin-top:120px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .story{max-width:760px;margin:0 auto;background:var(--panel);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:26px 28px}
 .story p{margin:0 0 14px;color:var(--muted)}
 .story .sig{margin:0;color:var(--ink);font-weight:700}
@@ -83,7 +91,6 @@ input,textarea,select{width:100%;padding:12px;border-radius:6px;border:1px solid
 input:focus,textarea:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px}
 .two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 #formMsg{text-align:center;color:var(--gold);min-height:1.4em;margin:0}
-#plans[hidden]{display:none}
 .question-field textarea{min-height:74px;resize:vertical}
 [hidden]{display:none !important}
 .plans-thanks{text-align:center;color:var(--gold);font-weight:700;margin:0 auto 18px}
@@ -141,6 +148,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
     <h1 class="sr">Business Pro</h1>
     <img class="titleimg" src="images/title2.png" width="1400" height="344" alt="Business Pro. Start small, grow big, join the Business Pro family. Bring your shop to every customer's couch.">
   </div>
+  <a class="btn solid hero-demos" href="#plans">View Demos</a>
 </section>
 
 <section class="block" id="why-online">
@@ -227,7 +235,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
   </form>
 </section>
 
-<section class="block" id="plans" hidden>
+<section class="block" id="plans">
   <h2>Plans &amp; demos</h2>
   <p class="lead">Prices are the same for every business.</p>
   <p id="plansThanks" class="plans-thanks" role="status" hidden></p>
@@ -239,7 +247,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
       <p class="first-month-free">First month free</p>
       <p class="split-price" hidden>or 3 monthly payments of $331.67</p>
       <ul><li>Mobile-friendly website</li><li>Services, hours and photos</li><li>Map and directions</li><li>Hosting, security and backups</li><li>Support and maintenance</li></ul>
-      <div class="btns"><a class="btn ghost" href="DEMOS/basic/index.html">SEE DEMO</a><a class="btn solid" href="CUSTOMER/join.html?plan=basic">SELECT</a></div>
+      <div class="btns"><a class="btn ghost" href="DEMOS/basic/index.html">Try Demo</a><a class="btn solid" href="CUSTOMER/join.html?plan=basic">SELECT</a></div>
     </div>
     <div class="tier">
       <h3>Professional</h3>
@@ -247,7 +255,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
       <p class="first-month-free">First month free</p>
       <p class="split-price" hidden>or 3 monthly payments of $498.33</p>
       <ul><li>Everything in Basic</li><li>Online appointment booking</li><li>Pick a service and staff member</li><li>Owner portal and schedules</li><li>Block days off and vacations</li></ul>
-      <div class="btns"><a class="btn ghost" href="DEMOS/professional/index.html">SEE DEMO</a><a class="btn solid" href="CUSTOMER/join.html?plan=professional">SELECT</a></div>
+      <div class="btns"><a class="btn ghost" href="DEMOS/professional/index.html">Try Demo</a><a class="btn solid" href="CUSTOMER/join.html?plan=professional">SELECT</a></div>
     </div>
     <div class="tier top">
       <h3>Business Pro</h3>
@@ -255,7 +263,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
       <p class="first-month-free">First month free</p>
       <p class="split-price" hidden>or 3 monthly payments of $831.67</p>
       <ul><li>Everything in Professional</li><li>Online storefront and shopping cart</li><li>Product photos and pricing</li><li>Orders, packing and shipping</li><li>Inventory and promotions</li></ul>
-      <div class="btns"><a class="btn ghost" href="DEMOS/business-pro/index.html">SEE DEMO</a><a class="btn solid" href="CUSTOMER/join.html?plan=business-pro">SELECT</a></div>
+      <div class="btns"><a class="btn ghost" href="DEMOS/business-pro/index.html">Try Demo</a><a class="btn solid" href="CUSTOMER/join.html?plan=business-pro">SELECT</a></div>
     </div>
   </div>
 </section>
@@ -283,21 +291,6 @@ typeSelect.addEventListener("change", function (event) {
 customType.addEventListener("blur", function () {
   if (!this.value.trim()) { typeSelect.value = ""; showCustomType(false); }
 });
-function showSavedPlans() {
-  if (location.hash !== "#plans") return;
-  try {
-    const leads = JSON.parse(localStorage.getItem("businessProLeads") || "[]");
-    if (!Array.isArray(leads)) throw new Error("Saved Get Started information is invalid.");
-    if (!leads.length) return;
-    document.getElementById("plans").hidden = false;
-    document.getElementById("plans").scrollIntoView({ block: "start" });
-  } catch (error) {
-    console.error("Plans load error:", error);
-    document.getElementById("formMsg").textContent = "We couldn't load your saved information. Please fill Get Started again.";
-  }
-}
-window.addEventListener("hashchange", showSavedPlans);
-showSavedPlans();
 async function sendLeadAlert(lead, website) {
   const payload = JSON.stringify({ ...lead, website, requestId: crypto.randomUUID() });
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -362,7 +355,6 @@ document.getElementById("startForm").addEventListener("submit", function (e) {
   const thanks = document.getElementById("plansThanks");
   thanks.textContent = `Thanks for joining us, ${name.split(/\s+/)[0]}! Here are your plans.`;
   thanks.hidden = false;
-  plans.hidden = false;
   plans.scrollIntoView({ behavior: "smooth", block: "start" });
   void sendLeadAlert(lead, document.getElementById("fWebsite").value);
 });
