@@ -1,7 +1,13 @@
 @font-face { font-family: "Cinzel"; src: url("../fonts/cinzel.ttf") format("truetype"); font-display: swap; }
 @property --gold-bar-bob { syntax: "<length>"; inherits: false; initial-value: 0px; }
-.gold-bar, #daily-dashboard .gold-bar {
+.gold-bar {
   position: var(--gold-bar-position, relative) !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  padding: 14px var(--gold-bar-side-padding, 24px) 22px !important;
+  white-space: normal !important;
   background: transparent !important;
   border-color: transparent !important;
   border-radius: 0 !important;
@@ -12,14 +18,10 @@
   color: transparent !important;
   box-shadow: none !important;
 }
-.gold-bar > *, #daily-dashboard .gold-bar > * { visibility: hidden !important; pointer-events: none !important; }
-.gold-bar::after, #daily-dashboard .gold-bar::after {
-  content: attr(data-gold-bar-label) !important;
-  position: absolute !important;
-  inset: 0 8px 8% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+.gold-bar > .gold-bar-source { display: none !important; }
+.gold-bar > .gold-bar-label {
+  position: static !important;
+  display: block !important;
   margin: 0 !important;
   padding: 0 !important;
   border: 0 !important;
@@ -33,23 +35,23 @@
   letter-spacing: 0 !important;
   text-align: center !important;
   white-space: normal !important;
+  overflow-wrap: anywhere !important;
   text-shadow: 0 1px 0 rgba(255,230,160,.6) !important;
   pointer-events: none !important;
   transform: none !important;
   transition: none !important;
 }
-.gold-bar, #daily-dashboard .gold-bar, .hero-demos {
+.gold-bar, .hero-demos {
   translate: 0 0 !important;
   filter: drop-shadow(0 0 0 rgba(255,200,90,0)) drop-shadow(0 0 0 rgba(255,180,50,0)) !important;
   transition: translate .3s ease, filter .3s ease !important;
 }
-.gold-bar:hover:not(:disabled), #daily-dashboard .gold-bar:hover:not(:disabled), .hero-demos:hover {
+.gold-bar:hover:not(:disabled), .hero-demos:hover {
   translate: 0 calc(-6px + var(--gold-bar-bob)) !important;
   filter: drop-shadow(0 0 10px rgba(255,200,90,.65)) drop-shadow(0 14px 18px rgba(255,180,50,.7)) !important;
   animation: gold-bar-bob 2s ease-in-out .3s infinite !important;
 }
-#daily-dashboard .nav .gold-bar:hover:not(.active) { transform: none !important; }
-.gold-bar.is-selected, #daily-dashboard .gold-bar.active { outline: 2px solid #4a2805; outline-offset: -5px; }
+.gold-bar.is-selected { outline: 2px solid #4a2805; outline-offset: -5px; }
 @keyframes gold-bar-bob { 0%, 100% { --gold-bar-bob: 0px; } 50% { --gold-bar-bob: -2px; } }
 .hero-demos { translate: var(--magnet-x, 0px) var(--magnet-y, 0px) !important; transition: translate .4s ease, filter .3s ease !important; }
 .hero-demos:hover { translate: var(--magnet-x, 0px) calc(var(--magnet-y, 0px) - 6px + var(--gold-bar-bob)) !important; }
@@ -57,5 +59,5 @@
   .hero-demos { --magnet-x: 0px !important; --magnet-y: 0px !important; }
 }
 @media(prefers-reduced-motion:reduce) {
-  .gold-bar:hover:not(:disabled), #daily-dashboard .gold-bar:hover:not(:disabled), .hero-demos:hover { animation: none !important; }
+  .gold-bar:hover:not(:disabled), .hero-demos:hover { animation: none !important; }
 }

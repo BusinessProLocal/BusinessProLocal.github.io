@@ -976,6 +976,17 @@ color: #fff;
 #daily-dashboard .calendar-card-barber { font-size: 10px; }
 #daily-dashboard .calendar-card-actions { margin-top: auto; }
 #daily-dashboard .calendar-card-actions button { padding: 2px 6px; font-size: 11px; line-height: 1.2; cursor: pointer; }
+#daily-dashboard button, #daily-dashboard .book-button, .owner-preview-popup button, .owner-preview-popup a {
+  max-width: 100%; min-width: 0; white-space: normal; overflow-wrap: anywhere;
+  background: #000 !important; color: #d4af37 !important; border-color: #d4af37;
+}
+#daily-dashboard .owner-demo-submenu button {
+  background: transparent !important; border-color: transparent; box-shadow: none;
+}
+#daily-dashboard .nav button > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+#daily-dashboard .nav button, #daily-dashboard .action-btn, #daily-dashboard .photo-button,
+#daily-dashboard .book-button, #daily-dashboard .owner-preview-controls button,
+.owner-preview-popup button, .owner-preview-popup a { height: auto; }
 #daily-dashboard .month-toolbar { grid-template-columns: minmax(0, 1fr); }
 #daily-dashboard .calendar-filter { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; min-width: 0; max-width: 100%; }
 @media (max-width:760px) {

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <defs>
+    <radialGradient id="surface">
+      <stop stop-color="#302920"/>
+      <stop offset=".65" stop-color="#121110"/>
+      <stop offset="1" stop-color="#050505"/>
+    </radialGradient>
+    <linearGradient id="gold" x2=".8" y2="1">
+      <stop stop-color="#6a4514"/>
+      <stop offset=".3" stop-color="#ffe2a0"/>
+      <stop offset=".55" stop-color="#b78029"/>
+      <stop offset=".8" stop-color="#f3d77a"/>
+      <stop offset="1" stop-color="#55320b"/>
+    </linearGradient>
+    <path id="hole" d="M154 110 190 98 214 70 246 84 278 66 313 79 349 65 370 89 410 79 428 104 473 104 466 131 501 148 484 177 508 207 494 237 512 268 481 289 491 321 460 338 456 365 422 363 399 390 369 379 337 404 305 387 272 402 248 380 212 389 194 359 159 353 163 325 130 305 145 279 124 249 139 218 125 188 148 163 136 137Z"/>
+    <mask id="opening">
+      <rect width="640" height="480" fill="#fff"/>
+      <use href="#hole" fill="#000"/>
+    </mask>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".09"/></feComponentTransfer>
+    </filter>
+  </defs>
+  <g mask="url(#opening)">
+    <rect width="640" height="480" fill="url(#surface)"/>
+    <rect width="640" height="480" filter="url(#grain)" opacity=".5"/>
+    <g fill="none" stroke="#000" stroke-width="6">
+      <path d="M214 70 190 41 167 28 160 0M154 110 109 96 89 63 54 47 18 0M136 137 102 152 57 137 21 147 0 134M125 188 83 206 48 193 0 213M124 249 76 256 43 290 0 302M130 305 95 335 72 332 50 370 0 392M159 353 133 398 139 424 107 480M248 380 234 416 214 431 220 480M337 404 359 435 351 465 368 480M422 363 464 402 502 398 533 446 591 480M491 321 538 322 572 349 640 356M512 268 551 240 580 251 640 226M508 207 553 181 566 154 615 128 640 130M473 104 493 65 530 53 548 0M370 89 387 41 423 25 435 0"/>
+    </g>
+    <g fill="none" stroke="url(#gold)" stroke-width="1.8" opacity=".85">
+      <path d="M214 70 188 43 167 29 160 0M154 110 108 97 88 64 54 48 18 0M136 137 102 153 57 138 21 148 0 135M125 188 83 207 48 194 0 214M124 249 76 257 43 291 0 303M130 305 95 336 72 333 50 371 0 393M159 353 132 398 138 424 107 480M248 380 233 416 213 431 220 480M337 404 358 435 350 465 368 480M422 363 463 403 502 399 533 447 591 480M491 321 538 323 572 350 640 357M512 268 551 241 580 252 640 227M508 207 553 182 566 155 615 129 640 131M473 104 494 65 531 53 548 0M370 89 388 41 424 25 435 0"/>
+      <path d="M109 96 104 57 88 39M57 137 49 113 26 109M76 256 70 232 37 220M95 335 115 353 109 383M234 416 261 440 257 469M464 402 482 377 519 369M538 322 550 293 582 282M553 181 593 188 617 169M493 65 475 41 482 17"/>
+    </g>
+    <use href="#hole" fill="none" stroke="#050505" stroke-width="26"/>
+    <use href="#hole" fill="none" stroke="#72604a" stroke-width="16" stroke-linejoin="bevel"/>
+    <use href="#hole" fill="none" stroke="url(#gold)" stroke-width="4"/>
+    <g fill="#1b1814" stroke="#9a7135" stroke-width="1.3">
+      <path d="m154 110 36-12-11 18-22 7ZM214 70l32 14-25 8ZM278 66l35 13-23 6ZM370 89l40-10-14 20ZM473 104l-7 27-13-16ZM484 177l24 30-26-9ZM494 237l18 31-23-10ZM481 289l10 32-23-16ZM456 365l-34-2 23-17ZM369 379l-32 25 7-24ZM272 402l-24-22 29 3ZM194 359l-35-6 27-14ZM130 305l15-26 9 23ZM124 249l15-31 10 30ZM125 188l23-25 2 25Z"/>
+    </g>
+  </g>
+</svg>

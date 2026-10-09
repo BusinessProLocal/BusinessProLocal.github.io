@@ -66,46 +66,37 @@
   }
   const image = (src, alt, className = "") => `<img class="${className}" src="${escape(src)}" alt="${escape(alt)}" loading="lazy">`;
   const ads = [
-    { name: "Pine & Blade", type: "Barbershop", tagline: "Classic cuts & hot-towel shaves", button: "Book now",
+    { name: "Pine & Blade", domain: "pineandblade", holeSize: "small", type: "Barbershop", tagline: "Classic cuts & hot-towel shaves", button: "Book now",
       bg: "#13261c", accent: "#d9b25c", glow: "#2b5a40", photo: "../assets/ads/ad-pine-blade.jpg",
       icon: '<circle cx="14" cy="36" r="6"/><circle cx="34" cy="36" r="6"/><path d="M18 31 36 7M30 31 12 7"/>' },
-    { name: "Harbor Light Salon", type: "Hair salon", tagline: "Color, cuts & styling", button: "Book now",
+    { name: "Harbor Light Salon", domain: "harborlightsalon", holeSize: "medium", type: "Hair salon", tagline: "Color, cuts & styling", button: "Book now",
       bg: "#14213d", accent: "#f2c57c", glow: "#2f4a80", photo: "../assets/ads/ad-harbor-light.jpg",
       icon: '<path d="M8 18h32v7H8z"/><path d="M11 25v12M15 25v12M19 25v12M23 25v12M27 25v12M31 25v12M35 25v12"/><path d="M38 6l1.5 3.5L43 11l-3.5 1.5L38 16l-1.5-3.5L33 11l3.5-1.5z" class="fill"/>' },
-    { name: "Seaside Treasures", type: "Gifts & keepsakes", tagline: "Maine-made gifts, candles & sea glass", button: "Shop now",
+    { name: "Seaside Treasures", domain: "seasidetreasures", holeSize: "medium", type: "Gifts & keepsakes", tagline: "Maine-made gifts, candles & sea glass", button: "Shop now",
       bg: "#0f3b3e", accent: "#f0d9a8", glow: "#1f6f73", photo: "../assets/ads/ad-seaside-treasures.jpg",
       icon: '<path d="M24 40 7 21C12 9 36 9 41 21Z"/><path d="M24 40 13 15M24 40 19 12M24 40V11M24 40 29 12M24 40 35 15"/><path d="M19 40h10"/>' },
-    { name: "Northway Auto Care", type: "Auto shop", tagline: "Honest repairs, oil changes & inspections", button: "Call today",
+    { name: "Northway Auto Care", domain: "northwayautocare", holeSize: "medium", type: "Auto shop", tagline: "Honest repairs, oil changes & inspections", button: "Call today",
       bg: "#1c1c1e", accent: "#e4572e", glow: "#3a2a24", photo: "../assets/ads/ad-northway-auto.jpg",
       icon: '<path d="M38.5 9.5a8 8 0 0 0-10.6 10L10 37.4a3 3 0 0 0 4.2 4.2L32 23.7a8 8 0 0 0 10-10.6l-5.2 5.2-4.6-1.1-1.1-4.6z"/>' },
-    { name: "Iron Anchor Tattoo", type: "Tattoo & piercing", tagline: "Custom tattoos & piercing", button: "Book now",
+    { name: "Iron Anchor Tattoo", domain: "ironanchortattoo", holeSize: "medium", type: "Tattoo & piercing", tagline: "Custom tattoos & piercing", button: "Book now",
       bg: "#0b0b0b", accent: "#c8102e", glow: "#3a0d14", photo: "../assets/ads/ad-iron-anchor.jpg",
       icon: '<circle cx="24" cy="9" r="4"/><path d="M24 13v28M15 20h18"/><path d="M8 29c1 7 8 12 16 12s15-5 16-12"/><path d="M5 32l3-4 4 3M43 32l-3-4-4 3"/>' },
-    { name: "Evergreen Home Services", type: "Home services", tagline: "Cleaning, landscaping & snow plowing", button: "Get a quote",
+    { name: "Evergreen Home Services", domain: "evergreenhomeservices", holeSize: "large", type: "Home services", tagline: "Cleaning, landscaping & snow plowing", button: "Get a quote",
       bg: "#16301f", accent: "#9fd18b", glow: "#2c5d3a", photo: "../assets/ads/ad-evergreen-home.jpg",
       icon: '<path d="M24 5 13 21h6L9 34h30L29 21h6z"/><path d="M24 34v8"/>' },
-    { name: "Muddy Paws Pet Care", type: "Pet care", tagline: "Grooming, boarding & play", button: "Book now",
+    { name: "Muddy Paws Pet Care", domain: "muddypawspetcare", holeSize: "medium", type: "Pet care", tagline: "Grooming, boarding & play", button: "Book now",
       bg: "#3b2414", accent: "#f4a259", glow: "#6b3f1f", photo: "../assets/ads/ad-muddy-paws.jpg",
       icon: '<ellipse class="fill" cx="24" cy="32" rx="9" ry="7.5"/><circle class="fill" cx="12.5" cy="21" r="3.8"/><circle class="fill" cx="19.5" cy="13.5" r="3.8"/><circle class="fill" cx="28.5" cy="13.5" r="3.8"/><circle class="fill" cx="35.5" cy="21" r="3.8"/>' },
-    { name: "Sea Glass Nails & Spa", type: "Nails & spa", tagline: "Manicures, pedicures & massage", button: "Book now",
+    { name: "Sea Glass Nails & Spa", domain: "seaglassnailsandspa", holeSize: "large", type: "Nails & spa", tagline: "Manicures, pedicures & massage", button: "Book now",
       bg: "#1d3b3a", accent: "#a8e6cf", glow: "#3f7f78", photo: "../assets/ads/ad-sea-glass.jpg",
       icon: '<path d="M24 40c-7-6-7-18 0-28 7 10 7 22 0 28z"/><path d="M24 40c-9 0-17-5-18-14 7-1 14 4 18 14zM24 40c9 0 17-5 18-14-7-1-14 4-18 14z"/>' }
   ];
-  function adCard(ad, fullSize = false, banner = false) {
-    const sponsored = '<span class="ad-sponsored">Sponsored</span>';
-    if (ad.photo && banner) return `<span class="ad-card ad-banner">
-      ${sponsored}
-      ${image(ad.photo, `${ad.name} - ${ad.tagline}`, "ad-photo")}
-      <span class="ad-banner-strip"><span class="ad-name">${escape(ad.name)}</span><span class="ad-banner-cta">Shop now</span></span></span>`;
-    if (ad.photo && !banner) return `<span class="ad-card ad-photo-card${fullSize ? " ad-card-full" : ""}">
-      ${sponsored}
-      ${image(ad.photo, `${ad.name} - ${ad.tagline}`, "ad-photo")}</span>`;
-    return `<span class="ad-card${fullSize ? " ad-card-full" : ""}${banner ? " ad-banner" : ""}" style="--bg:${ad.bg};--accent:${ad.accent};--glow:${ad.glow}">
-      ${sponsored}
-      <span class="ad-art"><span class="ad-badge"><svg viewBox="0 0 48 48" aria-hidden="true">${ad.icon}</svg></span></span>
-      <span class="ad-text"><span class="ad-type">${escape(ad.type)}</span>
-      <span class="ad-name"${fullSize ? ' id="ad-popup-name"' : ""}>${escape(ad.name)}</span>
-      <span class="ad-tagline">${escape(ad.tagline)}</span><span class="ad-cta">${escape(ad.button)}</span></span></span>`;
+  function adCard(ad, fullSize = false) {
+    return `<span class="ad-bullethole ad-hole-${escape(ad.holeSize)}${fullSize ? " ad-card-full" : ""}">
+      ${image("../assets/ads/bullet-hole.svg", "", "ad-bullethole-frame")}
+      <span class="ad-bullethole-copy"><span class="ad-sponsored">Sponsored</span>
+        <strong class="ad-name">${escape(ad.name)}</strong>
+        <span class="ad-address">${escape(ad.domain)}.<wbr>businessprolocal.com</span></span></span>`;
   }
   function setDemoIndexing(ownerOnly) {
     const robots = document.head.querySelector('meta[name="robots"]');
@@ -142,12 +133,12 @@
     if ($("cart-link")) $("cart-link").textContent = `Cart (${api.read(localStorage, config).cart.reduce((sum, item) => sum + item.quantity, 0)})`;
   }
   function renderAds() {
-    const excluded = bookingEnabled ? [0, 1] : storeEnabled ? [2, 5] : [];
+    const excluded = bookingEnabled ? [0, 1, 2] : storeEnabled ? [2, 5] : [];
     const selected = ads.map((ad, index) => ({ ad, index })).filter(item => !excluded.includes(item.index));
     $("demo-content").insertAdjacentHTML("beforebegin", `<div id="sample-ads"><p class="ad-label">Sample ads: Business Pro customers can choose to be featured on other local Business Pro websites.</p>
       </div>
       <div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
-        `<button type="button" class="ad-tab${bookingEnabled && index === 2 ? " ad-bullethole" : ""}" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${bookingEnabled && index === 2 ? `${image("../assets/ads/ad-seaside-bullethole.png", "", "ad-bullethole-image")}<span class="ad-bullethole-copy"><strong>Seaside Treasures</strong><span>seasidetreasures.<wbr>businessprolocal.com</span></span>` : adCard(ad, false, true)}</button>`).join("")}</div>
+        `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad, ${escape(ad.domain)}.businessprolocal.com" aria-haspopup="dialog">${adCard(ad)}</button>`).join("")}</div>
       <dialog id="ad-popup" aria-label="Sample business ad"><div id="ad-popup-content"></div>
       <button type="button" id="close-ad">Close ad</button></dialog>`);
     document.querySelectorAll("[data-ad]").forEach(button => button.addEventListener("click", () => {
@@ -190,29 +181,16 @@
     }
     return spots.sort((a, b) => b.width * b.height - a.width * a.height);
   }
-  function fixedAdSpot(bounds, obstacles, width, height) {
-    const tops = [...new Set([bounds.top, ...obstacles.map(rect => rect.bottom + 10)])]
-      .filter(top => top >= bounds.top && top + height <= bounds.bottom).sort((a, b) => a - b);
-    for (const top of tops) {
-      const spot = emptyAdSpots({ ...bounds, top, bottom: top + height }, obstacles, width, width / height)[0];
-      if (spot) return { ...spot, top, width, height };
-    }
-    return null;
-  }
   function layoutAds() {
     const row = document.querySelector(".ad-mobile-row");
     if (!row || document.body.classList.contains("demo-owner-open")) return;
     const buttons = [...row.querySelectorAll("[data-ad]")];
     buttons.forEach(button => {
-      button.classList.remove("ad-gap", "ad-compact");
-      button.hidden = false;
       button.removeAttribute("style");
       button.dataset.placement = "below shop photo";
     });
-    if ($("demo-error").textContent.startsWith("Some sample ads cannot fit safely") ||
-      $("demo-error").textContent === "The 334 x 250 Seaside sample ad is hidden because no safe full-size gap fits at this screen width.") $("demo-error").textContent = "";
-    if (window.innerWidth <= 600) return;
-    buttons.forEach(button => button.classList.add("ad-gap"));
+    row.classList.toggle("ad-desktop", window.innerWidth > 1280);
+    if (window.innerWidth <= 1280) return;
     const appBounds = app.getBoundingClientRect();
     const appStyles = getComputedStyle(app);
     const borderLeft = parseFloat(appStyles.borderLeftWidth);
@@ -259,44 +237,12 @@
     // One ad per region per pass: use independent open spots before returning
     // to a second side. Never convert a long gutter into a stack of ads.
     const usedSpots = new Set();
-    if (bookingEnabled) {
-      const bounds = { left: appBounds.left + 24, right: appBounds.right - 24,
-        top: document.querySelector(".hero-photo").getBoundingClientRect().bottom + 12,
-        bottom: document.querySelector("#services").getBoundingClientRect().top - 8 };
-      const bulletWidth = 334, bulletHeight = 250;
-      const findBulletSpot = region => fixedAdSpot(region, obstacles, bulletWidth, bulletHeight);
-      const spot = findBulletSpot(bounds);
-      const upperBounds = { ...bounds, top: header.getBoundingClientRect().top + 10,
-        bottom: document.querySelector(".hero-photo").getBoundingClientRect().top - 10 };
-      const alternative = spot ? null : findBulletSpot(upperBounds) ||
-        regions.map(region => ({ spot: findBulletSpot(region), label: region.label }))
-          .filter(region => region.spot).sort((a, b) => a.spot.top - b.spot.top)[0];
-      if (spot) placements.push({ ...spot, label: "home, existing open gap below shop photo" });
-      else if (alternative) placements.push(alternative.spot ?
-        { ...alternative.spot, label: alternative.label } :
-        { ...alternative, label: "shop header, open gap above shop photo" });
-      else {
-        $("demo-error").textContent = "The 334 x 250 Seaside sample ad is hidden because no safe full-size gap fits at this screen width.";
-        console.error("No safe 4:3 Seaside test ad spot.", { width: window.innerWidth });
-        placements.push(null);
-      }
-    }
-    if (bookingEnabled && window.innerWidth >= 1024) {
-      const buttonBounds = callToAction.getBoundingClientRect();
-      const center = buttonBounds.left + buttonBounds.width / 2;
-      const pair = symmetricAdSpots(regions[0], obstacles, center);
-      if (pair.length) {
-        placements.push({ ...pair[1], label: `${regions[0].label}, right` });
-        usedSpots.add(`${regions[0].label}/left`);
-        usedSpots.add(`${regions[0].label}/right`);
-      }
-    }
     for (let pass = 0; pass < 2 && placements.length < buttons.length; pass++) {
       for (const region of regions) {
         const spot = emptyAdSpots(region, [...obstacles, ...placements.filter(Boolean).map(slot => ({
           left: slot.left - 32, right: slot.left + slot.width + 32,
           top: slot.top - 40, bottom: slot.top + slot.height + 40
-        }))]).find(slot => {
+        }))], 280, 4 / 3).find(slot => {
           const side = slot.left + slot.width / 2 < appBounds.left + appBounds.width / 2 ? "left" : "right";
           return !usedSpots.has(`${region.label}/${side}`);
         });
@@ -308,32 +254,17 @@
       }
     }
     if (placements.length < buttons.length) {
-      $("demo-error").textContent = "Some sample ads cannot fit safely at this size. They are hidden to keep shop content clear.";
-      console.error("Not enough safe individual ad spots.", { width: window.innerWidth, placed: placements.length, total: buttons.length });
+      row.classList.remove("ad-desktop");
+      return;
     }
     buttons.forEach((button, index) => {
       const slot = placements[index];
-      button.hidden = !slot;
-      if (!slot) return;
-      button.classList.toggle("ad-compact", slot.width < 170 || slot.height < 100);
       button.style.left = `${slot.left - appBounds.left - borderLeft}px`;
       button.style.top = `${slot.top - appBounds.top - borderTop}px`;
       button.style.width = `${slot.width}px`;
       button.style.height = `${slot.height}px`;
       button.dataset.placement = slot.label;
     });
-  }
-  function symmetricAdSpots(bounds, obstacles, center) {
-    const leftSpots = emptyAdSpots({ ...bounds, right: center }, obstacles);
-    for (const left of leftSpots) {
-      const right = { ...left, left: 2 * center - left.left - left.width };
-      if (right.left + right.width > bounds.right) continue;
-      if (obstacles.some(rect => right.left < rect.right + 10 &&
-        right.left + right.width > rect.left - 10 &&
-        right.top < rect.bottom + 10 && right.top + right.height > rect.top - 10)) continue;
-      return [left, right];
-    }
-    return [];
   }
   function renderHome() {
     document.body.classList.remove("demo-owner-open");

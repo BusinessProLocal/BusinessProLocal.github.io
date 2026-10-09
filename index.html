@@ -62,7 +62,7 @@ h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(
 .card h3{margin:0 0 6px;color:var(--ink);font-size:1.1rem}
 .card p{margin:0;color:var(--muted);font-size:.95rem}
 .tiers{display:grid;gap:20px;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
-@media(max-width:850px){.tiers{grid-template-columns:1fr}}
+@media(max-width:850px){.tiers{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}}
 .tier{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 22px;display:flex;flex-direction:column;gap:12px}
 .tier.top{border:2px solid var(--gold)}

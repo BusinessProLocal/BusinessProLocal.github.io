@@ -96,6 +96,7 @@
     let changed = false;
     for (const element of document.querySelectorAll(candidates)) {
       if (element.closest(".gold-bar")) continue;
+      if (element.matches("button,a.btn,a.book-button,[role=button]")) continue;
       if (element.closest("#daily-dashboard,.owner-preview-popup") || document.body.classList.contains("demo-owner-open")) continue;
       if (element.closest(".gold-word-visual,.gold-word-text")) continue;
       if (!element.classList.contains("gold-word") && !goldColors.has(getComputedStyle(element).color)) continue;

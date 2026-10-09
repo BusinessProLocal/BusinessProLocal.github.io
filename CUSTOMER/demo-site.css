@@ -104,45 +104,12 @@ main > section { max-width: 1100px; padding: 40px 16px; margin: auto; }
 .demo-gallery.single img { max-height: 380px; aspect-ratio: auto; }
 .text-logo { font-family: "Playfair Display", Georgia, serif; font-size: 1.3rem; color: var(--gold); }
 .ad-label { font-size: .85rem; color: var(--muted); text-align: center; max-width: 850px; margin: 16px auto; padding-inline: 16px; }
-.ad-tab { display: block; width: 140px; padding: 0; border: 0; border-radius: 14px; background: transparent; font-weight: 400; flex-shrink: 0; }
-.ad-tab:hover, .ad-tab:focus-visible { background: transparent; box-shadow: 0 0 12px rgba(203,207,212,.3); }
-.ad-card { width: 100%; aspect-ratio: 2 / 3; border-radius: 8px; border: 1px solid #cbcfd4; overflow: hidden; display: flex; flex-direction: column; background: var(--bg); color: #fff; position: relative; box-shadow: 0 3px 12px rgba(0,0,0,.35); }
-.ad-sponsored { position: absolute; z-index: 1; top: 4px; left: 4px; padding: 2px 6px; border-radius: 999px; background: rgba(15,15,15,.9); color: #d1d5db; font: 9px/1.3 "Inter", system-ui, sans-serif; }
-.ad-art { flex: 1.1; min-height: 0; display: grid; place-items: center; background: radial-gradient(circle at 50% 45%,var(--glow),transparent 70%); overflow: hidden; }
-.ad-badge { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--accent); background: rgba(0,0,0,.25); }
-.ad-card svg { width: 33px; height: 33px; stroke: var(--accent); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.ad-card svg .fill { fill: var(--accent); stroke: none; }
-.ad-photo { display: block; width: 100%; height: auto; }
-.ad-photo-card { display: block; aspect-ratio: auto; border-width: 1px; background: var(--black); }
-.ad-photo-card.ad-card-full { width: 300px; }
-.ad-text { flex: 1; padding: 4px 8px 9px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.ad-type { font-size: 7px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-weight: 700; line-height: 1.3; }
-.ad-name { font-family: "Playfair Display",serif; font-weight: 800; font-size: 14px; line-height: 1.1; }
-.ad-tagline { font-size: 9px; color: rgba(255,255,255,.85); line-height: 1.35; }
-.ad-cta { margin-top: auto; font-size: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; background: var(--accent); color: var(--bg); }
-.ad-card-full { width: 240px; max-width: 100%; margin-inline: auto; }
-.ad-card-full .ad-badge { width: 96px; height: 96px; }
-.ad-card-full svg { width: 56px; height: 56px; }
-.ad-card-full .ad-text { padding: 6px 16px 16px; gap: 6px; }
-.ad-card-full .ad-type { font-size: .62rem; }
-.ad-card-full .ad-name { font-size: 1.45rem; }
-.ad-card-full .ad-tagline { font-size: .8rem; }
-.ad-card-full .ad-cta { font-size: .72rem; padding: 7px 14px; }
-.ad-mobile-row { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 0; }
-.ad-mobile-row .ad-tab { width: 100%; min-width: 0; }
-.ad-mobile-row .ad-banner { display: block; aspect-ratio: 2 / 1; border-radius: 8px; background: var(--black); }
-.ad-banner .ad-photo { width: 100%; height: 100%; object-fit: cover; object-position: center; }
-.ad-banner-strip { position: absolute; inset: auto 0 0; display: grid; gap: 2px; padding: 4px; background: rgba(0,0,0,.86); border-top: 1px solid var(--gold); color: var(--gold-hi); }
-.ad-banner-strip .ad-name { font-size: clamp(10px, 1.8vw, 16px); line-height: 1.15; }
-.ad-banner-cta { font-size: 9px; line-height: 1.1; font-weight: 700; }
-.ad-mobile-row .ad-gap { position: absolute; }
-.ad-gap .ad-banner { height: 100%; aspect-ratio: auto; }
-.ad-compact .ad-banner-strip .ad-name { font-size: 10px; }
-.ad-tab[hidden] { display: none; }
-@media(min-width:601px) {
-  .ad-mobile-row { display: block; height: 0; padding: 0; }
-  .ad-mobile-row .ad-tab { position: absolute; }
-}
+.ad-tab { display: block; width: 100%; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; font-weight: 400; }
+.ad-tab:hover, .ad-tab:focus-visible { background: transparent; filter: drop-shadow(0 0 8px rgba(212,175,55,.4)); }
+.ad-mobile-row { position: static; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); justify-items: center; gap: 16px; padding: 20px 0; }
+.ad-mobile-row .ad-tab { max-width: 334px; aspect-ratio: 4 / 3; }
+.ad-mobile-row.ad-desktop { display: block; height: 0; padding: 0; }
+.ad-desktop .ad-tab { position: absolute; max-width: none; }
 .contact-details { max-width: 650px; margin-inline: auto; text-align: center; }
 body.demo-owner-open .ad-mobile-row, .ad-mobile-row[hidden] { display: none; }
 dialog { width: min(430px, calc(100% - 32px)); max-height: calc(100vh - 40px); overflow: auto; padding: 24px; background: var(--panel); color: var(--ink); border: 2px solid var(--gold); border-radius: 12px; text-align: center; }
@@ -170,7 +137,7 @@ legend { color: var(--gold); padding: 0 6px; }
 .booking-date-weekdays { text-align: center; font-size: .8rem; }
 .booking-date-day { padding: 8px 2px; font-weight: 400; background: var(--black); color: var(--gold); border-width: 1px; }
 .booking-date-day.is-selected { background: var(--gold); color: #111; }
-.booking-date-day small { display: block; font-size: .6rem; }
+.booking-date-day small { display: block; font-size: .6rem; line-height: 1.25; overflow-wrap: anywhere; }
 .booking-date-note { font-size: .85rem; color: var(--muted); }
 .cart-row { display: grid; grid-template-columns: 90px 1fr 100px 110px; gap: 18px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--line); }
 .cart-row img { width: 90px; border-radius: 8px; }
@@ -203,13 +170,15 @@ legend { color: var(--gold); padding: 0 6px; }
 #booking-form legend { float: left; width: 100%; padding: 0 0 12px; }
 #booking-form legend + * { clear: both; }
 #booking-form .booking-date-calendar, #booking-form .demo-summary { border: 0; background: transparent; }
-.ad-mobile-row .ad-bullethole { position: relative; grid-column: 1 / -1; width: min(334px, 100%); justify-self: center; aspect-ratio: 334 / 250; border: 0; border-radius: 0; background: #000; box-shadow: none; container-type: inline-size; }
-@media(min-width:601px) { .ad-mobile-row .ad-bullethole { position: absolute; } }
-.ad-bullethole .ad-bullethole-image { display: block; width: 100%; height: 100%; object-fit: contain; }
-.ad-bullethole-copy { position: absolute; left: 30%; top: 34%; width: 40%; height: 34%; display: flex; flex-direction: column; justify-content: center; gap: 4px; background: #080705; color: var(--gold-hi); text-align: center; }
-.ad-bullethole-copy strong { font: 800 clamp(14px, 5.4cqi, 18px)/1.1 "Playfair Display", Georgia, serif; }
-.ad-bullethole-copy > span { font: 600 10px/1.25 "Inter", system-ui, sans-serif; overflow-wrap: anywhere; }
-.ad-bullethole:hover, .ad-bullethole:focus-visible { background: #000; box-shadow: none; }
+.ad-bullethole { --hole-scale: 1; --hole-width: 52%; position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; background: radial-gradient(ellipse, #24190a, #080705 60%); overflow: hidden; container-type: inline-size; }
+.ad-hole-medium { --hole-scale: 1.1; --hole-width: 58%; }
+.ad-hole-large { --hole-scale: 1.2; --hole-width: 64%; }
+.ad-bullethole-frame { display: block; width: 100%; height: 100%; transform: scale(var(--hole-scale)); }
+.ad-bullethole-copy { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: var(--hole-width); display: flex; flex-direction: column; align-items: center; gap: 7px; color: var(--gold-hi); text-align: center; }
+.ad-bullethole-copy .ad-sponsored { font: 600 10px/1.2 "Inter", system-ui, sans-serif; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.ad-bullethole-copy .ad-name { font: 800 clamp(16px, 6.2cqi, 22px)/1.15 "Playfair Display", Georgia, serif; }
+.ad-bullethole-copy .ad-address { font: 600 12px/1.35 "Inter", system-ui, sans-serif; overflow-wrap: anywhere; max-width: 100%; }
+.ad-card-full { max-width: 380px; margin-inline: auto; }
 .photo-control { text-align: center; margin-top: 20px; }
 .photo-button { padding: 16px 22px; font-size: 1.1rem; max-width: 100%; }
 .photo-message { font-size: .9rem; color: var(--gold); }
@@ -291,6 +260,5 @@ footer { text-align: center; border-top: 1px solid var(--line); padding: 30px 16
   html { scroll-padding-top: 16px; }
 }
 @media(max-width:600px) {
-  .ad-banner-strip .ad-name { font-size: 10px; }
 }
 @media(max-width:600px) { .card-grid, .demo-gallery, .cards { grid-template-columns: 1fr; } .cart-row { grid-template-columns: 60px 1fr; } .cart-row img { width: 60px; } .content, .topbar { padding: 16px; } main > section { padding-block: 28px; } }
