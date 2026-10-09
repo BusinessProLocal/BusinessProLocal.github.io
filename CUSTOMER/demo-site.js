@@ -12,6 +12,7 @@
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all";
   let ownerCalendarObserver = null;
+  let adLayoutObserver = null;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
   ownerStyles.href = "../../CUSTOMER/demo-owner.css";
@@ -87,6 +88,9 @@
       icon: '<path d="M24 40c-7-6-7-18 0-28 7 10 7 22 0 28z"/><path d="M24 40c-9 0-17-5-18-14 7-1 14 4 18 14zM24 40c9 0 17-5 18-14-7-1-14 4-18 14z"/>' }
   ];
   function adCard(ad, fullSize = false, banner = false) {
+    if (ad.photo && banner) return `<span class="ad-card ad-banner">
+      ${image(ad.photo, `${ad.name} - ${ad.tagline}`, "ad-photo")}
+      <span class="ad-banner-strip"><span class="ad-name">${escape(ad.name)}</span><span class="ad-banner-cta">Shop now</span></span></span>`;
     if (ad.photo && !banner) return `<span class="ad-card ad-photo-card${fullSize ? " ad-card-full" : ""}">
       ${image(ad.photo, `${ad.name} - ${ad.tagline}`, "ad-photo")}</span>`;
     return `<span class="ad-card${fullSize ? " ad-card-full" : ""}${banner ? " ad-banner" : ""}" style="--bg:${ad.bg};--accent:${ad.accent};--glow:${ad.glow}">
@@ -118,13 +122,10 @@
   function renderAds() {
     const excluded = bookingEnabled ? [0, 1] : storeEnabled ? [2, 5] : [];
     const selected = ads.map((ad, index) => ({ ad, index })).filter(item => !excluded.includes(item.index));
-    const tabs = selected.map(({ ad, index }) =>
-      `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${adCard(ad)}</button>`);
     $("demo-content").insertAdjacentHTML("beforebegin", `<div id="sample-ads"><p class="ad-label">Sample ads: Business Pro customers can choose to be featured on other local Business Pro websites.</p>
-      <aside class="ad-rail ad-rail-left" aria-label="Other local businesses, left">${tabs.slice(0, tabs.length / 2).join("")}</aside>
-      <aside class="ad-rail ad-rail-right" aria-label="Other local businesses, right">${tabs.slice(tabs.length / 2).join("")}</aside></div>
+      </div>
       <div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
-        `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${adCard(ad)}${adCard(ad, false, true)}</button>`).join("")}</div>
+        `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad" aria-haspopup="dialog">${adCard(ad, false, true)}</button>`).join("")}</div>
       <dialog id="ad-popup" aria-label="Sample business ad"><div id="ad-popup-content"></div>
       <button type="button" id="close-ad">Close ad</button></dialog>`);
     document.querySelectorAll("[data-ad]").forEach(button => button.addEventListener("click", () => {
@@ -135,9 +136,63 @@
     $("close-ad").addEventListener("click", () => $("ad-popup").close());
     $("ad-popup").addEventListener("click", event => { if (event.target === $("ad-popup")) $("ad-popup").close(); });
   }
+  function adGapSlots(width, height) {
+    if (width < 120 || height < 100) return [];
+    const adHeight = Math.min(width * 1.5, 200, height - 16);
+    const count = Math.min(4, Math.floor((height + 16) / (adHeight + 24)));
+    const spacing = (height - count * adHeight) / (count + 1);
+    return Array.from({ length: count }, (_, index) => ({
+      top: spacing + index * (adHeight + spacing), height: adHeight
+    }));
+  }
+  function layoutAds() {
+    const row = document.querySelector(".ad-mobile-row");
+    if (!row || document.body.classList.contains("demo-owner-open")) return;
+    const buttons = [...row.querySelectorAll("[data-ad]")];
+    buttons.forEach(button => {
+      button.classList.remove("ad-gap");
+      button.removeAttribute("style");
+      button.dataset.placement = "below shop photo";
+    });
+    row.classList.remove("all-ads-placed");
+    if (window.innerWidth <= 600) return;
+    const anchors = [...document.querySelectorAll("#services .menu, #booking .demo-form, #checkout .demo-form, #contact .contact-details")];
+    const placements = [];
+    for (const anchor of anchors) {
+      const section = anchor.closest("section");
+      const bounds = anchor.getBoundingClientRect(), outer = section.getBoundingClientRect();
+      for (const side of ["left", "right"]) {
+        const width = Math.floor((side === "left" ? bounds.left - outer.left : outer.right - bounds.right) - 32);
+        for (const slot of adGapSlots(width, bounds.height)) {
+          placements.push({ anchor, side, width, ...slot,
+            top: slot.top + (side === "right" ? Math.min(18, slot.top / 2) : 0),
+            section: section.id });
+        }
+      }
+    }
+    // Alternate sections and sides instead of filling one long gutter first.
+    placements.sort((a, b) => a.top - b.top || a.side.localeCompare(b.side));
+    let placementCount = Math.min(buttons.length, placements.length);
+    if ((buttons.length - placementCount) % 2) placementCount--;
+    const assigned = buttons.slice(0, placementCount);
+    assigned.forEach(button => button.classList.add("ad-gap"));
+    row.classList.toggle("all-ads-placed", assigned.length === buttons.length);
+    const appBounds = app.getBoundingClientRect();
+    assigned.forEach((button, index) => {
+      const slot = placements[index], bounds = slot.anchor.getBoundingClientRect();
+      const x = slot.side === "left" ? bounds.left - slot.width - 16 : bounds.right + 16;
+      button.style.left = `${x - appBounds.left - app.clientLeft}px`;
+      button.style.top = `${bounds.top - appBounds.top - app.clientTop + slot.top}px`;
+      button.style.width = `${slot.width}px`;
+      button.style.height = `${slot.height}px`;
+      button.dataset.placement = `${slot.section}, ${slot.side} gutter`;
+    });
+  }
   function renderHome() {
     document.body.classList.remove("demo-owner-open");
     app.classList.toggle("barber-customer-demo", bookingEnabled);
+    const mobileAds = document.querySelector(".ad-mobile-row");
+    if (mobileAds) mobileAds.remove();
     const shop = config.shop, state = api.read(localStorage, config);
     $("demo-content").innerHTML = `<section id="home">${image(config.photos[0].src, config.photos[0].alt, "hero-photo")}
       <div class="hero-content"><h2>${escape(shop.heroTitle)}</h2><p>${escape(shop.heroSubtitle)}</p>
@@ -168,11 +223,16 @@
           <p class="added-message" data-added="${escape(product.id)}" role="status"></p></article>`;
       }).join("")}</div></section>` : ""}
       ${storeEnabled ? `<section id="checkout"><h2>Your Order</h2>${checkoutContent(state)}</section>` : ""}
-      <section id="contact"><h2>Hours &amp; Contact</h2><p>${escape(shop.phoneDisplay)} &middot; ${escape(shop.email)}</p>
+      <section id="contact"><h2>Hours &amp; Contact</h2><div class="contact-details"><p>${escape(shop.phoneDisplay)} &middot; ${escape(shop.email)}</p>
       <p class="address">${escape([shop.addressLine1, shop.addressLine2].filter(Boolean).join(", "))}</p><h3>Hours</h3>
-      ${shop.hours.map(row => `<p><strong>${escape(row.days)}</strong>: ${escape(row.hours)}</p>`).join("")}</section>`;
-    const mobileAds = document.querySelector(".ad-mobile-row");
+      ${shop.hours.map(row => `<p><strong>${escape(row.days)}</strong>: ${escape(row.hours)}</p>`).join("")}</div></section>`;
     if (mobileAds) document.querySelector(".hero-photo").insertAdjacentElement("afterend", mobileAds);
+    adLayoutObserver?.disconnect();
+    adLayoutObserver = new ResizeObserver(layoutAds);
+    document.querySelectorAll("#demo-content > section, .hero-photo, #booking .demo-form, #checkout .demo-form, .contact-details").forEach(el => adLayoutObserver.observe(el));
+    document.querySelectorAll("#demo-content img").forEach(img => img.addEventListener("load", layoutAds));
+    document.fonts.ready.then(layoutAds);
+    layoutAds();
     if ($("call-order")) $("call-order").addEventListener("click", () => { $("call-message").textContent = `Call ${shop.phoneDisplay} to order`; });
     if (bookingEnabled) {
       setupBooking();
@@ -665,6 +725,7 @@
     const title = activeTab ? ownerTabLabel(activeTab) : "Dashboard";
     const preview = activeTab && !activeTab.live;
     document.body.classList.add("demo-owner-open");
+    adLayoutObserver?.disconnect();
     document.querySelector(".shop-header").hidden = true; document.querySelectorAll("#sample-ads, .ad-mobile-row").forEach(el => { el.hidden = true; });
     document.title = `${visitor?.business || config.shop.name} | ${title} Demo`;
     const records = [own];
@@ -929,6 +990,7 @@
     visitor = api.lead(localStorage);
     api.personalize(config, visitor);
     renderShell();
+    window.addEventListener("resize", layoutAds);
     api.read(localStorage, config);
     if (storeEnabled && pageName === "home") api.resetStoreVisit(localStorage, config);
     if (pageName !== "home" && !storeEnabled) throw new Error("This tier has no storefront.");

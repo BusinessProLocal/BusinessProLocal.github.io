@@ -4,10 +4,9 @@
 * { box-sizing: border-box; }
 html { scroll-padding-top: 16px; }
 #demo-app { position: relative; max-width: 1440px; margin: auto; padding-inline: 0; }
-#demo-app.has-customer-ads { padding-inline: 156px; }
+#demo-app.has-customer-ads { padding-inline: 0; }
 #demo-app.barber-customer-demo { border: 2px solid var(--gold); }
 .customer-demo-banner { background: var(--gold); color: #111; padding: 12px 16px; text-align: center; font-weight: 700; }
-#demo-app.has-customer-ads .customer-demo-banner { margin-inline: -156px; }
 body.demo-owner-open .customer-demo-banner { display: none; }
 #demo-app:not(.has-customer-ads) main > section { max-width: none; }
 .shipping-label { border: 2px solid var(--gold); border-radius: 10px; padding: 20px; margin-top: 20px; text-align: left; }
@@ -102,9 +101,6 @@ main > section { max-width: 1100px; padding: 40px 16px; margin: auto; }
 .demo-gallery.single img { max-height: 380px; aspect-ratio: auto; }
 .text-logo { font-family: "Playfair Display", Georgia, serif; font-size: 1.3rem; color: var(--gold); }
 .ad-label { font-size: .85rem; color: var(--muted); text-align: center; max-width: 850px; margin: 16px auto; padding-inline: 16px; }
-.ad-rail { position: absolute; top: 120px; bottom: 120px; width: 140px; display: flex; flex-direction: column; justify-content: space-around; gap: 18px; z-index: 10; }
-.ad-rail-left { left: 8px; }
-.ad-rail-right { right: 8px; }
 .ad-tab { display: block; width: 140px; padding: 0; border: 0; border-radius: 14px; background: transparent; font-weight: 400; flex-shrink: 0; }
 .ad-tab:hover, .ad-tab:focus-visible { background: transparent; box-shadow: 0 0 16px rgba(212,175,55,.7); }
 .ad-card { width: 100%; aspect-ratio: 2 / 3; border-radius: 14px; border: 1.5px solid #d4af37; overflow: hidden; display: flex; flex-direction: column; background: var(--bg); color: #fff; position: relative; box-shadow: 0 6px 20px rgba(0,0,0,.6); }
@@ -128,8 +124,18 @@ main > section { max-width: 1100px; padding: 40px 16px; margin: auto; }
 .ad-card-full .ad-name { font-size: 1.45rem; }
 .ad-card-full .ad-tagline { font-size: .8rem; }
 .ad-card-full .ad-cta { font-size: .72rem; padding: 7px 14px; }
-.ad-mobile-row { display: none; }
-.ad-mobile-row .ad-banner { display: none; }
+.ad-mobile-row { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 0; }
+.ad-mobile-row.all-ads-placed { padding: 0; }
+.ad-mobile-row .ad-tab { width: 100%; min-width: 0; }
+.ad-mobile-row .ad-banner { display: block; aspect-ratio: 2 / 1; border-radius: 8px; background: var(--black); }
+.ad-banner .ad-photo { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.ad-banner-strip { position: absolute; inset: auto 0 0; display: grid; gap: 2px; padding: 4px; background: rgba(0,0,0,.86); border-top: 1px solid var(--gold); color: var(--gold-hi); }
+.ad-banner-strip .ad-name { font-size: clamp(10px, 1.8vw, 16px); line-height: 1.15; }
+.ad-banner-cta { font-size: 9px; line-height: 1.1; font-weight: 700; }
+.ad-mobile-row .ad-gap { position: absolute; }
+.ad-gap .ad-banner { height: 100%; aspect-ratio: auto; }
+.contact-details { max-width: 650px; margin-inline: auto; text-align: center; }
+body.demo-owner-open .ad-mobile-row, .ad-mobile-row[hidden] { display: none; }
 dialog { width: min(430px, calc(100% - 32px)); max-height: calc(100vh - 40px); overflow: auto; padding: 24px; background: var(--panel); color: var(--ink); border: 2px solid var(--gold); border-radius: 12px; text-align: center; }
 dialog::backdrop { background: rgba(0,0,0,.8); }
 #ad-popup { width: min(430px, calc(100% - 16px)); max-width: calc(100% - 16px); padding: 16px; }
@@ -241,22 +247,9 @@ footer { text-align: center; border-top: 1px solid var(--line); padding: 30px 16
   .owner-nav span, .owner-nav button { padding: 6px 8px; }
 }
 @media(max-width:760px) {
-  html { scroll-padding-top: 80px; }
-  #demo-app.has-customer-ads { padding-inline: 0; }
-  #demo-app.has-customer-ads .customer-demo-banner { margin-inline: 0; }
-  .ad-rail { display: none; }
-  .ad-mobile-row { position: sticky; top: 0; z-index: 10; background: var(--black); display: flex; gap: 8px; width: 100%; overflow-x: auto; padding: 10px 16px; scroll-snap-type: x proximity; }
-  .ad-mobile-row .ad-tab { flex: 0 0 140px; scroll-snap-align: start; }
+  html { scroll-padding-top: 16px; }
 }
 @media(max-width:600px) {
-  html { scroll-padding-top: 16px; }
-  .ad-mobile-row { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; padding: 12px 0; }
-  .ad-mobile-row .ad-tab { width: 100%; min-width: 0; }
-  .ad-mobile-row .ad-photo-card { display: none; }
-  .ad-mobile-row .ad-banner { display: flex; aspect-ratio: auto; min-height: 72px; border-radius: 8px; background: radial-gradient(ellipse at top, var(--glow), var(--bg)); }
-  .ad-banner .ad-art { display: none; }
-  .ad-banner .ad-text { padding: 8px 6px; gap: 3px; }
-  .ad-banner .ad-name { font-size: 13px; }
-  .ad-banner .ad-type, .ad-banner .ad-tagline { display: none; }
+  .ad-banner-strip .ad-name { font-size: 10px; }
 }
 @media(max-width:600px) { .card-grid, .demo-gallery, .cards { grid-template-columns: 1fr; } .cart-row { grid-template-columns: 60px 1fr; } .cart-row img { width: 60px; } .content, .topbar { padding: 16px; } main > section { padding-block: 28px; } }
