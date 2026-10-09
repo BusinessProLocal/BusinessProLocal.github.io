@@ -242,9 +242,9 @@
     if (bookingEnabled) {
       const bounds = { left: appBounds.left + 24, right: appBounds.right - 24,
         top: document.querySelector(".hero-photo").getBoundingClientRect().bottom + 12,
-        bottom: document.querySelector("#contact").getBoundingClientRect().bottom - 8 };
-      const spot = emptyAdSpots(bounds, obstacles, window.innerWidth >= 1024 ? 420 : Math.min(300, (appBounds.width - 72) / 2), 4 / 3)[0];
-      if (spot) placements.push({ ...spot, label: "largest open customer-page spot" });
+        bottom: document.querySelector("#services").getBoundingClientRect().top - 8 };
+      const spot = emptyAdSpots(bounds, obstacles, 100, 4 / 3)[0];
+      if (spot) placements.push({ ...spot, label: "home, existing open gap below shop photo" });
       else {
         $("demo-error").textContent = "The Seaside test ad cannot fit safely at this size.";
         console.error("No safe 4:3 Seaside test ad spot.", { width: window.innerWidth });
@@ -724,7 +724,9 @@
         break;
       case "employees":
         content = panel("Employees", table(["Name", "Role", "Status"], employees.map((name, index) => [name, index ? "Employee" : "Owner", "Active"])) +
-          periods(["Add employee", "Edit employee"])) +
+          periods(["Add employee", "Edit employee"]) +
+          (bookingEnabled ? `<div class="staff-photo-controls">${config.barbers.map((staff, index) =>
+            `<section><h3>${escape(staff.name)}</h3>${barberPhotoControl(staff, index, api.read(localStorage, config))}</section>`).join("")}</div>` : "")) +
           periods(["Today", "Past Week", "Past Month", "Past Year"]) + panel("Employee Performance", select("Employee", employees)) +
           cards(bookingEnabled ? [["Completed Appointments", "6"], ["Completed Service Hours", "3.0"], ["Service Revenue", "$168.00"], ["Tips", "$24.00"], ["Total Collected", "$192.00"]] :
             [["Orders Packed", "6"], ["Hours Worked", "8.0"], ["Order Revenue", "$168.00"], ["Items Received", "24"], ["Orders Shipped", "5"]]) +
@@ -818,6 +820,7 @@
     const controls = document.querySelector(".owner-preview-controls");
     if (!controls) return;
     const block = event => {
+      if (event.target.closest(".staff-photo-controls")) return;
       if (!event.target.closest("button, input, select, textarea, label, a")) return;
       event.preventDefault();
       event.stopPropagation();
@@ -828,7 +831,9 @@
     controls.addEventListener("keydown", event => {
       if (event.key !== "Tab" && !((event.ctrlKey || event.metaKey) && ["c", "a"].includes(event.key.toLowerCase()))) block(event);
     }, true);
-    controls.querySelectorAll("input, textarea").forEach(input => { input.readOnly = true; });
+    controls.querySelectorAll("input, textarea").forEach(input => {
+      if (!input.closest(".staff-photo-controls")) input.readOnly = true;
+    });
     controls.addEventListener("submit", event => { event.preventDefault(); showPreviewPopup(); });
   }
   function renderDashboard() {
@@ -868,12 +873,12 @@
       <div class="access-controls"><span class="signed-in-badge">Signed in: Owner</span><div class="date">${escape(new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }))}</div>
       <button type="button" class="lock-btn" id="demo-lock">Lock</button></div></header>
       <div class="content">${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
-        dashboardView === "orders" ? `<section class="page active" id="dashboard">${ordersPanel(records, seeded)}</section>` : `<section class="page active" id="dashboard">
+        dashboardView === "orders" ? `<section class="page active" id="dashboard">${ordersPanel(records, seeded)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
       <div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
       <div class="cards"><div class="card"><span>${bookingEnabled ? "Today's Appointments" : "Today's Orders"}</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
       <div class="card"><span>${bookingEnabled ? "Barbers Working" : "To Pack & Ship"}</span><strong>${bookingEnabled ? config.barbers.length : complete ? 0 : 1}</strong><small>${bookingEnabled ? config.barbers.length + " scheduled today" : "Orders awaiting fulfillment"}</small></div>
       <div class="card"><span>Today's Sales</span><strong>${money(complete ? price : 0)} earned</strong><small>of ${money(price)} booked ${bookingEnabled ? "- services only" : "- orders only"}</small></div></div>
-      ${bookingEnabled ? schedulePanel(records, seeded) : ordersPanel(records, seeded)}</section>`}
+      ${bookingEnabled ? schedulePanel(records, seeded) + timeOffPanel() : ordersPanel(records, seeded)}</section>`}
       ${!preview && (own.status === "Finished" || own.status === "Shipped" || own.status === "Ready for pickup") ? endOfDemo() : ""}
       </div></main></div>${bookingEnabled && !preview ? appointmentDialog() : ""}
       <div id="owner-preview-popup" class="owner-preview-popup" role="status" aria-live="polite" hidden><p>This works in your real portal.</p>
@@ -889,12 +894,16 @@
       openOwnerTab(button.dataset.ownerTab);
     })));
     document.querySelectorAll("[data-preview-live]").forEach(button => button.addEventListener("click", () => action(() => openOwnerTab(button.dataset.previewLive))));
-    if (preview) { setupOwnerPreview(); return; }
+    if (preview) {
+      setupOwnerPreview();
+      if (bookingEnabled && activeTab.id === "employees") config.barbers.forEach((staff, index) =>
+        photoInput(`barber-photo-${staff.id}`, index === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`));
+      return;
+    }
     if (bookingEnabled) {
       if (dashboardView === "appointments") { setupOwnerCalendar(); return; }
       setupAppointmentDetails();
-      photoInput("work-photo", "workPhoto");
-      config.barbers.forEach((staff, index) => photoInput(`barber-photo-${staff.id}`, index === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`));
+      $("demo-time-off").addEventListener("click", showPreviewPopup);
     } else {
       document.querySelectorAll("[data-packed]").forEach(button => button.addEventListener("click", () => action(() => {
         const order = api.read(localStorage, config).orders.find(item => item.id === button.dataset.packed);
@@ -929,11 +938,25 @@
     return `<div class="panel"><div class="panel-header"><h3>Today's Appointments</h3></div><div class="panel-body">
       ${records[0].date !== api.dates()[0] ? "<p>Your selected booking is included in this preview even if it is on another day.</p>" : ""}
       <div class="completed-owner-grid">${config.barbers.map(staff => `<section class="completed-barber-block" style="border-top-color:${employeeColor(staff.id)}">
-      <div class="completed-barber-header"><button type="button" class="completed-barber-name compact-barber-name-btn">${escape(staff.name)}</button></div>
-      ${barberPhotoControl(staff, config.barbers.indexOf(staff), state)}
+      <div class="completed-barber-header"><div class="dashboard-barber-identity">${roundBarberPhoto(staff, state)}
+      <button type="button" class="completed-barber-name compact-barber-name-btn">${escape(staff.name)}</button></div></div>
       <div class="completed-time-list">${records.filter(item => item.staffId === staff.id).map(item =>
         `<button type="button" class="completed-time-btn ${item.status !== "Finished" ? "next-barber-appointment" : ""}" data-calendar-booking="${escape(item.id)}" title="${escape(item.name)} - ${escape(item.status || "Scheduled")}">${api.timeLabel(item.time)}</button>`).join("")}</div></section>`).join("")}</div>
-      ${photoControl("work-photo", "workPhoto", "Add a photo of your work", "Your work photo preview", state)}</div></div>`;
+      </div></div>`;
+  }
+  function roundBarberPhoto(staff, state) {
+    const field = config.barbers.indexOf(staff) === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`;
+    const src = previewPhotos[field] || state[field];
+    return `<span class="dashboard-barber-photo">${src ? image(src, `${staff.name} barber photo`) :
+      '<span class="dashboard-photo-silhouette" role="img" aria-label="Barber photo placeholder"></span>'}</span>`;
+  }
+  function timeOffPanel() {
+    const friday = new Date();
+    friday.setDate(friday.getDate() + ((5 - friday.getDay() + 7) % 7 || 7));
+    const date = friday.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+    return `<div class="panel dashboard-time-off-panel"><div class="panel-header"><h3>Time-Off Requests</h3></div>
+      <div class="panel-body"><div class="dashboard-time-off-list"><button type="button" id="demo-time-off" class="dashboard-time-off-item">
+      <strong>${escape(config.barbers[0].name)}</strong><span>Personal day &middot; ${escape(date)}</span><span>Pending</span></button></div></div></div>`;
   }
   function ownerCalendarPanel(state) {
     if (!ownerCalendarDate) {

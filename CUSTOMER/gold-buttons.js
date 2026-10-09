@@ -33,8 +33,41 @@
   }
   const resize = new ResizeObserver(entries => entries.forEach(entry => fit(entry.target)));
   const observer = new MutationObserver(refresh);
+  function setupMagnet() {
+    const hero = document.querySelector(".hero-demos");
+    if (!hero || hero.dataset.magnetReady) return;
+    hero.dataset.magnetReady = "true";
+    const allowed = matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)");
+    let home = null, tracking = false;
+    function reset() {
+      tracking = false;
+      hero.style.setProperty("--magnet-x", "0px");
+      hero.style.setProperty("--magnet-y", "0px");
+    }
+    hero.addEventListener("pointerenter", event => {
+      if (event.pointerType !== "mouse" || !allowed.matches) return;
+      hero.style.setProperty("--magnet-x", "0px");
+      hero.style.setProperty("--magnet-y", "0px");
+      const rect = hero.offsetParent.getBoundingClientRect();
+      home = { x: rect.left + hero.offsetLeft, y: rect.top + hero.offsetTop + hero.offsetHeight / 2 };
+      tracking = true;
+    });
+    window.addEventListener("pointermove", event => {
+      if (!tracking || event.pointerType !== "mouse") return;
+      const x = event.clientX - home.x, y = event.clientY - home.y;
+      if (!allowed.matches || Math.hypot(x, y) > 180) { reset(); return; }
+      hero.style.setProperty("--magnet-x", x + "px");
+      hero.style.setProperty("--magnet-y", y + "px");
+    });
+    hero.addEventListener("pointerleave", reset);
+    window.addEventListener("blur", reset);
+    window.addEventListener("resize", reset);
+    window.addEventListener("scroll", reset, { passive: true });
+    allowed.addEventListener("change", reset);
+  }
   function refresh() {
     observer.disconnect();
+    setupMagnet();
     for (const element of document.querySelectorAll("button,a.btn,a.book-button,.owner-preview-popup a,[role=button]")) {
       if (element.matches(".intro-splash,.ad-tab") || element.closest("#ad-popup")) continue;
       const style = getComputedStyle(element);

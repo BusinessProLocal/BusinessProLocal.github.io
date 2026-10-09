@@ -182,7 +182,21 @@ legend { color: var(--gold); padding: 0 6px; }
 .card .barber-photo-frame .photo-preview, #daily-dashboard .barber-photo-frame .photo-preview { width: 100%; height: 100%; max-width: none; max-height: none; aspect-ratio: 1; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
 .barber-photo-placeholder, #daily-dashboard .barber-photo-placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
 .barber-photo-placeholder svg, #daily-dashboard .barber-photo-placeholder svg { width: 64px; height: 64px; fill: #888; }
+#daily-dashboard .barber-photo-placeholder circle { cx: 32; cy: 20; r: 12; fill: #888; }
+#daily-dashboard .barber-photo-placeholder path { d: path("M10 58v-6a22 22 0 0 1 44 0v6z"); fill: #888; }
 .barber-photo-placeholder span, #daily-dashboard .barber-photo-placeholder span { color: #ccc; font-size: 14px; }
+#daily-dashboard .dashboard-barber-identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+#daily-dashboard .dashboard-barber-photo { display: inline-flex; width: 48px; height: 48px; flex: 0 0 48px; border-radius: 50%; overflow: hidden; background: #181818; }
+#daily-dashboard .dashboard-barber-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+#daily-dashboard .dashboard-photo-silhouette { display: block; position: relative; width: 48px; height: 48px; }
+#daily-dashboard .dashboard-photo-silhouette::before { content: ""; position: absolute; width: 15px; height: 15px; border-radius: 50%; background: #aaa; top: 7px; left: 16px; }
+#daily-dashboard .dashboard-photo-silhouette::after { content: ""; position: absolute; width: 30px; height: 20px; border-radius: 18px 18px 0 0; background: #aaa; top: 23px; left: 9px; }
+#daily-dashboard .dashboard-time-off-list { display: grid; gap: 8px; }
+#daily-dashboard .dashboard-time-off-item { display: grid; gap: 2px; width: 100%; text-align: left; padding: 10px 12px; background: #fff; border: 2px solid #000; cursor: pointer; }
+#daily-dashboard .dashboard-time-off-item:hover, #daily-dashboard .dashboard-time-off-item:focus-visible { background: #f4f4f4; }
+#daily-dashboard .staff-photo-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media(min-width:1101px) { #daily-dashboard .barber-owner-dashboard > .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media(max-width:600px) { #daily-dashboard .staff-photo-controls { grid-template-columns: 1fr; } }
 #booking-form { padding: 24px; border: 1px solid var(--gold); border-radius: 10px; background: var(--panel); }
 #booking-form fieldset { border: 0; border-radius: 0; padding: 18px 0; margin: 0; min-width: 0; }
 #booking-form fieldset + fieldset { border-top: 1px solid var(--gold); }
@@ -192,9 +206,6 @@ legend { color: var(--gold); padding: 0 6px; }
 .ad-mobile-row .ad-bullethole { grid-column: 1 / -1; aspect-ratio: 4 / 3; border: 0; border-radius: 0; background: #000; box-shadow: none; }
 .ad-bullethole .ad-bullethole-image { display: block; width: 100%; height: 100%; object-fit: contain; }
 .ad-bullethole:hover, .ad-bullethole:focus-visible { background: #000; box-shadow: none; }
-@media(min-width:601px) {
-  .barber-customer-demo #contact > h2, .barber-customer-demo #contact .contact-details { width: calc(50% - 24px); margin-left: 0; margin-right: 0; }
-}
 .photo-control { text-align: center; margin-top: 20px; }
 .photo-button { padding: 16px 22px; font-size: 1.1rem; max-width: 100%; }
 .photo-message { font-size: .9rem; color: var(--gold); }

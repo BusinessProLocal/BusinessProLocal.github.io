@@ -40,13 +40,18 @@ platform and check phone, tablet and desktop layouts:
   bobbing. Selected calendar days and active owner tabs retain a dark outline.
   The build publishes the shared renderer and `goldbar-blank.png`, rewriting
   the stylesheet image URL for the public directory layout.
+- View Demos has a mouse-only magnetic hover within 180px of its resting
+  center. Leaving or pulling beyond that radius releases it with a .4s ease;
+  the existing float/glow and link remain. Fine-pointer capability and
+  no-reduced-motion preference are required; touch events never activate it.
 - Ads use centered cover pictures with a dark, gold-edged business-name/Shop now
   strip, a top-left Sponsored pill, a thin silver border and a soft shadow.
   The barber customer page tests Seaside Treasures using its supplied 4:3
   bullet-hole image, without extra card chrome or a second Sponsored tag.
-  Above phone width it uses the largest safe open rectangle; Contact is arranged
-  on the left to free the right-hand area. Laptop placement is at least 420px
-  wide. Northway Auto Care retains the right-hand Customer Demo banner position.
+  Above phone width it uses an existing open gap below the hero photo and above
+  Services, retaining 4:3 and permitting a smaller image without moving content.
+  Contact is centered in its original single column. Northway Auto Care retains
+  the right-hand Customer Demo banner position.
   Clicking Seaside still opens its original popup.
   Phones show approximately 2:1 banners, two per row below the shop photo.
   The barber Seaside test instead spans the full phone row at 4:3.
@@ -62,10 +67,15 @@ platform and check phone, tablet and desktop layouts:
   Acceptance stays disabled until the bottom is reached; agreement wording is
   unchanged.
 - The barber customer demo has a gold explanatory banner, a continuous outer
-  gold border, and a `Customer Demo` entry button. Customer and owner dashboard
-  barber photos use matching square gold-edged frames, silhouette placeholders,
-  and centered cover-cropped uploaded photos. Each barber has an independent
-  locally saved photo, shared between customer and owner views.
+  gold border, and a `Customer Demo` entry button. Customer barber photos use
+  matching square gold-edged frames and centered cover-cropped uploaded photos.
+  The main owner Dashboard follows the real dashboard's order: greeting,
+  three statistic cards, Today's Appointments, then Time-Off Requests. Each
+  barber has a 48px round saved photo/silhouette beside the name with times below.
+  Uploading lives in Employees, not on the main dashboard; saved images remain
+  shared with the customer site. One Pending personal-day request for next
+  Friday opens the read-only preview popup. The sidebar business name has no
+  visible trim; transparent borders preserve its original dimensions.
   `Try Booking Your Customer's Appointment` contains all five booking steps in
   one continuous gold-bordered panel; steps retain accessible fieldset legends
   with thin dividers rather than individual boxes.
