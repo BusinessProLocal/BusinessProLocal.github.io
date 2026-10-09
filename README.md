@@ -11,24 +11,35 @@ platform and check phone, tablet and desktop layouts:
 
 - The homepage's supplied gold-bar `View Demos` image link sits centered near
   the bottom of the hero: 36% width (maximum 520px), 80% on phones, with a subtle
-  hover lift/brightness and no CSS background or border. It scrolls to public
+  shared gold float/glow hover and no CSS background or border. It scrolls to public
   `See It In Action`: three shop-picture `Try Demo` cards plus a gold
   `Your Business Here` card linking to Get Started. The grid is four across
   at 1024px and above, two across on tablets, and stacked at 600px and below.
   The separate `Plans & Pricing` section contains prices, features and
   Select/signup links only. Both sections work without Get Started, stored leads,
   or JavaScript. Each customer demo has gold pricing links near its top and
-  bottom pointing to the homepage's `#plans`; owner portals stay unchanged.
+  bottom pointing to the homepage's `#plans`.
   Tier cards stack on phones. The section order after My Story is demos,
   Get Started, then pricing; the lead-saving and signup flow is unchanged.
-- Gold-colored headings/button labels use the shared gold-word image renderer
-  on the homepage, signup page, and demo customer pages. Black button labels
-  and body text stay unchanged; owner portals and advertisement strips are
-  excluded. Real text remains
+- Gold-colored headings use the shared gold-word image renderer on the homepage,
+  signup page, and demo customer pages. Body text, owner-portal typography, and
+  advertisement strips are excluded. Real text remains
   accessible/searchable, words wrap only between words, and unsupported
   characters use local Cinzel. The 43 original glyph PNGs live only in
   `WEBSITE/images/gold-letters` in source; the build publishes them and rewrites
   their URL for the public site. Marketing retains the original alphabet sheet.
+- Gold buttons, including outlined gold controls and owner-demo buttons, use
+  the shared `gold-buttons.js` / `gold-buttons.css` renderer. The blank gold bar
+  is applied with nine-slice border-image (60 100 130 100 fill), preserving
+  original button content, geometry, event handlers, disabled states, and
+  accessible names. Engraved labels use dark-brown Cinzel caps with a warm
+  highlight, wrapping/fitting within the unchanged button. Ads and the
+  introductory splash are excluded. The hero retains its supplied View Demos
+  image. Hover lifts 6px, bobs another 2px on a 2-second loop, and fades in two
+  warm gold drop shadows over .3 seconds; reduced motion keeps lift/glow without
+  bobbing. Selected calendar days and active owner tabs retain a dark outline.
+  The build publishes the shared renderer and `goldbar-blank.png`, rewriting
+  the stylesheet image URL for the public directory layout.
 - Ads use centered cover pictures with a dark, gold-edged business-name/Shop now
   strip, a top-left Sponsored pill, a thin silver border and a soft shadow.
   The barber customer page tests Seaside Treasures using its supplied 4:3

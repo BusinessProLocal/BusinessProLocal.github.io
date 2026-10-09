@@ -6,6 +6,10 @@
   stylesheet.rel = "stylesheet";
   stylesheet.href = new URL("gold-word.css", scriptUrl).href;
   document.head.append(stylesheet);
+  const buttons = document.createElement("script");
+  buttons.src = new URL("gold-buttons.js", scriptUrl).href;
+  buttons.addEventListener("error", () => console.error("Gold button script failed to load:", buttons.src));
+  document.head.append(buttons);
   const widths = { "0":180,"1":129,"2":175,"3":165,"4":175,"5":162,"6":175,"7":183,"8":178,"9":175,
     A:234,B:203,C:204,D:228,E:188,F:181,G:239,H:253,I:130,J:152,K:232,L:185,M:280,N:223,
     O:233,P:194,Q:236,R:224,S:166,T:196,U:233,V:225,W:336,X:236,Y:234,Z:215,
@@ -79,6 +83,7 @@
   function refresh() {
     observer.disconnect();
     for (const element of document.querySelectorAll(".gold-word")) {
+      if (element.closest(".gold-bar")) continue;
       if (element.closest("#daily-dashboard,.owner-preview-popup") || document.body.classList.contains("demo-owner-open") ||
         (element.dataset.goldWordAuto === "true" && !goldColors.has(getComputedStyle(element).color))) {
         const text = element.querySelector(":scope > .gold-word-text");
@@ -90,6 +95,7 @@
     }
     let changed = false;
     for (const element of document.querySelectorAll(candidates)) {
+      if (element.closest(".gold-bar")) continue;
       if (element.closest("#daily-dashboard,.owner-preview-popup") || document.body.classList.contains("demo-owner-open")) continue;
       if (element.closest(".gold-word-visual,.gold-word-text")) continue;
       if (!element.classList.contains("gold-word") && !goldColors.has(getComputedStyle(element).color)) continue;

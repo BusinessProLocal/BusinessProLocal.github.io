@@ -1,0 +1,56 @@
+@font-face { font-family: "Cinzel"; src: url("../fonts/cinzel.ttf") format("truetype"); font-display: swap; }
+@property --gold-bar-bob { syntax: "<length>"; inherits: false; initial-value: 0px; }
+.gold-bar, #daily-dashboard .gold-bar {
+  position: var(--gold-bar-position, relative) !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  border-image-source: url("../images/goldbar-blank.png") !important;
+  border-image-slice: 60 100 130 100 fill !important;
+  border-image-width: calc(var(--gold-bar-height, 52px) * .15) min(25px, 15%) calc(var(--gold-bar-height, 52px) * .325) min(25px, 15%) !important;
+  border-image-repeat: stretch !important;
+  color: transparent !important;
+  box-shadow: none !important;
+}
+.gold-bar > *, #daily-dashboard .gold-bar > * { visibility: hidden !important; pointer-events: none !important; }
+.gold-bar::after, #daily-dashboard .gold-bar::after {
+  content: attr(data-gold-bar-label) !important;
+  position: absolute !important;
+  inset: 0 8px 8% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  color: #4a2805 !important;
+  font-family: "Cinzel", Georgia, serif !important;
+  font-weight: 700 !important;
+  font-size: var(--gold-bar-label-size, 1em) !important;
+  line-height: 1.15 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  text-shadow: 0 1px 0 rgba(255,230,160,.6) !important;
+  pointer-events: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+.gold-bar, #daily-dashboard .gold-bar, .hero-demos {
+  translate: 0 0 !important;
+  filter: drop-shadow(0 0 0 rgba(255,200,90,0)) drop-shadow(0 0 0 rgba(255,180,50,0)) !important;
+  transition: translate .3s ease, filter .3s ease !important;
+}
+.gold-bar:hover:not(:disabled), #daily-dashboard .gold-bar:hover:not(:disabled), .hero-demos:hover {
+  translate: 0 calc(-6px + var(--gold-bar-bob)) !important;
+  filter: drop-shadow(0 0 10px rgba(255,200,90,.65)) drop-shadow(0 14px 18px rgba(255,180,50,.7)) !important;
+  animation: gold-bar-bob 2s ease-in-out .3s infinite !important;
+}
+#daily-dashboard .nav .gold-bar:hover:not(.active) { transform: none !important; }
+.gold-bar.is-selected, #daily-dashboard .gold-bar.active { outline: 2px solid #4a2805; outline-offset: -5px; }
+@keyframes gold-bar-bob { 0%, 100% { --gold-bar-bob: 0px; } 50% { --gold-bar-bob: -2px; } }
+@media(prefers-reduced-motion:reduce) {
+  .gold-bar:hover:not(:disabled), #daily-dashboard .gold-bar:hover:not(:disabled), .hero-demos:hover { animation: none !important; }
+}
