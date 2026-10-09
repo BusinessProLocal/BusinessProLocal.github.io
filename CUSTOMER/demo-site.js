@@ -66,37 +66,39 @@
   }
   const image = (src, alt, className = "") => `<img class="${className}" src="${escape(src)}" alt="${escape(alt)}" loading="lazy">`;
   const ads = [
-    { name: "Pine & Blade", domain: "pineandblade", holeSize: "small", type: "Barbershop", tagline: "Classic cuts & hot-towel shaves", button: "Book now",
+    { name: "Pine & Blade", phone: "(207) 555-0106", email: "book@pineandblade.com", domain: "pineandblade", holeSize: "small", type: "Barbershop", tagline: "Classic cuts & hot-towel shaves", button: "Book now",
       bg: "#13261c", accent: "#d9b25c", glow: "#2b5a40", photo: "../assets/ads/ad-pine-blade.jpg",
       icon: '<circle cx="14" cy="36" r="6"/><circle cx="34" cy="36" r="6"/><path d="M18 31 36 7M30 31 12 7"/>' },
-    { name: "Harbor Light Salon", domain: "harborlightsalon", holeSize: "medium", type: "Hair salon", tagline: "Color, cuts & styling", button: "Book now",
+    { name: "Harbor Light Salon", phone: "(207) 555-0107", email: "book@harborlightsalon.com", domain: "harborlightsalon", holeSize: "medium", type: "Hair salon", tagline: "Color, cuts & styling", button: "Book now",
       bg: "#14213d", accent: "#f2c57c", glow: "#2f4a80", photo: "../assets/ads/ad-harbor-light.jpg",
       icon: '<path d="M8 18h32v7H8z"/><path d="M11 25v12M15 25v12M19 25v12M23 25v12M27 25v12M31 25v12M35 25v12"/><path d="M38 6l1.5 3.5L43 11l-3.5 1.5L38 16l-1.5-3.5L33 11l3.5-1.5z" class="fill"/>' },
-    { name: "Seaside Treasures", domain: "seasidetreasures", holeSize: "medium", type: "Gifts & keepsakes", tagline: "Maine-made gifts, candles & sea glass", button: "Shop now",
+    { name: "Seaside Treasures", phone: "(207) 555-0108", email: "hello@seasidetreasures.com", domain: "seasidetreasures", holeSize: "medium", type: "Gifts & keepsakes", tagline: "Maine-made gifts, candles & sea glass", button: "Shop now",
       bg: "#0f3b3e", accent: "#f0d9a8", glow: "#1f6f73", photo: "../assets/ads/ad-seaside-treasures.jpg",
       icon: '<path d="M24 40 7 21C12 9 36 9 41 21Z"/><path d="M24 40 13 15M24 40 19 12M24 40V11M24 40 29 12M24 40 35 15"/><path d="M19 40h10"/>' },
-    { name: "Northway Auto Care", domain: "northwayautocare", holeSize: "medium", type: "Auto shop", tagline: "Honest repairs, oil changes & inspections", button: "Call today",
+    { name: "Northway Auto Care", phone: "(207) 555-0101", email: "service@northwayauto.com", domain: "northwayautocare", holeSize: "medium", type: "Auto shop", tagline: "Honest repairs, oil changes & inspections", button: "Call today",
       bg: "#1c1c1e", accent: "#e4572e", glow: "#3a2a24", photo: "../assets/ads/ad-northway-auto.jpg",
       icon: '<path d="M38.5 9.5a8 8 0 0 0-10.6 10L10 37.4a3 3 0 0 0 4.2 4.2L32 23.7a8 8 0 0 0 10-10.6l-5.2 5.2-4.6-1.1-1.1-4.6z"/>' },
-    { name: "Iron Anchor Tattoo", domain: "ironanchortattoo", holeSize: "medium", type: "Tattoo & piercing", tagline: "Custom tattoos & piercing", button: "Book now",
+    { name: "Iron Anchor Tattoo", phone: "(207) 555-0102", email: "ink@ironanchortattoo.com", domain: "ironanchortattoo", holeSize: "medium", type: "Tattoo & piercing", tagline: "Custom tattoos & piercing", button: "Book now",
       bg: "#0b0b0b", accent: "#c8102e", glow: "#3a0d14", photo: "../assets/ads/ad-iron-anchor.jpg",
       icon: '<circle cx="24" cy="9" r="4"/><path d="M24 13v28M15 20h18"/><path d="M8 29c1 7 8 12 16 12s15-5 16-12"/><path d="M5 32l3-4 4 3M43 32l-3-4-4 3"/>' },
-    { name: "Evergreen Home Services", domain: "evergreenhomeservices", holeSize: "large", type: "Home services", tagline: "Cleaning, landscaping & snow plowing", button: "Get a quote",
+    { name: "Evergreen Home Services", phone: "(207) 555-0103", email: "hello@evergreenhome.com", domain: "evergreenhomeservices", holeSize: "large", type: "Home services", tagline: "Cleaning, landscaping & snow plowing", button: "Get a quote",
       bg: "#16301f", accent: "#9fd18b", glow: "#2c5d3a", photo: "../assets/ads/ad-evergreen-home.jpg",
       icon: '<path d="M24 5 13 21h6L9 34h30L29 21h6z"/><path d="M24 34v8"/>' },
-    { name: "Muddy Paws Pet Care", domain: "muddypawspetcare", holeSize: "medium", type: "Pet care", tagline: "Grooming, boarding & play", button: "Book now",
+    { name: "Muddy Paws Pet Care", phone: "(207) 555-0104", email: "woof@muddypawspet.com", domain: "muddypawspetcare", holeSize: "medium", type: "Pet care", tagline: "Grooming, boarding & play", button: "Book now",
       bg: "#3b2414", accent: "#f4a259", glow: "#6b3f1f", photo: "../assets/ads/ad-muddy-paws.jpg",
       icon: '<ellipse class="fill" cx="24" cy="32" rx="9" ry="7.5"/><circle class="fill" cx="12.5" cy="21" r="3.8"/><circle class="fill" cx="19.5" cy="13.5" r="3.8"/><circle class="fill" cx="28.5" cy="13.5" r="3.8"/><circle class="fill" cx="35.5" cy="21" r="3.8"/>' },
-    { name: "Sea Glass Nails & Spa", domain: "seaglassnailsandspa", holeSize: "large", type: "Nails & spa", tagline: "Manicures, pedicures & massage", button: "Book now",
+    { name: "Sea Glass Nails & Spa", phone: "(207) 555-0105", email: "book@seaglassspa.com", domain: "seaglassnailsandspa", holeSize: "large", type: "Nails & spa", tagline: "Manicures, pedicures & massage", button: "Book now",
       bg: "#1d3b3a", accent: "#a8e6cf", glow: "#3f7f78", photo: "../assets/ads/ad-sea-glass.jpg",
       icon: '<path d="M24 40c-7-6-7-18 0-28 7 10 7 22 0 28z"/><path d="M24 40c-9 0-17-5-18-14 7-1 14 4 18 14zM24 40c9 0 17-5 18-14-7-1-14 4-18 14z"/>' }
   ];
   function adCard(ad, fullSize = false) {
     return `<span class="ad-bullethole ad-hole-${escape(ad.holeSize)}${fullSize ? " ad-card-full" : ""}">
-      ${image("../assets/ads/bullet-hole.svg", "", "ad-bullethole-frame")}
-      <span class="ad-bullethole-copy"><span class="ad-sponsored">Sponsored</span>
+      ${image(ad.photo, "", "ad-bullethole-photo")}
+      ${image("../assets/ads/bullet-hole-frame.png", "", "ad-bullethole-frame")}
+      <span class="ad-bullethole-copy">
         <strong class="ad-name">${escape(ad.name)}</strong>
-        <span class="ad-address">${escape(ad.domain)}.<wbr>businessprolocal.com</span></span></span>`;
+        <span class="ad-phone">${escape(ad.phone)}</span>
+        <span class="ad-email">${escape(ad.email)}</span></span></span>`;
   }
   function setDemoIndexing(ownerOnly) {
     const robots = document.head.querySelector('meta[name="robots"]');
@@ -126,7 +128,8 @@
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
       <main id="demo-content"></main>
       <div class="demo-pricing"><a class="book-button" href="../../index.html#plans">Like what you see? See Plans &amp; Pricing &rarr;</a></div>
-      <footer>${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo by Business Pro</footer>`;
+      <footer>${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo by Business Pro
+        <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div></footer>`;
     if (pageName === "home") renderAds();
   }
   function updateCartLink() {
@@ -138,7 +141,7 @@
     $("demo-content").insertAdjacentHTML("beforebegin", `<div id="sample-ads"><p class="ad-label">Sample ads: Business Pro customers can choose to be featured on other local Business Pro websites.</p>
       </div>
       <div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
-        `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad, ${escape(ad.domain)}.businessprolocal.com" aria-haspopup="dialog">${adCard(ad)}</button>`).join("")}</div>
+        `<button type="button" class="ad-tab" data-ad="${index}" aria-label="${escape(ad.name)} sample ad, ${escape(ad.phone)}, ${escape(ad.email)}" aria-haspopup="dialog">${adCard(ad)}</button>`).join("")}</div>
       <dialog id="ad-popup" aria-label="Sample business ad"><div id="ad-popup-content"></div>
       <button type="button" id="close-ad">Close ad</button></dialog>`);
     document.querySelectorAll("[data-ad]").forEach(button => button.addEventListener("click", () => {
@@ -181,6 +184,37 @@
     }
     return spots.sort((a, b) => b.width * b.height - a.width * a.height);
   }
+  function scatteredAdSpots(width, count) {
+    const columns = Math.max(1, Math.min(3, Math.floor(width / 340)));
+    const laneWidth = width / columns;
+    const levels = [24, 91, 53].slice(0, columns);
+    const spots = [];
+    for (let index = 0; index < count; index++) {
+      const lane = levels.indexOf(Math.min(...levels));
+      const adWidth = Math.min([318, 292, 334, 306][index % 4], laneWidth - 32);
+      const height = adWidth * 3 / 4;
+      const slack = laneWidth - adWidth - 28;
+      const left = lane * laneWidth + 14 + slack * [0, 1, .3, .8][index % 4];
+      const top = levels[lane];
+      spots.push({ left, top, width: adWidth, height });
+      levels[lane] = top + height + [43, 68, 37, 57][index % 4];
+    }
+    return { spots, height: Math.max(...levels) };
+  }
+  function layoutScatteredAds(row, buttons) {
+    row.classList.remove("ad-desktop");
+    const layout = scatteredAdSpots(row.clientWidth, buttons.length);
+    row.style.height = `${layout.height}px`;
+    buttons.forEach((button, index) => {
+      const slot = layout.spots[index];
+      button.style.left = `${slot.left}px`;
+      button.style.top = `${slot.top}px`;
+      button.style.width = `${slot.width}px`;
+      button.style.height = `${slot.height}px`;
+      button.style.setProperty("--ad-tilt", `${[-2.5, 1.8, -1.2, 2.8, -.8, 2.2, -1.8, .9][index % 8]}deg`);
+      button.dataset.placement = "staggered space below shop photo";
+    });
+  }
   function layoutAds() {
     const row = document.querySelector(".ad-mobile-row");
     if (!row || document.body.classList.contains("demo-owner-open")) return;
@@ -189,8 +223,9 @@
       button.removeAttribute("style");
       button.dataset.placement = "below shop photo";
     });
+    row.style.removeProperty("height");
     row.classList.toggle("ad-desktop", window.innerWidth > 1280);
-    if (window.innerWidth <= 1280) return;
+    if (window.innerWidth <= 1280) { layoutScatteredAds(row, buttons); return; }
     const appBounds = app.getBoundingClientRect();
     const appStyles = getComputedStyle(app);
     const borderLeft = parseFloat(appStyles.borderLeftWidth);
@@ -254,7 +289,7 @@
       }
     }
     if (placements.length < buttons.length) {
-      row.classList.remove("ad-desktop");
+      layoutScatteredAds(row, buttons);
       return;
     }
     buttons.forEach((button, index) => {
@@ -263,6 +298,7 @@
       button.style.top = `${slot.top - appBounds.top - borderTop}px`;
       button.style.width = `${slot.width}px`;
       button.style.height = `${slot.height}px`;
+      button.style.setProperty("--ad-tilt", `${[-2.5, 1.8, -1.2, 2.8, -.8, 2.2, -1.8, .9][index % 8]}deg`);
       button.dataset.placement = slot.label;
     });
   }

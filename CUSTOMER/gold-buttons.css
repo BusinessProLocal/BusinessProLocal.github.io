@@ -4,9 +4,13 @@
   position: var(--gold-bar-position, relative) !important;
   box-sizing: border-box !important;
   min-width: 0 !important;
+  width: max-content !important;
   max-width: 100% !important;
+  align-self: center !important;
+  justify-self: center !important;
+  flex: 0 1 auto !important;
   height: auto !important;
-  padding: 14px var(--gold-bar-side-padding, 24px) 22px !important;
+  padding: 14px 12px 22px !important;
   white-space: normal !important;
   background: transparent !important;
   border-color: transparent !important;
@@ -46,7 +50,7 @@
   filter: drop-shadow(0 0 0 rgba(255,200,90,0)) drop-shadow(0 0 0 rgba(255,180,50,0)) !important;
   transition: translate .3s ease, filter .3s ease !important;
 }
-.gold-bar:hover:not(:disabled), .hero-demos:hover {
+.gold-bar:hover:not(:disabled), .hero-demos:hover, .hero-magnet-active .hero-demos {
   translate: 0 calc(-6px + var(--gold-bar-bob)) !important;
   filter: drop-shadow(0 0 10px rgba(255,200,90,.65)) drop-shadow(0 14px 18px rgba(255,180,50,.7)) !important;
   animation: gold-bar-bob 2s ease-in-out .3s infinite !important;
@@ -54,10 +58,13 @@
 .gold-bar.is-selected { outline: 2px solid #4a2805; outline-offset: -5px; }
 @keyframes gold-bar-bob { 0%, 100% { --gold-bar-bob: 0px; } 50% { --gold-bar-bob: -2px; } }
 .hero-demos { translate: var(--magnet-x, 0px) var(--magnet-y, 0px) !important; transition: translate .4s ease, filter .3s ease !important; }
-.hero-demos:hover { translate: var(--magnet-x, 0px) calc(var(--magnet-y, 0px) - 6px + var(--gold-bar-bob)) !important; }
+.hero-demos:hover, .hero-magnet-active .hero-demos { translate: var(--magnet-x, 0px) calc(var(--magnet-y, 0px) - 6px + var(--gold-bar-bob)) !important; }
 @media(pointer:coarse), (prefers-reduced-motion:reduce) {
   .hero-demos { --magnet-x: 0px !important; --magnet-y: 0px !important; }
 }
+@media(pointer:coarse), (max-width:700px) {
+  .hero-demos, .hero-demos:hover { translate: 0 0 !important; animation: none !important; }
+}
 @media(prefers-reduced-motion:reduce) {
-  .gold-bar:hover:not(:disabled), .hero-demos:hover { animation: none !important; }
+  .gold-bar:hover:not(:disabled), .hero-demos:hover, .hero-magnet-active .hero-demos { animation: none !important; }
 }

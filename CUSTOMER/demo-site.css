@@ -9,7 +9,8 @@ html { scroll-padding-top: 16px; }
 .customer-demo-banner { background: var(--gold); color: #111; padding: 12px 16px; text-align: center; font-weight: 700; }
 .demo-pricing { display: flex; justify-content: center; padding: 16px; }
 .demo-pricing .book-button { max-width: 100%; text-align: center; }
-body.demo-owner-open .demo-pricing { display: none; }
+.demo-home { display: flex; justify-content: center; padding: 20px 16px; }
+body.demo-owner-open .demo-pricing .book-button, body.demo-owner-open .demo-home .book-button { background: #000; color: var(--gold); max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 body.demo-owner-open .customer-demo-banner { display: none; }
 #demo-app:not(.has-customer-ads) main > section { max-width: none; }
 .shipping-label { border: 2px solid var(--gold); border-radius: 10px; padding: 20px; margin-top: 20px; text-align: left; }
@@ -104,11 +105,12 @@ main > section { max-width: 1100px; padding: 40px 16px; margin: auto; }
 .demo-gallery.single img { max-height: 380px; aspect-ratio: auto; }
 .text-logo { font-family: "Playfair Display", Georgia, serif; font-size: 1.3rem; color: var(--gold); }
 .ad-label { font-size: .85rem; color: var(--muted); text-align: center; max-width: 850px; margin: 16px auto; padding-inline: 16px; }
-.ad-tab { display: block; width: 100%; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; font-weight: 400; }
+.ad-tab { position: absolute; display: block; width: 100%; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; font-weight: 400; transform: rotate(var(--ad-tilt, 0deg)); }
 .ad-tab:hover, .ad-tab:focus-visible { background: transparent; filter: drop-shadow(0 0 8px rgba(212,175,55,.4)); }
-.ad-mobile-row { position: static; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); justify-items: center; gap: 16px; padding: 20px 0; }
-.ad-mobile-row .ad-tab { max-width: 334px; aspect-ratio: 4 / 3; }
+.ad-mobile-row { position: relative; display: block; padding: 0; margin-top: 20px; }
+.ad-mobile-row .ad-tab { aspect-ratio: 4 / 3; }
 .ad-mobile-row.ad-desktop { display: block; height: 0; padding: 0; }
+.ad-mobile-row.ad-desktop { position: static; margin-top: 0; }
 .ad-desktop .ad-tab { position: absolute; max-width: none; }
 .contact-details { max-width: 650px; margin-inline: auto; text-align: center; }
 body.demo-owner-open .ad-mobile-row, .ad-mobile-row[hidden] { display: none; }
@@ -122,7 +124,7 @@ dialog::backdrop { background: rgba(0,0,0,.8); }
 .menu-items { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
 .menu-items li { display: flex; align-items: center; gap: 16px; text-align: left; }
 .menu-thumbnail { width: 72px; height: 72px; flex: 0 0 72px; object-fit: cover; border-radius: 8px; }
-.demo-form { max-width: 650px; margin: 24px auto; display: grid; gap: 18px; }
+.demo-form { max-width: 650px; margin: 24px auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 .demo-form > button { justify-self: center; }
 label { display: grid; gap: 6px; font-weight: 600; }
 input, select, textarea { width: 100%; border: 1px solid var(--line); background: #0c0c0b; color: var(--ink); padding: 12px; border-radius: 6px; }
@@ -170,14 +172,14 @@ legend { color: var(--gold); padding: 0 6px; }
 #booking-form legend { float: left; width: 100%; padding: 0 0 12px; }
 #booking-form legend + * { clear: both; }
 #booking-form .booking-date-calendar, #booking-form .demo-summary { border: 0; background: transparent; }
-.ad-bullethole { --hole-scale: 1; --hole-width: 52%; position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; background: radial-gradient(ellipse, #24190a, #080705 60%); overflow: hidden; container-type: inline-size; }
-.ad-hole-medium { --hole-scale: 1.1; --hole-width: 58%; }
-.ad-hole-large { --hole-scale: 1.2; --hole-width: 64%; }
-.ad-bullethole-frame { display: block; width: 100%; height: 100%; transform: scale(var(--hole-scale)); }
-.ad-bullethole-copy { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: var(--hole-width); display: flex; flex-direction: column; align-items: center; gap: 7px; color: var(--gold-hi); text-align: center; }
-.ad-bullethole-copy .ad-sponsored { font: 600 10px/1.2 "Inter", system-ui, sans-serif; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-.ad-bullethole-copy .ad-name { font: 800 clamp(16px, 6.2cqi, 22px)/1.15 "Playfair Display", Georgia, serif; }
-.ad-bullethole-copy .ad-address { font: 600 12px/1.35 "Inter", system-ui, sans-serif; overflow-wrap: anywhere; max-width: 100%; }
+.ad-bullethole { --hole-scale: 1; --hole-width: 56%; position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; container-type: inline-size; }
+.ad-hole-medium { --hole-scale: 1.06; --hole-width: 59%; }
+.ad-hole-large { --hole-scale: 1.12; --hole-width: 62%; }
+.ad-bullethole-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 15%; clip-path: ellipse(43% 44% at 50% 50%); }
+.ad-bullethole-frame { position: relative; display: block; width: 100%; height: 100%; transform: scale(var(--hole-scale)); }
+.ad-bullethole-copy { position: absolute; left: 50%; bottom: 26%; transform: translateX(-50%); width: var(--hole-width); display: flex; flex-direction: column; align-items: center; gap: 3px; color: #fff; text-align: center; background: none; text-shadow: 0 1px 3px #000, 0 0 7px #000; }
+.ad-bullethole-copy .ad-name { color: var(--gold-hi); font: 800 clamp(11px, 4.2cqi, 17px)/1.2 "Playfair Display", Georgia, serif; white-space: nowrap; }
+.ad-bullethole-copy .ad-phone, .ad-bullethole-copy .ad-email { font: 600 clamp(10px, 3.6cqi, 13px)/1.25 "Inter", system-ui, sans-serif; white-space: nowrap; }
 .ad-card-full { max-width: 380px; margin-inline: auto; }
 .photo-control { text-align: center; margin-top: 20px; }
 .photo-button { padding: 16px 22px; font-size: 1.1rem; max-width: 100%; }
@@ -261,4 +263,4 @@ footer { text-align: center; border-top: 1px solid var(--line); padding: 30px 16
 }
 @media(max-width:600px) {
 }
-@media(max-width:600px) { .card-grid, .demo-gallery, .cards { grid-template-columns: 1fr; } .cart-row { grid-template-columns: 60px 1fr; } .cart-row img { width: 60px; } .content, .topbar { padding: 16px; } main > section { padding-block: 28px; } }
+@media(max-width:600px) { .card-grid, .demo-gallery, .cards { grid-template-columns: minmax(0, 1fr); } .cart-row { grid-template-columns: 60px 1fr; } .cart-row img { width: 60px; } .content, .topbar { padding: 16px; } main > section { padding-block: 28px; } }

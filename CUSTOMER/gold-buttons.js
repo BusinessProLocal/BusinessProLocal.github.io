@@ -10,7 +10,9 @@
   if (!measure) throw new Error("This browser could not measure engraved gold button labels.");
   function fit(element) {
     const style = getComputedStyle(element);
-    const available = element.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const parentStyle = getComputedStyle(element.parentElement);
+    const available = element.parentElement.clientWidth - parseFloat(parentStyle.paddingLeft) -
+      parseFloat(parentStyle.paddingRight) - 24 - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth);
     if (available <= 0) return;
     const words = element.dataset.goldBarLabel.toUpperCase().split(/\s+/);
     const baseSize = parseFloat(style.fontSize);
@@ -24,34 +26,32 @@
   const observer = new MutationObserver(refresh);
   function setupMagnet() {
     const hero = document.querySelector(".hero-demos");
-    if (!hero || hero.dataset.magnetReady) return;
+    const picture = hero?.closest(".hero");
+    if (!picture || hero.dataset.magnetReady) return;
     hero.dataset.magnetReady = "true";
     const allowed = matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)");
-    let home = null, tracking = false;
     function reset() {
-      tracking = false;
+      picture.classList.remove("hero-magnet-active");
       hero.style.setProperty("--magnet-x", "0px");
       hero.style.setProperty("--magnet-y", "0px");
     }
-    hero.addEventListener("pointerenter", event => {
-      if (event.pointerType !== "mouse" || !allowed.matches) return;
-      hero.style.setProperty("--magnet-x", "0px");
-      hero.style.setProperty("--magnet-y", "0px");
-      const rect = hero.offsetParent.getBoundingClientRect();
-      home = { x: rect.left + hero.offsetLeft, y: rect.top + hero.offsetTop + hero.offsetHeight / 2 };
-      tracking = true;
-    });
-    window.addEventListener("pointermove", event => {
-      if (!tracking || event.pointerType !== "mouse") return;
-      const x = event.clientX - home.x, y = event.clientY - home.y;
-      if (!allowed.matches || Math.hypot(x, y) > 180) { reset(); return; }
+    function follow(event) {
+      if (event.pointerType !== "mouse" || !allowed.matches || window.innerWidth <= 700) return;
+      const rect = picture.getBoundingClientRect();
+      const halfWidth = hero.offsetWidth / 2, halfHeight = hero.offsetHeight / 2;
+      const home = { x: hero.offsetLeft, y: hero.offsetTop + halfHeight };
+      const targetX = Math.max(halfWidth, Math.min(rect.width - halfWidth, event.clientX - rect.left));
+      const targetY = Math.max(halfHeight + 8, Math.min(rect.height - halfHeight - 8, event.clientY - rect.top));
+      const x = targetX - home.x, y = targetY - home.y;
+      picture.classList.add("hero-magnet-active");
       hero.style.setProperty("--magnet-x", x + "px");
       hero.style.setProperty("--magnet-y", y + "px");
-    });
-    hero.addEventListener("pointerleave", reset);
+    }
+    picture.addEventListener("pointerenter", follow);
+    picture.addEventListener("pointermove", follow);
+    picture.addEventListener("pointerleave", reset);
     window.addEventListener("blur", reset);
     window.addEventListener("resize", reset);
-    window.addEventListener("scroll", reset, { passive: true });
     allowed.addEventListener("change", reset);
   }
   function refresh() {
@@ -88,7 +88,6 @@
       element.dataset.goldBarLabel = text;
       if (!element.classList.contains("gold-bar") || !element.querySelector(":scope > .gold-bar-label")) {
         element.style.setProperty("--gold-bar-position", style.position === "static" ? "relative" : style.position);
-        element.style.setProperty("--gold-bar-side-padding", Math.min(24, Math.max(4, parseFloat(style.paddingLeft))) + "px");
         const original = document.createElement("span");
         original.className = "gold-bar-source";
         while (element.firstChild) original.append(element.firstChild);
