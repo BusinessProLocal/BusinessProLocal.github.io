@@ -1,5 +1,6 @@
 (function () {
   "use strict";
+  const ADS_ENABLED = false;
   const config = window.SHOP_CONFIG, api = window.BusinessProDemo, forms = window.BusinessProForms;
   const app = document.getElementById("demo-app");
   const escape = value => String(value ?? "").replace(/[&<>"']/g, char =>
@@ -114,7 +115,7 @@
   }
   function renderShell() {
     setDemoIndexing(false);
-    app.classList.toggle("has-customer-ads", pageName === "home");
+    app.classList.toggle("has-customer-ads", ADS_ENABLED && pageName === "home");
     app.classList.toggle("barber-customer-demo", bookingEnabled);
     document.title = config.shop.pageTitle;
     app.innerHTML = `${bookingEnabled ? '<div class="customer-demo-banner">Customer Demo &mdash; this is what your customers see when they book an appointment with you.</div>' : ""}
@@ -137,6 +138,7 @@
     if ($("cart-link")) $("cart-link").textContent = `Cart (${api.read(localStorage, config).cart.reduce((sum, item) => sum + item.quantity, 0)})`;
   }
   function renderAds() {
+    if (!ADS_ENABLED) return;
     const excluded = bookingEnabled ? [0, 1, 2] : storeEnabled ? [2, 5] : [];
     const selected = ads.map((ad, index) => ({ ad, index })).filter(item => !excluded.includes(item.index));
     $("demo-content").insertAdjacentHTML("beforebegin", `<div class="ad-mobile-row" aria-label="Other local businesses">${selected.map(({ ad, index }) =>
@@ -193,6 +195,7 @@
     }));
   }
   function layoutAds() {
+    if (!ADS_ENABLED) return;
     const row = document.querySelector(".ad-mobile-row");
     if (adLayoutRunning || !row || document.body.classList.contains("demo-owner-open")) return;
     adLayoutRunning = true;
@@ -280,6 +283,7 @@
     });
   }
   async function startAdLayout() {
+    if (!ADS_ENABLED) return;
     try {
       await document.fonts.ready;
       requestAnimationFrame(() => {
@@ -289,6 +293,7 @@
     } catch (failure) { error(failure); }
   }
   function resizeAds() {
+    if (!ADS_ENABLED) return;
     clearTimeout(adResizeTimer);
     if (adLayoutReady) adResizeTimer = setTimeout(() => action(layoutAds), 200);
   }
@@ -815,7 +820,7 @@
     if (!own) {
       dashboardOpen = false;
       document.body.classList.remove("demo-owner-open");
-      app.classList.toggle("has-customer-ads", pageName === "home");
+      app.classList.toggle("has-customer-ads", ADS_ENABLED && pageName === "home");
       document.querySelector(".shop-header").hidden = false; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = false; });
       $("demo-content").innerHTML = `<section><h2>Customer first</h2><p>Complete a demo ${bookingEnabled ? "booking" : "checkout"} before building your daily dashboard.</p><a class="book-button" href="index.html">Back to the customer site</a></section>`;
       return;
@@ -1112,9 +1117,11 @@
     visitor = api.lead(sessionStorage);
     api.personalize(config, visitor);
     renderShell();
-    window.addEventListener("resize", resizeAds);
-    if (document.readyState === "complete") startAdLayout();
-    else window.addEventListener("load", startAdLayout, { once: true });
+    if (ADS_ENABLED && pageName === "home") {
+      window.addEventListener("resize", resizeAds);
+      if (document.readyState === "complete") startAdLayout();
+      else window.addEventListener("load", startAdLayout, { once: true });
+    }
     api.read(localStorage, config);
     if (storeEnabled && pageName === "home") api.resetStoreVisit(localStorage, config);
     if (pageName !== "home" && !storeEnabled) throw new Error("This tier has no storefront.");
