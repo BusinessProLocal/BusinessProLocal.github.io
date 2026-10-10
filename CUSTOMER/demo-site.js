@@ -362,7 +362,7 @@
   }
   function enhanceContact(form, prefix) {
     const fields = { name: `${prefix}-name`, phone: `${prefix}-phone`, email: `${prefix}-email` };
-    const values = () => ({ ...forms.leadValues(localStorage), name: "Jake Miller" });
+    const values = () => ({ ...forms.leadValues(sessionStorage), name: "Jake Miller" });
     forms.enhance(form);
     forms.addDemoButton($("booking-info"), fields, values);
   }
@@ -525,7 +525,7 @@
   function setupCheckout() {
     const fields = { name: "checkout-name", street: "checkout-street", city: "checkout-city", state: "checkout-state", zip: "checkout-zip" };
     const values = () => {
-      const saved = forms.leadValues(localStorage);
+      const saved = forms.leadValues(sessionStorage);
       return { name: saved.name, ...(api.parseAddress(saved.address) || api.parseAddress(forms.sample.address)) };
     };
     forms.addDemoButton($("checkout-form"), fields, values);
@@ -1109,7 +1109,7 @@
       (order.status === "Shipped" ? "" : `<button type="button" class="action-btn" data-shipped="${escape(order.id)}">Shipped</button>`);
   }
   try {
-    visitor = api.lead(localStorage);
+    visitor = api.lead(sessionStorage);
     api.personalize(config, visitor);
     renderShell();
     window.addEventListener("resize", resizeAds);

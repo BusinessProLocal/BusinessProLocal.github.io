@@ -14,6 +14,12 @@
 <link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
 <link rel="stylesheet" href="CUSTOMER/form-helpers.css">
 <script src="CUSTOMER/gold-word.js" defer></script>
+<script>
+history.scrollRestoration = "manual";
+window.addEventListener("pageshow", event => {
+  if (!event.persisted && !location.hash) window.scrollTo(0, 0);
+});
+</script>
 <style>
 /* TEST PAGE — opens by double-click. Fonts load from ../fonts, demos from ../DEMOS */
 @font-face { font-family:"Playfair Display"; font-weight:800; src:url("fonts/playfair-800.ttf") format("truetype"); }
@@ -252,23 +258,23 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
 <section class="block" id="start">
   <h2>Get started</h2>
   <p class="lead">Tell us about your business and we'll reach out.</p>
-  <form id="startForm">
+  <form id="startForm" autocomplete="off">
     <div class="two">
-      <label for="fName">Your name<input id="fName" required maxlength="200" spellcheck="true" lang="en-US"></label>
-      <label for="fBiz">Business name<input id="fBiz" required maxlength="200" spellcheck="true" lang="en-US"></label>
+      <label for="fName">Your name<input id="fName" autocomplete="off" required maxlength="200" spellcheck="true" lang="en-US"></label>
+      <label for="fBiz">Business name<input id="fBiz" autocomplete="off" required maxlength="200" spellcheck="true" lang="en-US"></label>
     </div>
     <div class="two">
-      <label for="fPhone">Phone<input id="fPhone" type="tel" maxlength="100" spellcheck="false"></label>
-      <label for="fEmail">Email<input id="fEmail" type="email" required maxlength="320" spellcheck="false"></label>
+      <label for="fPhone">Phone<input id="fPhone" autocomplete="off" type="tel" maxlength="100" spellcheck="false"></label>
+      <label for="fEmail">Email<input id="fEmail" autocomplete="off" type="email" required maxlength="320" spellcheck="false"></label>
     </div>
-    <label for="fAddress">Business address<input id="fAddress" required maxlength="500" autocomplete="street-address" spellcheck="true" lang="en-US"></label>
-    <label for="fType">Type of business<select id="fType" required>
+    <label for="fAddress">Business address<input id="fAddress" required maxlength="500" autocomplete="off" spellcheck="true" lang="en-US"></label>
+    <label for="fType">Type of business<select id="fType" autocomplete="off" required>
       <option value="">Choose your business type</option>
       <option>Barbershop</option><option>Hair salon</option><option>Retail &amp; gift shop</option>
       <option>Auto shop</option><option>Tattoo &amp; piercing</option><option>Home services</option>
       <option>Pet services</option><option>Nail salon &amp; spa</option><option>Custom</option>
-    </select><input id="fCustomType" maxlength="80" placeholder="Type your business (bakery, florist...)" spellcheck="true" lang="en-US" hidden disabled></label>
-    <label class="question-field" for="fMsg">Questions? (optional)<textarea id="fMsg" rows="2" maxlength="2000" spellcheck="true" lang="en-US"></textarea></label>
+    </select><input id="fCustomType" autocomplete="off" maxlength="80" placeholder="Type your business (bakery, florist...)" spellcheck="true" lang="en-US" hidden disabled></label>
+    <label class="question-field" for="fMsg">Questions? (optional)<textarea id="fMsg" autocomplete="off" rows="2" maxlength="2000" spellcheck="true" lang="en-US"></textarea></label>
     <div hidden aria-hidden="true"><label for="fWebsite">Leave this blank<input id="fWebsite" name="website" tabindex="-1" autocomplete="off"></label></div>
     <p class="service-offer">Your first month of service is free.</p>
     <button class="btn solid" type="submit">Next: See Your Plans</button>
@@ -351,7 +357,7 @@ async function sendLeadAlert(lead, website) {
         await new Promise(resolve => setTimeout(resolve, 3000));
       } else {
         document.getElementById("plansThanks").textContent +=
-          " Your information is saved on this device, but we couldn't send the email alert. Please contact businessprolocal207@gmail.com.";
+          " Your information is available for this tab's visit, but we couldn't send the email alert. Please contact businessprolocal207@gmail.com.";
       }
     }
   }
@@ -377,12 +383,12 @@ document.getElementById("startForm").addEventListener("submit", function (e) {
     return;
   }
   try {
-    const leads = JSON.parse(localStorage.getItem("businessProLeads") || "[]");
+    const leads = JSON.parse(sessionStorage.getItem("businessProLeads") || "[]");
     if (!Array.isArray(leads)) {
       throw new Error("Saved lead data is not in the expected format.");
     }
     leads.push(lead);
-    localStorage.setItem("businessProLeads", JSON.stringify(leads));
+    sessionStorage.setItem("businessProLeads", JSON.stringify(leads));
   } catch (error) {
     console.error("Lead save error:", error);
     document.getElementById("formMsg").textContent =

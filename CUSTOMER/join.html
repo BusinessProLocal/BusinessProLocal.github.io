@@ -1730,7 +1730,7 @@
 
           const savedSignups =
             JSON.parse(
-              localStorage.getItem(SIGNUP_STORAGE_KEY) || "[]"
+              sessionStorage.getItem(SIGNUP_STORAGE_KEY) || "[]"
             );
 
           if (!Array.isArray(savedSignups)) {
@@ -1743,7 +1743,7 @@
 
           savedSignups.push(signup);
 
-          localStorage.setItem(
+          sessionStorage.setItem(
             SIGNUP_STORAGE_KEY,
             JSON.stringify(savedSignups)
           );
@@ -1751,7 +1751,7 @@
           document.getElementById(
             "save-status"
           ).textContent =
-            "Signup information saved in this browser. Connecting to secure checkout...";
+            "Signup information saved for this tab's visit. Connecting to secure checkout...";
 
 
         } catch (error) {

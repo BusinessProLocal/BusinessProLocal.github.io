@@ -4,6 +4,11 @@
   const sample = { name: "Joe Test", business: "Joe's Barbershop", phone: "207-555-0101", email: "joe.test@gmail.com",
     address: "7 Clipper Lane, Sanford, Maine 04073", businessType: "Barbershop" };
   const leadFields = ["name", "business", "phone", "email", "address", "businessType", "questions"];
+  function clearLegacyVisitor(storage) {
+    for (const key of ["businessProLeads", "businessProGetStartedDraft_v1", "businessProSignupDraft_v1", "businessProSignups"]) {
+      storage.removeItem(key);
+    }
+  }
   function latestLead(storage) {
     const leads = JSON.parse(storage.getItem("businessProLeads") || "[]");
     if (!Array.isArray(leads)) throw new Error("Saved Get Started information is invalid.");
@@ -137,9 +142,11 @@
     container.prepend(button);
     return button;
   }
-  const api = { enhance, fill, addTestButton, addDemoButton, sample, formatPhone, latestLead, leadValues, readDraft, saveDraft };
+  const api = { enhance, fill, addTestButton, addDemoButton, sample, formatPhone, latestLead, leadValues, readDraft, saveDraft, clearLegacyVisitor };
   if (typeof module !== "undefined" && module.exports) { module.exports = api; return; }
   root.BusinessProForms = api;
+  try { clearLegacyVisitor(localStorage); }
+  catch (failure) { formFailure(document.body, failure); }
   enhance();
   function startValues(values) {
     const select = document.getElementById("fType");
@@ -153,9 +160,9 @@
     function restore() {
       restoring = true;
       try {
-        const draft = readDraft(localStorage, key);
-        const lead = latestLead(localStorage);
-        if (draft || lead) fill(fields, draft || transform(lead));
+        const draft = readDraft(sessionStorage, key);
+        const lead = latestLead(sessionStorage);
+        fill(fields, draft || transform(lead || {}));
       } catch (failure) { formFailure(container, failure); }
       finally { restoring = false; }
     }
@@ -163,7 +170,7 @@
       if (restoring || (event && !ids.has(event.target.id) && event.type !== "submit")) return;
       try {
         const values = Object.fromEntries(Object.entries(fields).map(([field, id]) => [field, document.getElementById(id).value]));
-        saveDraft(localStorage, key, values);
+        saveDraft(sessionStorage, key, values);
         container.querySelector(".form-storage-error")?.remove();
       } catch (failure) { formFailure(container, failure); }
     }
@@ -176,6 +183,8 @@
   }
   const start = document.getElementById("startForm");
   if (start) {
+    start.autocomplete = "off";
+    start.querySelectorAll("input, select, textarea").forEach(field => { field.autocomplete = "off"; });
     const fields = { name: "fName", business: "fBiz", phone: "fPhone", email: "fEmail", address: "fAddress",
       businessType: "fType", customType: "fCustomType", questions: "fMsg" };
     remember(start, fields, "businessProGetStartedDraft_v1", startValues);
