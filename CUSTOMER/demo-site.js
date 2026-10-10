@@ -12,7 +12,9 @@
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all";
   let ownerCalendarObserver = null;
-  let adLayoutObserver = null;
+  let adLayoutRunning = false;
+  let adLayoutReady = false;
+  let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
   ownerStyles.href = "../../CUSTOMER/demo-owner.css";
@@ -20,7 +22,6 @@
   const goldWords = document.createElement("script");
   goldWords.src = "../../CUSTOMER/gold-word.js";
   document.head.appendChild(goldWords);
-  window.addEventListener("goldwordschange", layoutAds);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
   const photoMessages = {};
@@ -64,7 +65,7 @@
     $("demo-error").textContent = "";
     try { callback(); } catch (failure) { error(failure); }
   }
-  const image = (src, alt, className = "") => `<img class="${className}" src="${escape(src)}" alt="${escape(alt)}" loading="lazy">`;
+  const image = (src, alt, className = "") => `<img class="${className}" src="${escape(src)}" alt="${escape(alt)}" loading="${className === "hero-photo" ? "eager" : "lazy"}">`;
   const ads = [
     { name: "Pine & Blade", phone: "(207) 555-0106", email: "book@pineandblade.com", domain: "pineandblade", holeSize: "small", type: "Barbershop", tagline: "Classic cuts & hot-towel shaves", button: "Book now",
       bg: "#13261c", accent: "#d9b25c", glow: "#2b5a40", photo: "../assets/ads/ad-pine-blade.jpg",
@@ -128,7 +129,7 @@
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
       <main id="demo-content"></main>
       <div class="demo-pricing"><a class="book-button" href="../../index.html#plans">Like what you see? See Plans &amp; Pricing &rarr;</a></div>
-      <footer>${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo by Business Pro
+      <footer><span class="demo-footer-label">${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo by Business Pro</span>
         <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div></footer>`;
     if (pageName === "home") renderAds();
   }
@@ -193,36 +194,34 @@
   }
   function layoutAds() {
     const row = document.querySelector(".ad-mobile-row");
-    if (!row || document.body.classList.contains("demo-owner-open")) return;
-    const buttons = [...row.querySelectorAll("[data-ad]")];
+    if (adLayoutRunning || !row || document.body.classList.contains("demo-owner-open")) return;
+    adLayoutRunning = true;
+    try { layoutAdButtons(row); }
+    finally { adLayoutRunning = false; }
+  }
+  function layoutAdButtons(row) {
+    const buttons = [...app.querySelectorAll(".ad-mobile-row [data-ad]")]
+      .sort((a, b) => Number(a.dataset.ad) - Number(b.dataset.ad));
     buttons.forEach(button => {
       button.removeAttribute("style");
     });
     const appBounds = app.getBoundingClientRect();
     const appStyles = getComputedStyle(app);
-    const borderLeft = parseFloat(appStyles.borderLeftWidth);
-    const borderTop = parseFloat(appStyles.borderTopWidth);
     const obstacles = [];
-    app.querySelectorAll(".test-bar, .demo-ribbon, .shop-header, .demo-notice, .customer-demo-banner, .hero-photo, img:not(.ad-bullethole-photo):not(.ad-bullethole-frame), .card, .demo-gallery, .demo-form, .demo-summary, button:not(.ad-tab), a:not(.ad-tab), input, select, textarea, video, canvas, iframe").forEach(el => {
+    app.querySelectorAll(".test-bar, .demo-ribbon, .shop-header, .demo-notice, .customer-demo-banner, .hero-photo, img:not(.ad-bullethole-photo):not(.ad-bullethole-frame):not(.gold-letter), .card, .demo-gallery, .demo-form, .demo-summary, .gold-word-piece, .menu-items span, .hero-content p > span, .contact-details p > span, .menu h3 > span, .contact-details h3 > span, .demo-footer-label, #booking > p, #store > p, button:not(.ad-tab), a:not(.ad-tab), input, select, textarea, video, canvas, iframe").forEach(el => {
+      if (el.closest(".ad-mobile-row, #ad-popup")) return;
       const rect = el.getBoundingClientRect();
       if (rect.width && rect.height) obstacles.push(rect);
     });
-    const textNodes = document.createTreeWalker(app, NodeFilter.SHOW_TEXT);
-    while (textNodes.nextNode()) {
-      const node = textNodes.currentNode;
-      if (!node.textContent.trim() || node.parentElement.closest(".ad-tab, #ad-popup")) continue;
-      const range = document.createRange();
-      range.selectNodeContents(node);
-      for (const rect of range.getClientRects()) {
-        if (rect.width && rect.height) obstacles.push(rect);
-      }
-    }
     const bounds = { left: appBounds.left + 16, right: appBounds.right - 16,
       top: appBounds.top + 8, bottom: appBounds.bottom - 8 };
     const minimumWidth = window.innerWidth <= 760 ? 64 :
       Math.min(280, Math.max(96, (bounds.right - bounds.left) * .3));
     const placements = [];
-    const sections = [...app.querySelectorAll("#demo-content > section")];
+    const sections = [...app.querySelectorAll("#demo-content > section")].map(element =>
+      ({ element, id: element.id, rect: element.getBoundingClientRect() }));
+    const footer = app.querySelector("footer");
+    const footerBounds = footer.getBoundingClientRect();
     for (let index = 0; index < buttons.length; index++) {
       const blockers = [...obstacles, ...reserveAdSpacing(bounds, placements)];
       let spots = [];
@@ -242,26 +241,56 @@
         Math.abs(candidate.top + candidate.height / 2 - targetY) <
           Math.abs(best.top + best.height / 2 - targetY) ? candidate : best);
       placements.push(slot);
-      const section = sections.find(element => {
-        const rect = element.getBoundingClientRect();
+      const section = sections.find(({ rect }) => {
         const centerY = slot.top + slot.height / 2;
         return centerY >= rect.top && centerY <= rect.bottom;
       });
       slot.label = section ? `${section.id || "customer content"} section` : "page gap";
+      slot.anchor = section?.element || (slot.top >= footerBounds.top ? footer : app);
     }
     buttons.forEach((button, index) => {
       const slot = placements[index];
+      const anchor = slot.anchor || footer;
+      let layer = anchor === app ? row : anchor.querySelector(":scope > .ad-mobile-row");
+      if (!layer) {
+        layer = document.createElement("div");
+        layer.className = "ad-mobile-row";
+        layer.setAttribute("aria-label", "Other local businesses");
+        anchor.appendChild(layer);
+      }
+      layer.appendChild(button);
+      const anchorBounds = anchor.getBoundingClientRect();
+      const anchorStyles = anchor === app ? appStyles : getComputedStyle(anchor);
+      const tilt = [-2.5, 1.8, -1.2, 2.8, -.8, 2.2, -1.8, .9][index % 8];
+      const angle = Math.abs(tilt) * Math.PI / 180;
+      // Keep the rotated outline inside the reserved open rectangle.
+      const scale = Math.min(slot.width / (slot.width * Math.cos(angle) + slot.height * Math.sin(angle)),
+        slot.height / (slot.height * Math.cos(angle) + slot.width * Math.sin(angle)));
+      const width = slot.width * scale, height = slot.height * scale;
       button.hidden = false;
-      button.style.left = `${slot.left - appBounds.left - borderLeft}px`;
-      button.style.top = `${slot.top - appBounds.top - borderTop}px`;
-      button.style.width = `${slot.width}px`;
-      button.style.height = `${slot.height}px`;
-      button.style.setProperty("--ad-tilt", `${[-2.5, 1.8, -1.2, 2.8, -.8, 2.2, -1.8, .9][index % 8]}deg`);
+      button.style.left = `${slot.left + (slot.width - width) / 2 - anchorBounds.left - parseFloat(anchorStyles.borderLeftWidth)}px`;
+      button.style.top = `${slot.top + (slot.height - height) / 2 - anchorBounds.top - parseFloat(anchorStyles.borderTopWidth)}px`;
+      button.style.width = `${width}px`;
+      button.style.height = `${height}px`;
+      button.style.setProperty("--ad-tilt", `${tilt}deg`);
       const hole = button.querySelector(".ad-bullethole");
       hole.classList.remove("ad-hole-small", "ad-hole-medium", "ad-hole-large");
-      hole.classList.add(`ad-hole-${adHoleSize(slot.width)}`);
+      hole.classList.add(`ad-hole-${adHoleSize(width)}`);
       button.dataset.placement = slot.label;
     });
+  }
+  async function startAdLayout() {
+    try {
+      await document.fonts.ready;
+      requestAnimationFrame(() => {
+        adLayoutReady = true;
+        action(layoutAds);
+      });
+    } catch (failure) { error(failure); }
+  }
+  function resizeAds() {
+    clearTimeout(adResizeTimer);
+    if (adLayoutReady) adResizeTimer = setTimeout(() => action(layoutAds), 200);
   }
   function renderHome() {
     document.body.classList.remove("demo-owner-open");
@@ -270,11 +299,11 @@
     if (mobileAds) mobileAds.remove();
     const shop = config.shop, state = api.read(localStorage, config);
     $("demo-content").innerHTML = `<section id="home">${image(config.photos[0].src, config.photos[0].alt, "hero-photo")}
-      <div class="hero-content"><h2>${escape(shop.heroTitle)}</h2><p>${escape(shop.heroSubtitle)}</p>
+      <div class="hero-content"><h2>${escape(shop.heroTitle)}</h2><p><span>${escape(shop.heroSubtitle)}</span></p>
       ${!bookingEnabled && !storeEnabled ? '<button id="call-order" type="button">Call to order</button><p id="call-message" role="status"></p>' :
         `<a class="book-button" href="#${storeEnabled ? "store" : "booking"}">${storeEnabled ? "Shop coastal gifts" : "Customer Demo"}</a>`}</div></section>
       ${config.menu ? `<section id="services"><h2>Our Menu</h2><div class="menu">${config.menu.map(group =>
-        `<article><h3>${escape(group.name)}</h3><ul class="menu-items">${group.items.map(item =>
+        `<article><h3><span>${escape(group.name)}</span></h3><ul class="menu-items">${group.items.map(item =>
           `<li>${image(item.photo, item.text.split("$")[0].trim(), "menu-thumbnail")}<span>${escape(item.text)}</span></li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="services"><h2>Our Services</h2><div class="card-grid">${config.services.map(service =>
         `<article class="card"><h3>${escape(service.name)}</h3><p>${escape(service.description)}</p><p>${money(service.price * 100)}</p></article>`).join("")}</div></section>` : ""}
@@ -298,16 +327,10 @@
           <p class="added-message" data-added="${escape(product.id)}" role="status"></p></article>`;
       }).join("")}</div></section>` : ""}
       ${storeEnabled ? `<section id="checkout"><h2>Your Order</h2>${checkoutContent(state)}</section>` : ""}
-      <section id="contact"><h2>Hours &amp; Contact</h2><div class="contact-details"><p>${escape(shop.phoneDisplay)} &middot; ${escape(shop.email)}</p>
-      <p class="address">${escape([shop.addressLine1, shop.addressLine2].filter(Boolean).join(", "))}</p><h3>Hours</h3>
-      ${shop.hours.map(row => `<p><strong>${escape(row.days)}</strong>: ${escape(row.hours)}</p>`).join("")}</div></section>`;
-    if (mobileAds) document.querySelector(".hero-photo").insertAdjacentElement("afterend", mobileAds);
-    adLayoutObserver?.disconnect();
-    adLayoutObserver = new ResizeObserver(layoutAds);
-    document.querySelectorAll(".shop-header, #demo-content > section, .hero-photo, #booking .demo-form, #checkout .demo-form, .contact-details").forEach(el => adLayoutObserver.observe(el));
-    document.querySelectorAll("#demo-content img").forEach(img => img.addEventListener("load", layoutAds));
-    document.fonts.ready.then(layoutAds);
-    layoutAds();
+      <section id="contact"><h2>Hours &amp; Contact</h2><div class="contact-details"><p><span>${escape(shop.phoneDisplay)} &middot; ${escape(shop.email)}</span></p>
+      <p class="address"><span>${escape([shop.addressLine1, shop.addressLine2].filter(Boolean).join(", "))}</span></p><h3><span>Hours</span></h3>
+      ${shop.hours.map(row => `<p><span><strong>${escape(row.days)}</strong>: ${escape(row.hours)}</span></p>`).join("")}</div></section>`;
+    if (mobileAds) $("demo-content").insertAdjacentElement("beforebegin", mobileAds);
     if ($("call-order")) $("call-order").addEventListener("click", () => { $("call-message").textContent = `Call ${shop.phoneDisplay} to order`; });
     if (bookingEnabled) {
       setupBooking();
@@ -341,8 +364,7 @@
     const fields = { name: `${prefix}-name`, phone: `${prefix}-phone`, email: `${prefix}-email` };
     const values = () => ({ ...forms.leadValues(localStorage), name: "Jake Miller" });
     forms.enhance(form);
-    forms.fill(fields, values());
-    forms.addDemoButton(form, fields, values);
+    forms.addDemoButton($("booking-info"), fields, values);
   }
   function bookingForm() {
     return `<form id="booking-form" class="demo-form"><fieldset><legend>1. Pick a service</legend>
@@ -398,23 +420,15 @@
     $("booking-info").disabled = !ready;
     $("demo-confirm").disabled = !ready;
     $("booking-summary").textContent = ready ?
-      `${service.name} with ${staff.name} on ${$("demo-date").value} at ${api.timeLabel($("demo-time").value)}. ${money(service.price * 100)}; nothing charged in this demo.` : "";
+      `${service.name} with ${staff.name} on ${$("demo-date").value} at ${api.timeLabel($("demo-time").value)}. ${money(service.price * 100)}; nothing charged in this demo. ` +
+      [$("demo-name").value, $("demo-phone").value, $("demo-email").value].filter(Boolean).join(" · ") : "";
   }
   function setupBooking() {
     enhanceContact($("booking-form"), "demo");
-    $("booking-form").querySelector(".demo-fill").addEventListener("click", () => formAction("booking-error", () => {
-      $("demo-service").selectedIndex = 1; $("demo-service").dispatchEvent(new Event("change"));
-      $("demo-staff").selectedIndex = 1; $("demo-staff").dispatchEvent(new Event("change"));
-      const state = api.read(localStorage, config);
-      const day = api.dates().find(date => api.slots(config, state, $("demo-staff").value, $("demo-service").value, date).length);
-      if (!day) throw new Error("No demo appointments are available in the next 30 days.");
-      $("demo-date").value = day;
-      const date = new Date(day + "T12:00:00");
-      calendarMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-      renderCalendar(); refreshTimes();
-      $("demo-time").selectedIndex = 1;
-      refreshSummary();
-    }));
+    ["demo-name", "demo-phone", "demo-email"].forEach(id => {
+      $(id).addEventListener("input", refreshSummary);
+      $(id).addEventListener("change", refreshSummary);
+    });
     $("demo-service").addEventListener("change", () => action(() => {
       const staff = config.barbers.filter(item => item.serviceIds.includes($("demo-service").value));
       $("demo-staff").innerHTML = '<option value="">Select a barber</option>' + staff.map(item =>
@@ -514,7 +528,6 @@
       const saved = forms.leadValues(localStorage);
       return { name: saved.name, ...(api.parseAddress(saved.address) || api.parseAddress(forms.sample.address)) };
     };
-    forms.fill(fields, values());
     forms.addDemoButton($("checkout-form"), fields, values);
     $("checkout-state").addEventListener("input", event => { event.target.value = event.target.value.toUpperCase(); });
     $("checkout-shipping").addEventListener("change", () => {
@@ -814,7 +827,6 @@
     const title = activeTab ? ownerTabLabel(activeTab) : "Dashboard";
     const preview = activeTab && !activeTab.live;
     document.body.classList.add("demo-owner-open");
-    adLayoutObserver?.disconnect();
     document.querySelector(".shop-header").hidden = true; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = true; });
     document.title = `${visitor?.business || config.shop.name} | ${title} Demo`;
     setDemoIndexing(true);
@@ -1100,7 +1112,9 @@
     visitor = api.lead(localStorage);
     api.personalize(config, visitor);
     renderShell();
-    window.addEventListener("resize", layoutAds);
+    window.addEventListener("resize", resizeAds);
+    if (document.readyState === "complete") startAdLayout();
+    else window.addEventListener("load", startAdLayout, { once: true });
     api.read(localStorage, config);
     if (storeEnabled && pageName === "home") api.resetStoreVisit(localStorage, config);
     if (pageName !== "home" && !storeEnabled) throw new Error("This tier has no storefront.");
