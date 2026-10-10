@@ -9,16 +9,17 @@
   const measure = document.createElement("canvas").getContext("2d");
   if (!measure) throw new Error("This browser could not measure engraved gold button labels.");
   function fit(element) {
+    const label = element.querySelector(":scope > .gold-bar-label");
+    if (!label || !element.getClientRects().length) return;
     const style = getComputedStyle(element);
-    const parentStyle = getComputedStyle(element.parentElement);
-    const available = element.parentElement.clientWidth - parseFloat(parentStyle.paddingLeft) -
-      parseFloat(parentStyle.paddingRight) - 24 - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth);
-    if (available <= 0) return;
-    const words = element.dataset.goldBarLabel.toUpperCase().split(/\s+/);
     const baseSize = parseFloat(style.fontSize);
-    measure.font = `700 ${baseSize}px Cinzel`;
-    const longest = Math.max(...words.map(word => measure.measureText(word).width));
-    const size = longest > available ? baseSize * available / longest : baseSize;
+    element.style.setProperty("--gold-bar-label-size", baseSize + "px");
+    const labelStyle = getComputedStyle(label);
+    const available = element.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    if (available <= 0) return;
+    measure.font = `${labelStyle.fontWeight} ${baseSize}px ${labelStyle.fontFamily}`;
+    const textWidth = measure.measureText(element.dataset.goldBarLabel.toUpperCase()).width;
+    const size = textWidth > available - 1 ? baseSize * Math.max(0, available - 1) / textWidth : baseSize;
     element.style.setProperty("--gold-bar-label-size", size + "px");
     element.style.setProperty("--gold-bar-height", element.getBoundingClientRect().height + "px");
   }
