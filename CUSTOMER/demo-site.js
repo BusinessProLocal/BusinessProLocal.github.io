@@ -119,7 +119,7 @@
     app.classList.toggle("barber-customer-demo", bookingEnabled);
     document.title = config.shop.pageTitle;
     app.innerHTML = `${bookingEnabled ? '<div class="customer-demo-banner">Customer Demo &mdash; this is what your customers see when they book an appointment with you.</div>' : ""}
-      <div class="test-bar">TEST PAGE &middot; NOT LIVE</div>
+      <div class="test-bar">UNDER MAINTENANCE</div>
       <div class="demo-ribbon">DEMO MODE &middot; ${storeEnabled ? "Business Pro" : "Business Pro " + escape(config.demo.label)}</div>
       <header class="shop-header"><h1>${escape(config.shop.name)}</h1><nav aria-label="Main navigation">
       <a href="index.html#home">Home</a><a href="index.html#${storeEnabled ? "store" : "services"}">${storeEnabled ? "Shop" : bookingEnabled ? "Services" : "Menu"}</a>
