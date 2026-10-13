@@ -475,7 +475,7 @@
     dashboardOpen = true;
     dashboardView = "dashboard";
     renderDashboard();
-    document.querySelector("#daily-dashboard .topbar").scrollIntoView({ block: "start", behavior: "instant" });
+    document.querySelector("#daily-dashboard").scrollIntoView({ block: "start", behavior: "instant" });
   }
   function renderCart() {
     const state = api.read(localStorage, config);
