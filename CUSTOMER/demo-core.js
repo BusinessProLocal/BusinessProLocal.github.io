@@ -162,6 +162,12 @@
   function total(config, state) {
     return state.cart.reduce((sum, item) => sum + config.products.find(product => product.id === item.id).priceCents * item.quantity, 0);
   }
+  function taxCents(config, state) {
+    return Math.round(total(config, state) * 0.055);
+  }
+  function grandTotal(config, state) {
+    return total(config, state) + taxCents(config, state);
+  }
   function clearCart(storage, config) {
     const state = read(storage, config);
     if (state.cart.length) {
@@ -199,7 +205,7 @@
     const order = {
       id: "DEMO-" + root.crypto.randomUUID(), ...customer, shippingMethod, status: "New", packedIds: [], shipment: null, label: null,
       demo: true, payment: "simulated-no-charge",
-      createdAt: now.toISOString(), totalCents: total(config, state),
+      createdAt: now.toISOString(), totalCents: grandTotal(config, state), taxCents: taxCents(config, state),
       items: state.cart.map(item => ({ ...item, name: config.products.find(product => product.id === item.id).name,
         priceCents: config.products.find(product => product.id === item.id).priceCents }))
     };
@@ -424,7 +430,7 @@
     state[field] = data;
     write(storage, config, state);
   }
-  const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, book, setQuantity, clearCart, total, checkout,
+  const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, book, setQuantity, clearCart, total, taxCents, grandTotal, checkout,
     parseAddress, addressText, shippingTo, shippingFrom, isPickup, savePacking, printLabel, setCarrier, markShipped,
     dashboard, bookingStatus, shipBox, shipBoxes, savePhoto };
   if (typeof module !== "undefined" && module.exports) module.exports = api;

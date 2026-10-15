@@ -46,7 +46,7 @@
       ownerCalendarDate = new Date(own.date + "T12:00:00");
     }
     renderDashboard();
-    window.scrollTo({ top: 0 });
+    document.querySelector("#daily-dashboard .topbar")?.scrollIntoView({ block: "start", behavior: "instant" });
   }
   function ownerNavigation() {
     const button = (tab, child = false) => `<button type="button" data-owner-tab="${escape(tab.id)}"
@@ -485,7 +485,8 @@
         <label>Quantity<input type="number" min="1" max="${Math.min(99, api.stock(config, state, item.id))}" step="1" value="${item.quantity}" data-quantity="${escape(item.id)}"></label>
         <button type="button" data-remove="${escape(item.id)}">Remove</button></article>`;
     }).join("") : "<p>Your cart is empty.</p>"}${state.cart.length ? `<div class="demo-summary order-totals"><p><span>Subtotal</span><span>${money(api.total(config, state))}</span></p>
-      <p><span>Shipping</span><span>Choose at checkout</span></p><p class="grand-total"><span>Total</span><span>${money(api.total(config, state))}</span></p></div>` : ""}
+      <p><span>Maine sales tax (5.5%)</span><span>${money(api.taxCents(config, state))}</span></p>
+      <p><span>Shipping</span><span>Choose at checkout</span></p><p class="grand-total"><span>Total</span><span>${money(api.grandTotal(config, state))}</span></p></div>` : ""}
       <div class="cart-actions"><a class="book-button ghost" href="index.html#store">Continue shopping</a>${state.cart.length ? '<a class="book-button" href="checkout.html">Checkout</a>' : ""}</div></section>`;
     document.querySelectorAll("[data-quantity]").forEach(input => input.addEventListener("change", () => action(() => {
       if (!input.checkValidity()) throw new Error("Choose a whole-number quantity within available stock.");
@@ -508,8 +509,9 @@
       const product = config.products.find(product => product.id === item.id);
       return `<p class="order-line"><span>${escape(product.name)} &times; ${item.quantity}</span><span>${money(product.priceCents * item.quantity)}</span></p>`;
     }).join("") + `<p class="subtotal"><span>Subtotal</span><span>${money(api.total(config, state))}</span></p>
+      <p><span>Maine sales tax (5.5%)</span><span>${money(api.taxCents(config, state))}</span></p>
       <p><span>Shipping</span><span>${pickup ? "Free pickup" : "$0.00 (demo)"}</span></p>
-      <p class="grand-total"><span>Total</span><span>${money(api.total(config, state))}</span></p>`;
+      <p class="grand-total"><span>Total</span><span>${money(api.grandTotal(config, state))}</span></p>`;
   }
   function checkoutContent(state) {
     return `<div id="order-totals" class="demo-summary order-totals" aria-live="polite">${orderTotals(state)}</div>
@@ -636,7 +638,6 @@
     });
   }
   function ownerPreview(tab) {
-    const live = bookingEnabled ? "Appointments" : "Orders", target = bookingEnabled ? "appointments" : "orders";
     const panel = (title, content) => `<article class="preview-panel"><h3>${escape(title)}</h3><div>${content}</div></article>`;
     const field = (label, value = "", type = "text") => `<label>${escape(label)}<input type="${type}" value="${escape(value)}" readonly></label>`;
     const select = (label, values) => `<label>${escape(label)}<select tabindex="0" aria-readonly="true">${values.map(value => `<option>${escape(value)}</option>`).join("")}</select></label>`;
@@ -738,7 +739,7 @@
             ${select("Customer notifications", ["Enabled", "Disabled"])}</div>`) +
           (storeEnabled ? panel("Pickup & Tax", `<div class="preview-fields">${select("Local pickup", ["Enabled", "Disabled"])}
             ${field("Pickup instructions", "Collect your order during shop hours.")}${field("Sample tax rate (%)", "5.5", "number")}</div>
-            <p>Sample settings only. No tax is applied to demo checkout.</p>`) : "") + periods(["Save settings"]);
+            <p>Sample settings only. Demo checkout adds 5.5% Maine sales tax.</p>`) : "") + periods(["Save settings"]);
         break;
       case "financials":
         content = periods(["Day", "Week", "Month", "Year"]) + cards([["Total Income", "$480.00"], ["Service / Order Revenue", "$450.00"], ["Tips", "$30.00"], ["Outgoing", "$120.00"], ["Net", "$360.00"]]) +
@@ -777,8 +778,7 @@
           ${table(["Time", ...employees], ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"].map((time, index) =>
             [time, ...employees.map((name, employee) => index === employee ? "Demo Guest - Sample appointment" : "Available")]))}${button("Open appointment")}`);
     }
-    return `<section class="owner-preview-page"><div class="owner-preview-banner">Preview. Try the live tabs:
-      <button type="button" data-preview-live="dashboard">Dashboard</button> and <button type="button" data-preview-live="${target}">${live}</button></div>
+    return `<section class="owner-preview-page">
       <div class="preview-heading"><h2>${escape(ownerTabLabel(tab))}</h2><p>Demo data only. Explore the layout without changing your shop.</p></div>
       <div class="owner-preview-controls">${content}</div></section>`;
   }
@@ -849,13 +849,12 @@
       <div class="access-controls"><span class="signed-in-badge">Signed in: Owner</span><div class="date">${escape(new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }))}</div>
       <button type="button" class="lock-btn" id="demo-lock">Lock</button></div></header>
       <div class="content">${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
-        dashboardView === "orders" ? `<section class="page active" id="dashboard">${ordersPanel(records, seeded)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
+        dashboardView === "orders" ? `<section class="page active" id="dashboard">${ordersPanel(records, seeded)}${shippingPanel(records, seeded)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
       <div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
       <div class="cards"><div class="card"><span>${bookingEnabled ? "Today's Appointments" : "Today's Orders"}</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
       <div class="card"><span>${bookingEnabled ? "Barbers Working" : "To Pack & Ship"}</span><strong>${bookingEnabled ? config.barbers.length : complete ? 0 : 1}</strong><small>${bookingEnabled ? config.barbers.length + " scheduled today" : "Orders awaiting fulfillment"}</small></div>
-      <div class="card"><span>Today's Sales</span><strong>${money(complete ? price : 0)} earned</strong><small>of ${money(price)} booked ${bookingEnabled ? "- services only" : "- orders only"}</small></div></div>
-      ${bookingEnabled ? schedulePanel(records, seeded) + timeOffPanel() : ordersPanel(records, seeded)}</section>`}
-      ${!preview && (own.status === "Finished" || own.status === "Shipped" || own.status === "Ready for pickup") ? endOfDemo() : ""}
+      ${storeEnabled ? `<div class="card"><span>Today's Sales</span><strong>${money(complete ? price : 0)} earned</strong><small>of ${money(price)} booked - orders only</small></div>` : ""}</div>
+      ${bookingEnabled ? schedulePanel(records, seeded) + timeOffPanel() : ordersPanel(records, seeded) + shippingPanel(records, seeded)}</section>`}
       </div></main></div>${bookingEnabled && !preview ? appointmentDialog() : ""}
       <div id="owner-preview-popup" class="owner-preview-popup" role="status" aria-live="polite" hidden><p>This works in your real portal.</p>
       <div><button type="button" data-preview-live="${bookingEnabled ? "appointments" : "orders"}">Try ${bookingEnabled ? "Appointments" : "Orders"} &#8594;</button>
@@ -904,10 +903,6 @@
         api.markShipped(localStorage, config, button.dataset.shipped);
         renderDashboard();
       })));
-    }
-    function endOfDemo() {
-      return `<div class="end-of-demo"><p>That's a day running your shop with Business Pro.</p>
-        <a class="book-button" href="${plansLink}">See plans</a></div>`;
     }
   }
   function schedulePanel(records, state) {
@@ -1072,17 +1067,17 @@
     return api.shipBox(config, order);
   }
   function ordersPanel(records, state) {
-    return records.map(order => `<article class="panel owner-order"><div class="panel-header"><h3>${escape(order.name)} &middot; ${money(order.totalCents)}</h3>
+    const packing = records.filter(order => !["Packed", "Shipped", "Ready for pickup"].includes(order.status));
+    if (!packing.length) return `<div class="panel"><div class="panel-header"><h3>Orders</h3></div><div class="panel-body">
+      <p>Nothing to pack right now. Packed orders move to the Shipping section.</p></div></div>`;
+    return packing.map(order => `<article class="panel owner-order"><div class="panel-header"><h3>Order to pack &middot; ${money(order.totalCents)}</h3>
       <span class="status">${escape(order.status || "New")}</span></div><div class="panel-body">
       ${!order.example ? "<p>Your demo order</p>" : ""}
       <p>${api.isPickup(order) ? "Free pickup" : "Ship"}</p>
-      <p class="address">${escape(api.shippingTo(order))}</p>
       <h3>Ships in ${shipBox(order).boxes} box${shipBox(order).boxes === 1 ? "" : "es"}</h3>
       <h3>Packing checklist</h3>
       ${(order.boxes || api.shipBoxes(config, order)).map((box, index, boxes) => `<section class="ship-box">
         <h3>Box ${index + 1} of ${boxes.length}</h3>
-        <p><strong>Weight:</strong> ${box.lbs} lb ${box.oz} oz</p>
-        <p><strong>Size:</strong> ${box.length} x ${box.width} x ${box.height} in</p>
         ${box.items.map(item => {
         const product = config.products.find(product => product.id === item.id);
         if (!product) throw new Error("An earlier demo order contains a retired product. Place a new order to preview packing.");
@@ -1090,12 +1085,19 @@
           data-box-pack="${index}:${escape(item.id)}"
           ${(order.packedBoxIds || (boxes.length === 1 ? (order.packedIds || []).map(id => `0:${id}`) : [])).includes(`${index}:${item.id}`) ? "checked" : ""}
           ${["Packed", "Shipped", "Ready for pickup"].includes(order.status) ? "disabled" : ""}>
-          <span>${escape(item.name)} &times; ${item.quantity}<br>Each: ${product.weight} lb &middot; item size ${product.box.join(" x ")} in
-          ${product.fragile ? "<br>Fragile - wrap and protect before packing." : ""}<br>Exact stock: ${api.stock(config, state, product.id)}</span></label>`;
+          <span>${escape(item.name)} &times; ${item.quantity}</span></label>`;
         }).join("")}</section>`).join("")}
       <button type="button" class="action-btn" data-packed="${escape(order.id)}" ${["Packed", "Shipped", "Ready for pickup"].includes(order.status) ? "disabled" : ""}>Packed</button>
-      ${shippingLabel(order)}
       </div></article>`).join("");
+  }
+  function shippingPanel(records, state) {
+    const ready = records.filter(order => ["Packed", "Shipped", "Ready for pickup"].includes(order.status));
+    if (!ready.length) return "";
+    return `<div class="panel owner-shipping"><div class="panel-header"><h3>Shipping</h3></div><div class="panel-body">
+      ${ready.map(order => `<section class="ship-order"><h3>${escape(order.name)}</h3>
+        <p class="address">${escape(api.shippingTo(order))}</p>
+        ${api.isPickup(order) ? "<p>Ready for pickup at the shop.</p>" : shippingLabel(order)}
+        </section>`).join("")}</div></div>`;
   }
   function shippingLabel(order) {
     if (api.isPickup(order) || !order.label) return "";

@@ -27,7 +27,7 @@ window.SHOP_CONFIG = {
   shop: {
     name: "Classic Cuts Barbershop", pageTitle: "Classic Cuts Barbershop | Professional DEMO",
     heroTitle: "A fresh cut. A classic experience.",
-    heroSubtitle: "Precision cuts and easy scheduling. Try a booking without sending a text or making a payment.",
+    heroSubtitle: "Precision cuts and easy scheduling. This is a demo. Book an appointment like your customer would, then see what you'll see as the owner.",
     addressLine1: "7 Clipper Lane", addressLine2: "Sanford, Maine",
     phoneDisplay: "207-4BARBER", email: "book@classiccuts.example",
     hours: [{ days: "Monday - Saturday", hours: "9:00 AM - 5:00 PM" }, { days: "Sunday", hours: "Closed" }]

@@ -262,3 +262,4 @@ footer { text-align: center; border-top: 1px solid var(--line); padding: 30px 16
 @media(max-width:600px) {
 }
 @media(max-width:600px) { .card-grid, .demo-gallery, .cards { grid-template-columns: minmax(0, 1fr); } .cart-row { grid-template-columns: 60px 1fr; } .cart-row img { width: 60px; } .content, .topbar { padding: 16px; } main > section { padding-block: 28px; } }
+@media(max-width:600px) { #store .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } #store .card { padding: 12px 10px; border-radius: 10px; } #store .card h3 { font-size: .95rem; margin-bottom: 6px; } #store .card p { font-size: .82rem; margin: 6px 0; } #store .product-description { display: none; } #store .add-row label { font-size: .8rem; gap: 6px; } #store .add-row select { min-width: 52px; padding: 6px; } }
