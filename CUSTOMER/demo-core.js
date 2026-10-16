@@ -45,7 +45,7 @@
         (state.inventoryOrderOffset !== undefined && (!Number.isInteger(state.inventoryOrderOffset) ||
           state.inventoryOrderOffset < 0 || state.inventoryOrderOffset > state.orders.length)) ||
         state.cart.some(item => !config.products?.some(product => product.id === item.id) ||
-          !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99) ||
+          !Number.isInteger(item.quantity) || item.quantity < 1) ||
         new Set(state.cart.map(item => item.id)).size !== state.cart.length ||
         state.bookings.some(item => !item || typeof item.id !== "string" || typeof item.staffId !== "string" ||
           typeof item.date !== "string" || typeof item.time !== "string") ||
@@ -151,7 +151,7 @@
   function setQuantity(storage, config, id, quantity) {
     if (config.demo.tier !== "business-pro") throw new Error("Storefront is only included in Business Pro.");
     if (!config.products.some(product => product.id === id)) throw new Error("Product not found.");
-    if (!Number.isInteger(quantity) || quantity < 0 || quantity > 99) throw new Error("Quantity must be between 0 and 99.");
+    if (!Number.isInteger(quantity) || quantity < 0) throw new Error("Quantity must be a whole number of zero or more.");
     const state = read(storage, config);
     if (quantity > stock(config, state, id)) throw new Error("Not enough stock for that quantity.");
     state.cart = state.cart.filter(item => item.id !== id);
@@ -392,7 +392,6 @@
         let box = packages.find(box => box.volume + volume <= 24 ** 3 &&
           Math.ceil((box.weight + product.weight) * 16) <= 320);
         if (!box) {
-          if (packages.length === 2) throw new Error("This order exceeds the largest two-box demo shipment. Reduce quantities.");
           box = { volume: 0, weight: 0, longest: 0, fragile: false, items: [] };
           packages.push(box);
         }
@@ -430,9 +429,18 @@
     state[field] = data;
     write(storage, config, state);
   }
+  function removePhoto(storage, config, field) {
+    const barberField = config.barbers?.some(staff => field === `barberPhoto:${staff.id}`);
+    if (!["barberPhoto", "workPhoto"].includes(field) && !barberField) {
+      throw new Error("Choose a valid barber or work photo to remove.");
+    }
+    const state = read(storage, config);
+    delete state[field];
+    write(storage, config, state);
+  }
   const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, book, setQuantity, clearCart, total, taxCents, grandTotal, checkout,
     parseAddress, addressText, shippingTo, shippingFrom, isPickup, savePacking, printLabel, setCarrier, markShipped,
-    dashboard, bookingStatus, shipBox, shipBoxes, savePhoto };
+    dashboard, bookingStatus, shipBox, shipBoxes, savePhoto, removePhoto };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.BusinessProDemo = api;
 })(globalThis);

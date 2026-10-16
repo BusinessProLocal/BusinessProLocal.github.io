@@ -9,7 +9,7 @@
   const $ = id => document.getElementById(id);
   const bookingEnabled = config.demo.tier === "professional", storeEnabled = config.demo.tier === "business-pro";
   const pageName = document.body.dataset.page || "home";
-  let visitor, dashboardOpen = false, dashboardView = "dashboard";
+  let visitor, dashboardOpen = false, dashboardView = "dashboard", ownerMenuOpen = false, ownerMenuShown = false;
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all";
   let ownerCalendarObserver = null;
@@ -29,7 +29,7 @@
   const ownerTabs = config.ownerTabs || [];
   const visitedLiveTabs = new Set();
   const expandedOwnerTabs = new Set();
-  let previewPopupTimer;
+  let previewPopupTimer, ownerMenuTimer;
   const plansLink = "../../index.html#start";
   function ownerTabLabel(tab) {
     const staff = config.barbers?.find(staff => staff.id === tab.staffId);
@@ -46,7 +46,14 @@
       ownerCalendarDate = new Date(own.date + "T12:00:00");
     }
     renderDashboard();
-    document.querySelector("#daily-dashboard .topbar")?.scrollIntoView({ block: "start", behavior: "instant" });
+    document.querySelector("#daily-dashboard .content")?.scrollIntoView({ block: "start", behavior: "instant" });
+  }
+  function setOwnerMenuOpen(open) {
+    ownerMenuOpen = open;
+    const sidebar = document.querySelector("#daily-dashboard .sidebar");
+    const toggle = $("owner-menu-toggle");
+    sidebar?.classList.toggle("owner-menu-open", open);
+    toggle?.setAttribute("aria-expanded", String(open));
   }
   function ownerNavigation() {
     const button = (tab, child = false) => `<button type="button" data-owner-tab="${escape(tab.id)}"
@@ -326,7 +333,7 @@
           <p>${money(product.priceCents)}</p><p class="product-description">${escape(product.description)}</p>
           <p>${count === 0 ? "Out of stock" : count <= 3 ? `Only ${count} left` : "In stock"}</p>
           <div class="add-row"><label>Quantity<select data-qty="${escape(product.id)}" autocomplete="off" aria-label="${escape(product.name)} quantity">
-          ${Array.from({ length: Math.min(count, 10) + 1 }, (_, quantity) =>
+          ${Array.from({ length: count + 1 }, (_, quantity) =>
             `<option value="${quantity}" ${quantity === (state.cart.find(item => item.id === product.id)?.quantity || 0) ? "selected" : ""}>${quantity}</option>`).join("")}
           </select></label></div>
           <p class="added-message" data-added="${escape(product.id)}" role="status"></p></article>`;
@@ -348,7 +355,7 @@
       message.textContent = "";
       try {
         const quantity = Number(select.value);
-        if (!Number.isInteger(quantity) || quantity < 0 || quantity > 10) throw new Error("Choose a quantity from 0 to 10.");
+        if (!Number.isInteger(quantity) || quantity < 0) throw new Error("Choose a whole-number quantity.");
         const state = api.setQuantity(localStorage, config, id, quantity);
         select.dataset.savedQuantity = String(quantity);
         updateOrderTotals(state);
@@ -471,18 +478,20 @@
       else error(failure);
     }
   }
-  function jumpToDashboard() {
+  function jumpToDashboard(orderId) {
     dashboardOpen = true;
     dashboardView = "dashboard";
     renderDashboard();
-    document.querySelector("#daily-dashboard").scrollIntoView({ block: "start", behavior: "instant" });
+    const order = orderId && document.getElementById(`pack-order-${orderId}`);
+    const target = order?.querySelector(".ship-box") || order || document.querySelector("#daily-dashboard");
+    target.scrollIntoView({ block: "start", behavior: "instant" });
   }
   function renderCart() {
     const state = api.read(localStorage, config);
     $("demo-content").innerHTML = `<section><h2>Your Cart</h2>${state.cart.length ? state.cart.map(item => {
       const product = config.products.find(product => product.id === item.id);
       return `<article class="cart-row">${image(product.photo, product.name)}<div><h3>${escape(product.name)}</h3><p>${money(product.priceCents)} each</p></div>
-        <label>Quantity<input type="number" min="1" max="${Math.min(99, api.stock(config, state, item.id))}" step="1" value="${item.quantity}" data-quantity="${escape(item.id)}"></label>
+        <label>Quantity<input type="number" min="1" max="${api.stock(config, state, item.id)}" step="1" value="${item.quantity}" data-quantity="${escape(item.id)}"></label>
         <button type="button" data-remove="${escape(item.id)}">Remove</button></article>`;
     }).join("") : "<p>Your cart is empty.</p>"}${state.cart.length ? `<div class="demo-summary order-totals"><p><span>Subtotal</span><span>${money(api.total(config, state))}</span></p>
       <p><span>Maine sales tax (5.5%)</span><span>${money(api.taxCents(config, state))}</span></p>
@@ -547,11 +556,11 @@
     $("checkout-form").addEventListener("submit", event => {
       event.preventDefault();
       formAction("checkout-error", () => {
-        api.checkout(localStorage, config, { name: $("checkout-name").value, shippingMethod: $("checkout-shipping").value,
+        const order = api.checkout(localStorage, config, { name: $("checkout-name").value, shippingMethod: $("checkout-shipping").value,
           shippingAddress: { street: $("checkout-street").value, city: $("checkout-city").value,
             state: $("checkout-state").value, zip: $("checkout-zip").value } });
         updateCartLink();
-        jumpToDashboard();
+        jumpToDashboard(order.id);
       });
     });
   }
@@ -562,6 +571,7 @@
       <input type="file" id="${id}" class="sr-only" accept="image/*" aria-label="${label}">
       ${barber ? '<div class="barber-photo-frame">' : ""}
       <img id="${id}-preview" class="photo-preview" alt="${alt}" ${src ? `src="${escape(src)}"` : "hidden"}>
+      ${barber ? `<button type="button" class="photo-remove" data-remove-photo="${escape(field)}" aria-label="Remove ${escape(alt)}" ${src ? "" : "hidden"}>&times;</button>` : ""}
       ${barber ? `<div id="${id}-placeholder" class="barber-photo-placeholder"${src ? " hidden" : ""}><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="20" r="12"/><path d="M10 58v-6a22 22 0 0 1 44 0v6z"/></svg><span>Put your picture here</span></div></div>` : ""}
       <p id="${id}-message" class="photo-message" role="status">${escape(photoMessages[field] || "")}</p></div>`;
   }
@@ -594,7 +604,20 @@
   }
   function photoInput(id, field) {
     const input = $(id), preview = $(id + "-preview"), message = $(id + "-message");
+    const remove = document.querySelector(`[data-remove-photo="${field}"]`);
     document.querySelector(`[data-photo-input="${id}"]`).addEventListener("click", () => input.click());
+    remove?.addEventListener("click", () => action(() => {
+      api.removePhoto(localStorage, config, field);
+      selection++;
+      delete previewPhotos[field];
+      preview.removeAttribute("src");
+      preview.hidden = true;
+      if ($(id + "-placeholder")) $(id + "-placeholder").hidden = false;
+      remove.hidden = true;
+      input.value = "";
+      photoMessages[field] = "Photo removed from this device.";
+      message.textContent = photoMessages[field];
+    }));
     let selection = 0;
     input.addEventListener("change", async () => {
       const file = input.files[0];
@@ -607,6 +630,7 @@
       const src = URL.createObjectURL(file);
       preview.src = src;
       preview.hidden = false;
+      if (remove) remove.hidden = false;
       if ($(id + "-placeholder")) $(id + "-placeholder").hidden = true;
       message.textContent = "Photo selected. Shrinking it for this device...";
       try {
@@ -627,6 +651,7 @@
         if (current === selection) {
           preview.removeAttribute("src");
           preview.hidden = true;
+          if (remove) remove.hidden = true;
           if ($(id + "-placeholder")) $(id + "-placeholder").hidden = false;
           message.textContent = "The photo could not be prepared. Try a JPG or PNG.";
           error(failure);
@@ -659,7 +684,7 @@
       case "schedule":
         content = panel("Employee Schedule", `<div class="preview-fields">${select("Employee", employees)}${field("Week of", api.dates()[0], "date")}</div>
           ${table(["Day", "Employee", "Start", "End"], ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => [day, employees[0], "9:00 AM", "5:00 PM"]))}
-          ${periods(["Edit schedule", "Save schedule", "Request time off"])}`) +
+          ${periods(bookingEnabled ? ["Edit schedule", "Save schedule"] : ["Edit schedule", "Save schedule", "Request time off"])}`) +
           panel("Time-Off Requests", table(["Employee", "Day", "Reason", "Status"], [[employees.at(-1), "Next Friday", "Sample request", "Awaiting review"]]) + periods(["Approve", "Decline"]));
         break;
       case "services":
@@ -704,7 +729,10 @@
           periods(["Add employee", "Edit employee"]) +
           (bookingEnabled ? `<div class="staff-photo-controls">${config.barbers.map((staff, index) =>
             `<section><h3>${escape(staff.name)}</h3>${barberPhotoControl(staff, index, api.read(localStorage, config))}</section>`).join("")}</div>` : "")) +
-          periods(["Today", "Past Week", "Past Month", "Past Year"]) + panel("Employee Performance", select("Employee", employees)) +
+          (bookingEnabled ? `<article class="preview-panel preview-performance"><header><h3>Employee Performance</h3>
+            <label>Show: <select aria-label="Performance period"><option selected>Today</option><option>Past Week</option>
+              <option>Past Month</option><option>Past Year</option></select></label></header><div>${select("Employee", employees)}</div></article>` :
+            periods(["Today", "Past Week", "Past Month", "Past Year"]) + panel("Employee Performance", select("Employee", employees))) +
           cards(bookingEnabled ? [["Completed Appointments", "6"], ["Completed Service Hours", "3.0"], ["Service Revenue", "$168.00"], ["Tips", "$24.00"], ["Total Collected", "$192.00"]] :
             [["Orders Packed", "6"], ["Hours Worked", "8.0"], ["Order Revenue", "$168.00"], ["Items Received", "24"], ["Orders Shipped", "5"]]) +
           panel("Completed Transactions - Today", table(["Employee", "Customer", bookingEnabled ? "Service" : "Order", "Revenue"],
@@ -831,6 +859,11 @@
     const activeTab = ownerTabs.flatMap(tab => [tab, ...(tab.children || [])]).find(tab => tab.id === dashboardView);
     const title = activeTab ? ownerTabLabel(activeTab) : "Dashboard";
     const preview = activeTab && !activeTab.live;
+    const showMenuOnLanding = !ownerMenuShown;
+    if (showMenuOnLanding) {
+      ownerMenuShown = true;
+      ownerMenuOpen = window.matchMedia("(max-width: 767px)").matches;
+    }
     document.body.classList.add("demo-owner-open");
     document.querySelector(".shop-header").hidden = true; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = true; });
     document.title = `${visitor?.business || config.shop.name} | ${title} Demo`;
@@ -839,10 +872,12 @@
     const finished = own.status === "Finished";
     const price = bookingEnabled ? own.status === "Canceled" ? 0 : (config.services.find(service => service.id === own.serviceId)?.price || 0) * 100 : own.totalCents;
     const complete = bookingEnabled ? finished || own.status === "Canceled" : ["Shipped", "Ready for pickup"].includes(own.status);
-    $("demo-content").innerHTML = `<section id="daily-dashboard"><div class="app"><aside class="sidebar"><div class="brand">
+    $("demo-content").innerHTML = `<section id="daily-dashboard"><div class="app"><aside class="sidebar${ownerMenuOpen ? " owner-menu-open" : ""}">
+      <button type="button" class="mobile-menu-toggle" id="owner-menu-toggle" aria-expanded="${ownerMenuOpen}" aria-controls="owner-tabs">
+        &#9776; Menu &middot; <span>${escape(title)}</span></button><div class="brand">
       <div class="business-name"><strong>${escape(visitor?.business || config.shop.name)}</strong></div>
       <h1>BUSINESS PRO</h1><p>${bookingEnabled ? "Professional" : "Business Pro"} Owner Portal</p></div>
-      <nav class="nav" aria-label="Owner portal menu">${ownerNavigation()}</nav>
+      <nav class="nav" id="owner-tabs" aria-label="Owner portal menu">${ownerNavigation()}</nav>
       <div class="support-box"><h3>Need Help?</h3><p>Having a problem with your website or owner portal? Contact Business Pro directly.</p>
       <div class="support-buttons"><button type="button" aria-disabled="true">&#9993; Email Me</button><button type="button" aria-disabled="true">&#128172; Text Me</button></div></div></aside>
       <main class="main"><header class="topbar"><div><h2>${title}</h2><div class="note" style="font-size:12px;color:#777">Business: ${escape(visitor?.business || config.shop.name)} - demo mode</div></div>
@@ -860,12 +895,21 @@
       <div><button type="button" data-preview-live="${bookingEnabled ? "appointments" : "orders"}">Try ${bookingEnabled ? "Appointments" : "Orders"} &#8594;</button>
       <a href="${plansLink}">See plans</a></div></div></section>`;
     $("demo-lock").addEventListener("click", () => { location.href = "index.html"; });
+    $("owner-menu-toggle").addEventListener("click", () => {
+      clearTimeout(ownerMenuTimer);
+      setOwnerMenuOpen(!ownerMenuOpen);
+    });
+    if (showMenuOnLanding && ownerMenuOpen) {
+      ownerMenuTimer = setTimeout(() => setOwnerMenuOpen(false), 2000);
+    }
     document.querySelectorAll("[data-owner-tab]").forEach(button => button.addEventListener("click", () => action(() => {
       const tab = ownerTabs.find(tab => tab.id === button.dataset.ownerTab);
       if (tab?.children) {
         if (expandedOwnerTabs.has(tab.id)) expandedOwnerTabs.delete(tab.id);
         else expandedOwnerTabs.add(tab.id);
       }
+      clearTimeout(ownerMenuTimer);
+      ownerMenuOpen = false;
       openOwnerTab(button.dataset.ownerTab);
     })));
     document.querySelectorAll("[data-preview-live]").forEach(button => button.addEventListener("click", () => action(() => openOwnerTab(button.dataset.previewLive))));
@@ -902,6 +946,26 @@
         api.printLabel(localStorage, config, button.dataset.shipped);
         api.markShipped(localStorage, config, button.dataset.shipped);
         renderDashboard();
+      })));
+      document.querySelectorAll("[data-print-label]").forEach(button => button.addEventListener("click", () => action(() => {
+        api.printLabel(localStorage, config, button.dataset.printLabel);
+        renderDashboard();
+        const labels = Array.from(document.querySelectorAll(".shipping-label")).filter(label =>
+          label.closest("[data-shipping-order]")?.dataset.shippingOrder === button.dataset.printLabel);
+        if (!labels.length) throw new Error("No shipping labels are available to print for this order.");
+        const printArea = document.createElement("div");
+        printArea.id = "demo-print-area";
+        labels.forEach(label => printArea.appendChild(label.cloneNode(true)));
+        document.body.appendChild(printArea);
+        const clearPrintTarget = () => {
+          document.body.classList.remove("demo-print-label");
+          printArea.remove();
+          window.removeEventListener("afterprint", clearPrintTarget);
+        };
+        window.addEventListener("afterprint", clearPrintTarget);
+        document.body.classList.add("demo-print-label");
+        try { window.print(); }
+        catch (failure) { clearPrintTarget(); throw failure; }
       })));
     }
   }
@@ -1070,7 +1134,7 @@
     const packing = records.filter(order => !["Packed", "Shipped", "Ready for pickup"].includes(order.status));
     if (!packing.length) return `<div class="panel"><div class="panel-header"><h3>Orders</h3></div><div class="panel-body">
       <p>Nothing to pack right now. Packed orders move to the Shipping section.</p></div></div>`;
-    return packing.map(order => `<article class="panel owner-order"><div class="panel-header"><h3>Order to pack &middot; ${money(order.totalCents)}</h3>
+    return packing.map(order => `<article class="panel owner-order" id="pack-order-${escape(order.id)}"><div class="panel-header"><h3>Order to pack &middot; ${money(order.totalCents)}</h3>
       <span class="status">${escape(order.status || "New")}</span></div><div class="panel-body">
       ${!order.example ? "<p>Your demo order</p>" : ""}
       <p>${api.isPickup(order) ? "Free pickup" : "Ship"}</p>
@@ -1102,7 +1166,7 @@
   function shippingLabel(order) {
     if (api.isPickup(order) || !order.label) return "";
     const labels = order.labels?.length ? order.labels : [order.label];
-    return labels.map((label, index) => `<div class="shipping-label"><div class="shipping-label-content"><h3>${order.status === "Shipped" ? "SHIPPED" : "Shipping label"} &middot; DEMO</h3>
+    return `<div class="shipping-order-labels" data-shipping-order="${escape(order.id)}">${labels.map((label, index) => `<div class="shipping-label"><div class="shipping-label-content"><h3>${order.status === "Shipped" ? "SHIPPED" : "Shipping label"} &middot; DEMO</h3>
       <p><strong>Box ${index + 1} of ${labels.length}</strong></p>
       <div class="label-address"><strong>FROM:</strong><p class="address">${escape(label.from)}</p></div>
       <div class="label-address"><strong>TO:</strong><p class="address">${escape(label.to)}</p></div>
@@ -1112,8 +1176,8 @@
         `<label>Carrier<select data-carrier="${escape(order.id)}">${["USPS", "UPS", "FedEx"].map(carrier =>
           `<option ${carrier === (order.carrier || label.carrier || "USPS") ? "selected" : ""}>${carrier}</option>`).join("")}</select></label>
         `}
-      <p>Demo label only. No postage purchased or carrier contacted.</p></div></div>`).join("") +
-      (order.status === "Shipped" ? "" : `<button type="button" class="action-btn" data-shipped="${escape(order.id)}">Shipped</button>`);
+      <p>Demo label only. No postage purchased or carrier contacted.</p></div></div>`).join("")}<div class="shipping-label-actions"><button type="button" class="action-btn" data-print-label="${escape(order.id)}">Print Label</button>
+      ${order.status === "Shipped" ? "" : `<button type="button" class="action-btn" data-shipped="${escape(order.id)}">Shipped</button>`}</div></div>`;
   }
   try {
     visitor = api.lead(sessionStorage);

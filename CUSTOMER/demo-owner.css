@@ -477,6 +477,89 @@ color: #fff;
 #daily-dashboard .month-appointment span {
   margin-bottom: 2px;
 }
+#daily-dashboard .card,
+#daily-dashboard .panel,
+#daily-dashboard .ship-box,
+#daily-dashboard .shipping-label,
+#daily-dashboard .completed-barber-block,
+#daily-dashboard .preview-panel,
+#daily-dashboard .preview-cards article,
+#daily-dashboard .staff-photo-controls > section {
+  border-radius: 10px;
+}
+#daily-dashboard .mobile-menu-toggle {
+  display: none;
+}
+#daily-dashboard .barber-photo-frame {
+  position: relative;
+}
+#daily-dashboard .staff-photo-controls input.sr-only {
+  position: fixed !important;
+  left: -10000px !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+#daily-dashboard .photo-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .8);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+}
+#daily-dashboard .shipping-order-labels {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#daily-dashboard .preview-performance > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--bp-gold);
+}
+#daily-dashboard .preview-performance > header h3 {
+  font-size: 18px;
+}
+#daily-dashboard .preview-performance > header label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+#daily-dashboard .preview-performance > header select {
+  width: auto;
+  max-width: 150px;
+}
+#daily-dashboard .shipping-label-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px auto 20px;
+}
+@media print {
+  @page { size: 4in 6in; margin: 0; }
+  body.demo-print-label * { visibility: hidden !important; }
+  body.demo-print-label #demo-print-area,
+  body.demo-print-label #demo-print-area * { visibility: visible !important; }
+  body.demo-print-label #demo-print-area { position: absolute; inset: 0; background: #fff; }
+  body.demo-print-label #demo-print-area .shipping-label { position: relative; width: 4in; height: 6in; margin: 0; break-after: page; page-break-after: always; }
+  body.demo-print-label #demo-print-area .shipping-label:last-child { break-after: auto; page-break-after: auto; }
+  body.demo-print-label #demo-print-area .shipping-label label { display: none; }
+}
 @media (max-width: 1000px) {
 #daily-dashboard .cards {
         grid-template-columns: repeat(2, 1fr);
@@ -497,6 +580,66 @@ color: #fff;
         padding-left: 18px;
         padding-right: 18px;
       }
+}
+@media (max-width: 767px) {
+  #daily-dashboard .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 10px 12px;
+  }
+  #daily-dashboard .mobile-menu-toggle {
+    display: block;
+    width: 100%;
+    min-height: 40px;
+    padding: 7px 12px;
+    border: 1px solid var(--bp-gold);
+    background: var(--bp-black);
+    color: var(--bp-gold);
+    text-align: left;
+    font-weight: bold;
+  }
+  #daily-dashboard .mobile-menu-toggle span {
+    overflow-wrap: anywhere;
+  }
+  #daily-dashboard .brand {
+    display: none;
+  }
+  #daily-dashboard .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    max-height: calc(100vh - 56px);
+    gap: 4px;
+    padding: 8px 12px 12px;
+    overflow-y: auto;
+    border: 0;
+    border-bottom: 2px solid var(--bp-gold);
+    background: var(--bp-black);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, .5);
+  }
+  #daily-dashboard .sidebar.owner-menu-open .nav {
+    display: flex;
+  }
+  #daily-dashboard .nav button {
+    padding: 9px 10px;
+  }
+  #daily-dashboard .support-box {
+    display: none;
+  }
+  #daily-dashboard .content {
+    scroll-margin-top: 56px;
+  }
+  #daily-dashboard .ship-box {
+    scroll-margin-top: 60px;
+  }
+  #daily-dashboard .preview-performance > header {
+    align-items: flex-start;
+    padding: 14px;
+  }
 }
 #daily-dashboard .appointment-modal {
   display: none;
