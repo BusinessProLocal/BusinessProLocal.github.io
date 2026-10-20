@@ -1138,3 +1138,26 @@ color: #fff;
   #daily-dashboard .access-controls { justify-content: flex-start; }
   #daily-dashboard .appointment-detail-grid { grid-template-columns: 1fr; }
 }
+/* Round every square box and button in the demo owner dashboards */
+#daily-dashboard button,
+#daily-dashboard input,
+#daily-dashboard select,
+#daily-dashboard textarea,
+#daily-dashboard .signed-in-badge,
+#daily-dashboard .business-name {
+  border-radius: 6px;
+}
+#daily-dashboard .sidebar,
+#daily-dashboard img {
+  border-radius: 10px;
+}
+#daily-dashboard .status {
+  border-radius: 999px;
+}
+#daily-dashboard .month-appointment {
+  border-radius: 6px;
+}
+#daily-dashboard .month-calendar {
+  border-radius: 10px;
+  overflow: hidden;
+}
