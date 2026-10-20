@@ -1161,3 +1161,9 @@ color: #fff;
   border-radius: 10px;
   overflow: hidden;
 }
+/* Box headers follow their box's rounded top corners so the gold outline isn't covered */
+#daily-dashboard .panel > .panel-header:first-child,
+#daily-dashboard .preview-panel > header:first-child,
+#daily-dashboard .card > header:first-child {
+  border-radius: 9px 9px 0 0;
+}
