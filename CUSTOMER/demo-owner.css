@@ -477,6 +477,7 @@ color: #fff;
 #daily-dashboard .month-appointment span {
   margin-bottom: 2px;
 }
+#daily-dashboard .page,
 #daily-dashboard .card,
 #daily-dashboard .panel,
 #daily-dashboard .ship-box,
