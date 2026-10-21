@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021o";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021q";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021o";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021q";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -1143,7 +1143,8 @@
           ${ownerCalendarView === "week" ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
           ${item.status !== "Canceled" ? `<div class="calendar-card-actions">
           ${item.status !== "Finished" ? `<button type="button" data-calendar-status="${item.status === "Started" ? "Finished" : "Started"}" data-id="${escape(item.id)}">${item.status === "Started" ? "Finish" : "Start"}</button>` : ""}
-          <button type="button" class="calendar-tip-btn" data-calendar-tip="${escape(item.id)}">${item.tipCents ? `Tip ${money(item.tipCents)}` : "+ Tip"}</button></div>` : ""}</div>`).join("")}</div>`;
+          <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><span aria-hidden="true">$</span><input type="text" inputmode="decimal" autocomplete="off"
+            aria-label="Tip amount for ${escape(item.name)}" placeholder="Tip" value="${item.tipCents ? (item.tipCents / 100).toFixed(2) : ""}"><button type="button" aria-label="Save tip">&#10003;</button></span></div>` : ""}</div>`).join("")}</div>`;
       }).join("");
     }
     const end = new Date(monday);
@@ -1206,35 +1207,21 @@
       <div id="appointment-popup-content"></div></div></div>`;
   }
   function setupAppointmentDetails() {
-    document.querySelectorAll("[data-calendar-tip]").forEach(button => button.addEventListener("click", event => {
-      event.stopPropagation();
-      const id = button.dataset.calendarTip;
-      const booking = api.read(localStorage, config).bookings.find(item => item.id === id);
-      const editor = document.createElement("span");
-      editor.className = "calendar-tip-editor";
-      editor.innerHTML = `<span aria-hidden="true">$</span><input type="text" inputmode="decimal" autocomplete="off" aria-label="Tip amount" placeholder="0.00"
-        value="${booking?.tipCents ? (booking.tipCents / 100).toFixed(2) : ""}"><button type="button" aria-label="Save tip">&#10003;</button>`;
+    document.querySelectorAll(".calendar-tip-editor[data-calendar-tip]").forEach(editor => {
+      const id = editor.dataset.calendarTip, input = editor.querySelector("input"), check = editor.querySelector("button");
       ["click", "keydown", "pointerdown", "mousedown", "touchstart"].forEach(type => editor.addEventListener(type, inner => inner.stopPropagation()));
-      button.replaceWith(editor);
-      const input = editor.querySelector("input");
-      input.focus(); input.select();
-      let done = false;
       const save = () => {
-        if (done) return;
         try {
           const saved = api.setTip(localStorage, config, id, input.value);
-          done = true;
-          button.textContent = saved.tipCents ? `Tip ${money(saved.tipCents)}` : "+ Tip";
-          editor.replaceWith(button);
+          input.value = saved.tipCents ? (saved.tipCents / 100).toFixed(2) : "";
+          editor.classList.add("saved");
+          setTimeout(() => editor.classList.remove("saved"), 900);
         } catch (failure) { input.setCustomValidity(failure.message); input.reportValidity(); input.setCustomValidity(""); }
       };
-      editor.querySelector("button").addEventListener("click", save);
-      input.addEventListener("keydown", key => {
-        if (key.key === "Enter") { key.preventDefault(); save(); }
-        if (key.key === "Escape") { done = true; editor.replaceWith(button); }
-      });
-      input.addEventListener("blur", () => setTimeout(() => { if (!done && !editor.contains(document.activeElement)) save(); }, 150));
-    }));
+      check.addEventListener("click", save);
+      input.addEventListener("keydown", key => { if (key.key === "Enter") { key.preventDefault(); save(); input.blur(); } });
+      input.addEventListener("change", save);
+    });
     document.querySelectorAll("[data-calendar-booking]").forEach(button => button.addEventListener("click", () => action(() => {
       const booking = api.read(localStorage, config).bookings.find(item => item.id === button.dataset.calendarBooking);
       if (!booking) throw new Error("This demo appointment was not found.");
@@ -1264,8 +1251,8 @@
           $("appointment-tip").value = saved.tipCents ? (saved.tipCents / 100).toFixed(2) : "";
           $("appointment-tip-total").textContent = `Total: ${money(price * 100 + (saved.tipCents || 0))}${saved.tipCents ? ` (tip ${money(saved.tipCents)})` : ""}`;
           $("appointment-tip-error").textContent = "";
-          const blockTip = document.querySelector(`[data-calendar-tip="${booking.id}"]`);
-          if (blockTip) blockTip.textContent = saved.tipCents ? `Tip ${money(saved.tipCents)}` : "+ Tip";
+          const blockTip = document.querySelector(`[data-calendar-tip="${booking.id}"] input`);
+          if (blockTip) blockTip.value = saved.tipCents ? (saved.tipCents / 100).toFixed(2) : "";
           return true;
         } catch (failure) { $("appointment-tip-error").textContent = failure.message; return false; }
       };
