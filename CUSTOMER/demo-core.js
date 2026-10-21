@@ -378,7 +378,7 @@
     if (text === "") { booking.tipCents = 0; write(storage, config, state); return booking; }
     if (!/^\d+(\.\d{0,2})?$/.test(text)) throw new Error("Type the tip as dollars and cents, like 5 or 5.50.");
     const cents = Math.round(Number(text) * 100);
-    if (cents > 100000) throw new Error("That tip looks too big. Double-check the amount.");
+    if (cents > 10000) throw new Error("Tips top out at $100. Double-check the amount.");
     booking.tipCents = cents;
     write(storage, config, state);
     return booking;
