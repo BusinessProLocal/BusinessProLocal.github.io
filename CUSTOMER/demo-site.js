@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021d";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021e";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021d";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021e";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -862,7 +862,7 @@
     const showMenuOnLanding = !ownerMenuShown;
     if (showMenuOnLanding) {
       ownerMenuShown = true;
-      ownerMenuOpen = false;
+      ownerMenuOpen = window.matchMedia("(max-width: 767px)").matches;
     }
     document.body.classList.add("demo-owner-open");
     document.querySelector(".shop-header").hidden = true; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = true; });
@@ -908,9 +908,6 @@
       clearTimeout(ownerMenuTimer);
       setOwnerMenuOpen(!ownerMenuOpen);
     });
-    if (showMenuOnLanding && ownerMenuOpen) {
-      ownerMenuTimer = setTimeout(() => setOwnerMenuOpen(false), 2000);
-    }
     document.querySelectorAll("[data-owner-tab]").forEach(button => button.addEventListener("click", () => action(() => {
       const tab = ownerTabs.find(tab => tab.id === button.dataset.ownerTab);
       if (tab?.children) {
