@@ -1343,3 +1343,4 @@ color: #fff;
 #daily-dashboard .calendar-card-actions .calendar-tip-editor button { height: 24px; padding: 0 6px !important; }
 #daily-dashboard .calendar-card-actions .calendar-tip-editor input { width: 38px !important; text-align: right; }
 #daily-dashboard .calendar-tip-editor .tip-cents { color: #d4af37; font-weight: 700; margin-right: 2px; }
+#daily-dashboard .calendar-card-actions .calendar-tip-editor input { width: 60px !important; text-align: right; }

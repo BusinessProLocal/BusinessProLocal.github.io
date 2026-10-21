@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021r";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021s";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021r";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021s";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -1143,8 +1143,8 @@
           ${ownerCalendarView === "week" ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
           ${item.status !== "Canceled" ? `<div class="calendar-card-actions">
           ${item.status !== "Finished" ? `<button type="button" data-calendar-status="${item.status === "Started" ? "Finished" : "Started"}" data-id="${escape(item.id)}">${item.status === "Started" ? "Finish" : "Start"}</button>` : ""}
-          <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><span aria-hidden="true">$</span><input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off"
-            aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="Tip" value="${item.tipCents ? Math.round(item.tipCents / 100) : ""}"><span class="tip-cents" aria-hidden="true">.00</span><button type="button" aria-label="Save tip">&#10003;</button></span></div>` : ""}</div>`).join("")}</div>`;
+          <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><span aria-hidden="true">$</span><input type="text" inputmode="numeric" maxlength="6" autocomplete="off"
+            aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="0.00" value="${item.tipCents ? Math.round(item.tipCents / 100) + ".00" : ""}"><button type="button" aria-label="Save tip">&#10003;</button></span></div>` : ""}</div>`).join("")}</div>`;
       }).join("");
     }
     const end = new Date(monday);
@@ -1211,14 +1211,19 @@
       const id = editor.dataset.calendarTip, input = editor.querySelector("input"), check = editor.querySelector("button");
       ["click", "keydown", "pointerdown", "mousedown", "touchstart"].forEach(type => editor.addEventListener(type, inner => inner.stopPropagation()));
       input.addEventListener("input", () => {
-        let digits = input.value.replace(/\D/g, "").replace(/^0+/, "").slice(0, 3);
+        let digits = input.value.split(".")[0].replace(/\D/g, "").replace(/^0+/, "").slice(0, 3);
         if (Number(digits) > 100) digits = "100";
-        input.value = digits;
+        input.value = digits ? digits + ".00" : "";
+        input.setSelectionRange(digits.length, digits.length);
       });
+      input.addEventListener("focus", () => setTimeout(() => {
+        const end = input.value.split(".")[0].length;
+        input.setSelectionRange(end, end);
+      }, 0));
       const save = () => {
         try {
           const saved = api.setTip(localStorage, config, id, input.value);
-          input.value = saved.tipCents ? String(Math.round(saved.tipCents / 100)) : "";
+          input.value = saved.tipCents ? Math.round(saved.tipCents / 100) + ".00" : "";
           editor.classList.add("saved");
           setTimeout(() => editor.classList.remove("saved"), 900);
         } catch (failure) { input.setCustomValidity(failure.message); input.reportValidity(); input.setCustomValidity(""); }
@@ -1257,7 +1262,7 @@
           $("appointment-tip-total").textContent = `Total: ${money(price * 100 + (saved.tipCents || 0))}${saved.tipCents ? ` (tip ${money(saved.tipCents)})` : ""}`;
           $("appointment-tip-error").textContent = "";
           const blockTip = document.querySelector(`[data-calendar-tip="${booking.id}"] input`);
-          if (blockTip) blockTip.value = saved.tipCents ? String(Math.round(saved.tipCents / 100)) : "";
+          if (blockTip) blockTip.value = saved.tipCents ? Math.round(saved.tipCents / 100) + ".00" : "";
           return true;
         } catch (failure) { $("appointment-tip-error").textContent = failure.message; return false; }
       };
