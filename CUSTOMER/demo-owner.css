@@ -1315,3 +1315,17 @@ color: #fff;
 #daily-dashboard .appointment-tip-row input, .appointment-tip-row input { flex: 1; min-width: 0; padding: 10px; font-size: 1rem; }
 #daily-dashboard .appointment-tip-total, .appointment-tip-total { margin-top: 6px; font-weight: 700; }
 #daily-dashboard .appointment-tip-error, .appointment-tip-error { color: #ff8a8a; margin-top: 4px; }
+#daily-dashboard .calendar-card-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+#daily-dashboard .calendar-card-actions .calendar-tip-btn { background: #fff; color: #000; border: 1px solid #000; font-weight: 700; }
+/* Appointment popup always fits the phone screen: header stays reachable, box scrolls inside */
+#daily-dashboard .appointment-modal-box {
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#daily-dashboard .appointment-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: inherit;
+}

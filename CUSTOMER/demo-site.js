@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021j";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021l";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021j";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021l";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -1107,8 +1107,9 @@
           data-calendar-booking="${escape(item.id)}">
           <div class="calendar-card-summary"><strong>${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
           ${ownerCalendarView === "week" ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
-          ${!["Finished", "Canceled"].includes(item.status) ? `<div class="calendar-card-actions">
-          <button type="button" data-calendar-status="${item.status === "Started" ? "Finished" : "Started"}" data-id="${escape(item.id)}">${item.status === "Started" ? "Finish" : "Start"}</button></div>` : ""}</div>`).join("")}</div>`;
+          ${item.status !== "Canceled" ? `<div class="calendar-card-actions">
+          ${item.status !== "Finished" ? `<button type="button" data-calendar-status="${item.status === "Started" ? "Finished" : "Started"}" data-id="${escape(item.id)}">${item.status === "Started" ? "Finish" : "Start"}</button>` : ""}
+          <button type="button" class="calendar-tip-btn" data-calendar-tip="${escape(item.id)}">${item.tipCents ? `Tip ${money(item.tipCents)}` : "+ Tip"}</button></div>` : ""}</div>`).join("")}</div>`;
       }).join("");
     }
     const end = new Date(monday);
@@ -1171,6 +1172,11 @@
       <div id="appointment-popup-content"></div></div></div>`;
   }
   function setupAppointmentDetails() {
+    document.querySelectorAll("[data-calendar-tip]").forEach(button => button.addEventListener("click", event => {
+      event.stopPropagation();
+      document.querySelector(`[data-calendar-booking="${button.dataset.calendarTip}"]`)?.click();
+      setTimeout(() => { $("appointment-tip")?.focus(); $("appointment-tip")?.select(); }, 50);
+    }));
     document.querySelectorAll("[data-calendar-booking]").forEach(button => button.addEventListener("click", () => action(() => {
       const booking = api.read(localStorage, config).bookings.find(item => item.id === button.dataset.calendarBooking);
       if (!booking) throw new Error("This demo appointment was not found.");
@@ -1200,6 +1206,8 @@
           $("appointment-tip").value = saved.tipCents ? (saved.tipCents / 100).toFixed(2) : "";
           $("appointment-tip-total").textContent = `Total: ${money(price * 100 + (saved.tipCents || 0))}${saved.tipCents ? ` (tip ${money(saved.tipCents)})` : ""}`;
           $("appointment-tip-error").textContent = "";
+          const blockTip = document.querySelector(`[data-calendar-tip="${booking.id}"]`);
+          if (blockTip) blockTip.textContent = saved.tipCents ? `Tip ${money(saved.tipCents)}` : "+ Tip";
           return true;
         } catch (failure) { $("appointment-tip-error").textContent = failure.message; return false; }
       };
