@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021n";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021o";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021n";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021o";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -473,6 +473,40 @@
       `${service.name} with ${staff.name} on ${$("demo-date").value} at ${api.timeLabel($("demo-time").value)}. ${money(service.price * 100)}; nothing charged in this demo. ` +
       [$("demo-name").value, $("demo-phone").value, $("demo-email").value].filter(Boolean).join(" · ") : "";
   }
+  function showTextPreview(booking) {
+    const service = config.services.find(item => item.id === booking.serviceId);
+    const staff = config.barbers.find(item => item.id === booking.staffId);
+    const when = new Date(booking.date + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    const first = String(booking.name || "").trim().split(/\s+/)[0] || "there";
+    const shop = visitor?.business || config.shop.name;
+    let dialog = $("text-preview");
+    if (!dialog) {
+      dialog = document.createElement("dialog");
+      dialog.id = "text-preview";
+      dialog.className = "text-preview";
+      dialog.setAttribute("aria-labelledby", "text-preview-title");
+      document.body.appendChild(dialog);
+    }
+    dialog.innerHTML = `<p class="text-preview-tag">SHOP OWNER VIEW</p>
+      <h2 id="text-preview-title">Your customer just got this text</h2>
+      <p class="text-preview-intro">The second they book, Business Pro texts them automatically. Here's exactly what ${escape(first)} would see:</p>
+      <div class="text-preview-phone" aria-label="Sample text message">
+        <p class="text-preview-from">${escape(shop)}</p>
+        <div class="text-preview-bubble">
+          <p>Hi ${escape(first)}! You're booked at ${escape(shop)}.</p>
+          <p><strong>${escape(service?.name || "Appointment")}</strong> with ${escape(staff?.name || "your barber")}<br>${escape(when)} at ${escape(api.timeLabel(booking.time))}</p>
+          <p>Need to cancel or reschedule? Tap here:<br><span class="text-preview-link">businessprolocal.com/manage/…</span></p>
+          <p>Reply STOP to opt out.</p>
+        </div>
+        <p class="text-preview-time">Delivered · just now</p>
+      </div>
+      <p class="text-preview-note">Demo only. No text was actually sent. If they cancel or reschedule, they get a text for that too, and you get notified.</p>
+      <button type="button" id="text-preview-go" class="text-preview-go">Go to my dashboard</button>`;
+    $("text-preview-go").addEventListener("click", () => { dialog.close(); jumpToDashboard(); });
+    dialog.addEventListener("cancel", event => { event.preventDefault(); dialog.close(); jumpToDashboard(); }, { once: true });
+    dialog.showModal();
+    $("text-preview-go").focus();
+  }
   function setupBooking() {
     enhanceContact($("booking-form"), "demo");
     ["demo-name", "demo-phone", "demo-email"].forEach(id => {
@@ -534,10 +568,10 @@
     $("booking-form").addEventListener("submit", event => {
       event.preventDefault();
       formAction("booking-error", () => {
-        api.book(localStorage, config, { serviceId: $("demo-service").value, staffId: $("demo-staff").value,
+        const booked = api.book(localStorage, config, { serviceId: $("demo-service").value, staffId: $("demo-staff").value,
           date: $("demo-date").value, time: $("demo-time").value, name: $("demo-name").value,
           phone: $("demo-phone").value, email: $("demo-email").value });
-        jumpToDashboard();
+        showTextPreview(booked);
       });
     });
     renderCalendar();
