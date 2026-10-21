@@ -10,7 +10,7 @@
   const bookingEnabled = config.demo.tier === "professional", storeEnabled = config.demo.tier === "business-pro";
   const pageName = document.body.dataset.page || "home";
   let visitor, dashboardOpen = false, dashboardView = "dashboard", ownerMenuOpen = false, ownerMenuShown = false;
-  let selectedOrderNumber = null;
+  let selectedOrderNumber = null, orderListOpen = false;
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all";
   let ownerCalendarObserver = null;
@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021e";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021f";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021e";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021f";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -895,10 +895,17 @@
       <div><button type="button" data-preview-live="${bookingEnabled ? "appointments" : "orders"}">Try ${bookingEnabled ? "Appointments" : "Orders"} &#8594;</button>
       <a href="${plansLink}">See plans</a></div></div></section>`;
     $("demo-lock").addEventListener("click", () => { location.href = "index.html"; });
-    $("order-lookup")?.addEventListener("change", event => action(() => {
-      selectedOrderNumber = Number(event.target.value);
+    $("order-lookup")?.addEventListener("click", () => {
+      orderListOpen = !orderListOpen;
+      $("order-lookup-list").hidden = !orderListOpen;
+      $("order-lookup").setAttribute("aria-expanded", String(orderListOpen));
+      document.querySelector(".order-lookup-caret").innerHTML = orderListOpen ? "&#9652;" : "&#9662;";
+    });
+    document.querySelectorAll("[data-order-number]").forEach(option => option.addEventListener("click", () => action(() => {
+      selectedOrderNumber = Number(option.dataset.orderNumber);
+      orderListOpen = false;
       renderDashboard();
-    }));
+    })));
     $("back-to-dashboard")?.addEventListener("click", () => action(() => {
       dashboardView = "dashboard";
       renderDashboard();
@@ -1162,9 +1169,11 @@
       ...sampleOrders().reverse().map(order => ({ number: order.number, label: `#${order.number} · ${order.name} · ${order.status}` }))];
     if (!selectedOrderNumber || !options.some(option => option.number === selectedOrderNumber)) selectedOrderNumber = ownNumber || options[0]?.number;
     return `<div class="panel order-lookup"><div class="panel-header"><h3>Orders</h3></div><div class="panel-body">
-      <label class="order-lookup-label" for="order-lookup">Order number</label>
-      <select id="order-lookup" class="order-lookup-select">${options.map(option =>
-        `<option value="${option.number}" ${option.number === selectedOrderNumber ? "selected" : ""}>${escape(option.label)}</option>`).join("")}</select>
+      <p class="order-lookup-label" id="order-lookup-label">Order number</p>
+      <button type="button" id="order-lookup" class="order-lookup-toggle" aria-expanded="${orderListOpen}" aria-controls="order-lookup-list" aria-labelledby="order-lookup-label order-lookup">
+        <span>${escape(options.find(option => option.number === selectedOrderNumber)?.label || "Choose an order")}</span><span class="order-lookup-caret" aria-hidden="true">${orderListOpen ? "&#9652;" : "&#9662;"}</span></button>
+      <div class="order-lookup-list" id="order-lookup-list" role="listbox" aria-labelledby="order-lookup-label" ${orderListOpen ? "" : "hidden"}>${options.map(option =>
+        `<button type="button" role="option" class="order-lookup-option${option.number === selectedOrderNumber ? " selected" : ""}" aria-selected="${option.number === selectedOrderNumber}" data-order-number="${option.number}">${escape(option.label)}</button>`).join("")}</div>
       </div></div>`;
   }
   function sampleOrderPanel(number) {

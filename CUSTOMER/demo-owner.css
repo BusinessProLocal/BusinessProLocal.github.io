@@ -1269,3 +1269,44 @@ color: #fff;
 @media (prefers-reduced-motion: reduce) {
   #daily-dashboard .nav > button.owner-live-blink > span:first-child { animation: none; color: #fff3c4; text-shadow: 0 0 10px rgba(212, 175, 55, .95); }
 }
+/* Orders page: on-page order list (no pop-up picker) */
+#daily-dashboard .order-lookup-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: #000;
+  color: #d4af37;
+  border: 2px solid #d4af37;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+#daily-dashboard .order-lookup-toggle > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+#daily-dashboard .order-lookup-list {
+  margin-top: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid #d4af37;
+  border-radius: 10px;
+  background: #050505;
+}
+#daily-dashboard .order-lookup-option {
+  display: block;
+  width: 100%;
+  padding: 13px 14px;
+  background: transparent;
+  color: #d4af37;
+  border: 0;
+  border-bottom: 1px solid #2a2208;
+  border-radius: 0;
+  text-align: left;
+  font-size: .98rem;
+  cursor: pointer;
+}
+#daily-dashboard .order-lookup-option:last-child { border-bottom: 0; }
+#daily-dashboard .order-lookup-option.selected { background: #2a2208; font-weight: 700; }
