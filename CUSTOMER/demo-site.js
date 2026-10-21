@@ -18,10 +18,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020c";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020d";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020c";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020d";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -482,9 +482,7 @@
     dashboardOpen = true;
     dashboardView = "dashboard";
     renderDashboard();
-    const order = orderId && document.getElementById(`pack-order-${orderId}`);
-    const target = order?.querySelector(".ship-box") || order || document.querySelector("#daily-dashboard");
-    target.scrollIntoView({ block: "start", behavior: "instant" });
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }
   function renderCart() {
     const state = api.read(localStorage, config);
@@ -886,10 +884,11 @@
       <div class="content">${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
         dashboardView === "orders" ? `<section class="page active" id="dashboard">${ordersPanel(records, seeded)}${shippingPanel(records, seeded)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
       <div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
+      ${bookingEnabled ? "" : ordersPanel(records, seeded)}
       <div class="cards"><div class="card"><span>${bookingEnabled ? "Today's Appointments" : "Today's Orders"}</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
       <div class="card"><span>${bookingEnabled ? "Barbers Working" : "To Pack & Ship"}</span><strong>${bookingEnabled ? config.barbers.length : complete ? 0 : 1}</strong><small>${bookingEnabled ? config.barbers.length + " scheduled today" : "Orders awaiting fulfillment"}</small></div>
       ${storeEnabled ? `<div class="card"><span>Today's Sales</span><strong>${money(complete ? price : 0)} earned</strong><small>of ${money(price)} booked - orders only</small></div>` : ""}</div>
-      ${bookingEnabled ? schedulePanel(records, seeded) + timeOffPanel() : ordersPanel(records, seeded) + shippingPanel(records, seeded)}</section>`}
+      ${bookingEnabled ? schedulePanel(records, seeded) + timeOffPanel() : shippingPanel(records, seeded)}</section>`}
       </div></main></div>${bookingEnabled && !preview ? appointmentDialog() : ""}
       <div id="owner-preview-popup" class="owner-preview-popup" role="status" aria-live="polite" hidden><p>This works in your real portal.</p>
       <div><button type="button" data-preview-live="${bookingEnabled ? "appointments" : "orders"}">Try ${bookingEnabled ? "Appointments" : "Orders"} &#8594;</button>
