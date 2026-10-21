@@ -18,10 +18,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020i";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021a";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020i";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021a";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -768,7 +768,8 @@
             <p>Sample settings only. Demo checkout adds 5.5% Maine sales tax.</p>`) : "") + periods(["Save settings"]);
         break;
       case "financials":
-        content = periods(["Day", "Week", "Month", "Year"]) + cards([["Total Income", "$480.00"], ["Service / Order Revenue", "$450.00"], ["Tips", "$30.00"], ["Outgoing", "$120.00"], ["Net", "$360.00"]]) +
+        content = periods(["Day", "Week", "Month", "Year"]) + cards(bookingEnabled ? [["Total Income", "$480.00"], ["Service Revenue", "$450.00"], ["Tips", "$30.00"], ["Outgoing", "$120.00"], ["Net", "$360.00"]] :
+          [["Total Income", "$450.00"], ["Order Revenue", "$450.00"], ["Outgoing", "$120.00"], ["Net", "$330.00"]]) +
           panel("Add Outgoing", `<div class="preview-fields">${field("Expense", "Sample supplies")}${field("Amount", "45.00", "number")}${field("Due Date", api.dates()[0], "date")}${select("Repeat", ["Monthly", "Weekly", "Yearly"])}</div>${button("Add outgoing")}`) +
           panel("Outgoing Bills / Expenses", table(["Expense", "Amount", "Due", "Recurring", "Status"], [["Sample rent", "$120.00", "This month", "Monthly", "Unpaid"]]) + periods(["Mark paid", "Delete"])) +
           panel("Saved Expense Dropdown", "<p>Sample rent · Sample supplies</p>" + button("Remove saved expense"));
