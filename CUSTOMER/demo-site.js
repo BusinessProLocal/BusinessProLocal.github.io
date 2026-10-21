@@ -18,10 +18,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020h";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020i";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020h";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020i";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -1166,11 +1166,18 @@
         ${api.isPickup(order) ? "<p>Ready for pickup at the shop.</p>" : shippingLabel(order)}
         </section>`).join("")}</div></div>`;
   }
+  function labelBarcode(order, label, index) {
+    const code = label.tracking || order.trackingNumbers?.[index] ||
+      ("DEMO" + String(order.id).replace(/[^A-Za-z0-9]/g, "").slice(-8).toUpperCase() + "B" + (index + 1));
+    if (!globalThis.DemoBarcode) return "";
+    return `<div class="label-barcode-wrap">${globalThis.DemoBarcode.svg(code)}<p class="label-barcode-text">${escape(code)}</p></div>`;
+  }
   function shippingLabel(order) {
     if (api.isPickup(order) || !order.label) return "";
     const labels = order.labels?.length ? order.labels : [order.label];
     return `<div class="shipping-order-labels" data-shipping-order="${escape(order.id)}">${labels.map((label, index) => `<div class="shipping-label"><div class="shipping-label-content"><h3>${order.status === "Shipped" ? "SHIPPED" : "Shipping label"} &middot; DEMO</h3>
       <p><strong>Box ${index + 1} of ${labels.length}</strong></p>
+      ${labelBarcode(order, label, index)}
       <div class="label-address"><strong>FROM:</strong><p class="address">${escape(label.from)}</p></div>
       <div class="label-address"><strong>TO:</strong><p class="address">${escape(label.to)}</p></div>
       <p><strong>Package:</strong> ${label.lbs} lb ${label.oz} oz &middot; ${label.length} x ${label.width} x ${label.height} in</p>
