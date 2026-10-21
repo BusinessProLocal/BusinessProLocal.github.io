@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021g";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021h";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021g";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021h";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -519,6 +519,11 @@
     document.querySelectorAll("[data-book-with]").forEach(button => button.addEventListener("click", () => openBarberInBooking(button.dataset.bookWith)));
     document.querySelectorAll("[data-barber-card] .barber-photo-frame").forEach(frame => frame.addEventListener("click", event => {
       if (event.target.closest(".photo-remove, .photo-button, input")) return;
+      const photo = frame.querySelector(".photo-preview");
+      if (!photo || photo.hidden || !photo.getAttribute("src")) {
+        frame.closest(".photo-control")?.querySelector('input[type="file"]')?.click();
+        return;
+      }
       openBarberInBooking(frame.closest("[data-barber-card]").dataset.barberCard);
     }));
     [["calendar-prev", -1], ["calendar-next", 1]].forEach(([id, delta]) => $(id).addEventListener("click", () => action(() => {
