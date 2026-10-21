@@ -10,6 +10,7 @@
   const bookingEnabled = config.demo.tier === "professional", storeEnabled = config.demo.tier === "business-pro";
   const pageName = document.body.dataset.page || "home";
   let visitor, dashboardOpen = false, dashboardView = "dashboard", ownerMenuOpen = false, ownerMenuShown = false;
+  let selectedOrderNumber = null;
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all";
   let ownerCalendarObserver = null;
@@ -18,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021a";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021b";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021a";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021b";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -883,7 +884,7 @@
       <div class="access-controls"><span class="signed-in-badge">Signed in: Owner</span><div class="date">${escape(new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }))}</div>
       <button type="button" class="lock-btn" id="demo-lock">Lock</button></div></header>
       <div class="content">${dashboardView !== "dashboard" ? `<button type="button" class="back-to-dashboard" id="back-to-dashboard">&#8592; Go back to Dashboard</button>` : ""}${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
-        dashboardView === "orders" ? `<section class="page active" id="dashboard">${ordersPanel(records, seeded)}${shippingPanel(records, seeded)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
+        dashboardView === "orders" ? `<section class="page active" id="dashboard">${orderLookupPanel(own)}${selectedOrderNumber === orderNumber(own) ? ordersPanel(records, seeded) + shippingPanel(records, seeded) : sampleOrderPanel(selectedOrderNumber)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
       <div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
       <div class="cards"><div class="card"><span>${bookingEnabled ? "Today's Appointments" : "Today's Orders"}</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
       <div class="card"><span>${bookingEnabled ? "Barbers Working" : "To Pack & Ship"}</span><strong>${bookingEnabled ? config.barbers.length : complete ? 0 : 1}</strong><small>${bookingEnabled ? config.barbers.length + " scheduled today" : "Orders awaiting fulfillment"}</small></div>
@@ -894,6 +895,10 @@
       <div><button type="button" data-preview-live="${bookingEnabled ? "appointments" : "orders"}">Try ${bookingEnabled ? "Appointments" : "Orders"} &#8594;</button>
       <a href="${plansLink}">See plans</a></div></div></section>`;
     $("demo-lock").addEventListener("click", () => { location.href = "index.html"; });
+    $("order-lookup")?.addEventListener("change", event => action(() => {
+      selectedOrderNumber = Number(event.target.value);
+      renderDashboard();
+    }));
     $("back-to-dashboard")?.addEventListener("click", () => action(() => {
       dashboardView = "dashboard";
       renderDashboard();
@@ -1134,11 +1139,53 @@
   function shipBox(order) {
     return api.shipBox(config, order);
   }
+  function orderNumber(order) {
+    if (!order) return "";
+    if (order.example) return 1009;
+    const own = api.read(localStorage, config).orders.filter(item => !item.example);
+    const index = own.findIndex(item => item.id === order.id);
+    return 1010 + Math.max(0, index);
+  }
+  function sampleOrders() {
+    const names = ["Riley Grant", "Casey Moore", "Drew Palmer", "Avery Lane", "Quinn Harper", "Jordan Blake", "Parker Hayes", "Sydney Ward", "Logan Pierce"];
+    const statuses = ["Delivered", "Delivered", "Picked up", "Delivered", "Shipped", "Delivered", "Picked up", "Shipped", "Delivered"];
+    const products = config.products.filter(product => product.priceCents);
+    return names.map((name, index) => {
+      const product = products[index % products.length], quantity = 1 + (index % 3 === 0 ? 1 : 0);
+      const day = new Date(); day.setDate(day.getDate() - (13 - index));
+      return { number: 1001 + index, name, status: statuses[index], item: product.name, quantity,
+        totalCents: Math.round(product.priceCents * quantity * 1.055),
+        date: day.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        method: statuses[index] === "Picked up" ? "Pickup at the shop" : "Shipped (USPS)" };
+    });
+  }
+  function orderLookupPanel(own) {
+    const ownNumber = orderNumber(own);
+    const options = [...(own ? [{ number: ownNumber, label: `#${ownNumber} · ${own.name} · ${own.status || "New"} (yours)` }] : []),
+      ...sampleOrders().reverse().map(order => ({ number: order.number, label: `#${order.number} · ${order.name} · ${order.status}` }))];
+    if (!selectedOrderNumber || !options.some(option => option.number === selectedOrderNumber)) selectedOrderNumber = ownNumber || options[0]?.number;
+    return `<div class="panel order-lookup"><div class="panel-header"><h3>Orders</h3></div><div class="panel-body">
+      <label class="order-lookup-label" for="order-lookup">Order number</label>
+      <select id="order-lookup" class="order-lookup-select">${options.map(option =>
+        `<option value="${option.number}" ${option.number === selectedOrderNumber ? "selected" : ""}>${escape(option.label)}</option>`).join("")}</select>
+      </div></div>`;
+  }
+  function sampleOrderPanel(number) {
+    const order = sampleOrders().find(item => item.number === number);
+    if (!order) return "";
+    return `<article class="panel sample-order"><div class="panel-header"><h3>Order #${order.number} &middot; ${money(order.totalCents)}</h3>
+      <span class="status">${escape(order.status)}</span></div><div class="panel-body">
+      <p><strong>Customer:</strong> ${escape(order.name)}</p>
+      <p><strong>Ordered:</strong> ${escape(order.date)}</p>
+      <p><strong>Items:</strong> ${escape(order.item)} &times; ${order.quantity}</p>
+      <p><strong>How it went out:</strong> ${escape(order.method)}</p>
+      <p class="sample-order-note">Sample past order. Your real portal keeps every order here.</p></div></article>`;
+  }
   function ordersPanel(records, state) {
     const packing = records.filter(order => !["Packed", "Shipped", "Ready for pickup"].includes(order.status));
     if (!packing.length) return `<div class="panel"><div class="panel-header"><h3>Orders</h3></div><div class="panel-body">
       <p>Nothing to pack right now. Packed orders move to the Shipping section.</p></div></div>`;
-    return packing.map(order => `<article class="panel owner-order" id="pack-order-${escape(order.id)}"><div class="panel-header"><h3>Order to pack &middot; ${money(order.totalCents)}</h3>
+    return packing.map(order => `<article class="panel owner-order" id="pack-order-${escape(order.id)}"><div class="panel-header"><h3>Order #${orderNumber(order)} to pack &middot; ${money(order.totalCents)}</h3>
       <span class="status">${escape(order.status || "New")}</span></div><div class="panel-body">
       ${!order.example ? "<p>Your demo order</p>" : ""}
       <p>${api.isPickup(order) ? "Free pickup" : "Ship"}</p>
@@ -1162,7 +1209,7 @@
     const ready = records.filter(order => ["Packed", "Shipped", "Ready for pickup"].includes(order.status));
     if (!ready.length) return "";
     return `<div class="panel owner-shipping"><div class="panel-header"><h3>Shipping</h3></div><div class="panel-body">
-      ${ready.map(order => `<section class="ship-order"><h3>${escape(order.name)}</h3>
+      ${ready.map(order => `<section class="ship-order"><h3>Order #${orderNumber(order)} &middot; ${escape(order.name)}</h3>
         <p class="address">${escape(api.shippingTo(order))}</p>
         ${api.isPickup(order) ? "<p>Ready for pickup at the shop.</p>" : shippingLabel(order)}
         </section>`).join("")}</div></div>`;
@@ -1177,7 +1224,7 @@
     if (api.isPickup(order) || !order.label) return "";
     const labels = order.labels?.length ? order.labels : [order.label];
     return `<div class="shipping-order-labels" data-shipping-order="${escape(order.id)}">${labels.map((label, index) => `<div class="shipping-label"><div class="shipping-label-content"><h3>${order.status === "Shipped" ? "SHIPPED" : "Shipping label"} &middot; DEMO</h3>
-      <p><strong>Box ${index + 1} of ${labels.length}</strong></p>
+      <p><strong>Order #${orderNumber(order)} &middot; Box ${index + 1} of ${labels.length}</strong></p>
       ${labelBarcode(order, label, index)}
       <div class="label-address"><strong>FROM:</strong><p class="address">${escape(label.from)}</p></div>
       <div class="label-address"><strong>TO:</strong><p class="address">${escape(label.to)}</p></div>

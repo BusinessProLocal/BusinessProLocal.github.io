@@ -1222,3 +1222,22 @@ color: #fff;
   letter-spacing: .12em;
   word-break: break-all;
 }
+/* Orders page: pick an order by number */
+#daily-dashboard .order-lookup-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #d4af37;
+  font-weight: 700;
+}
+#daily-dashboard .order-lookup-select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  background: #000;
+  color: #d4af37;
+  border: 2px solid #d4af37;
+  font-size: 1rem;
+}
+#daily-dashboard .sample-order p { margin: 8px 0; }
+#daily-dashboard .sample-order-note { opacity: .75; font-size: .9rem; }
