@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021w";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021x";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021w";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021x";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -990,7 +990,7 @@
       <button type="button" class="lock-btn" id="demo-lock">Lock</button></div></header>
       <div class="content">${dashboardView !== "dashboard" ? `<button type="button" class="back-to-dashboard" id="back-to-dashboard">&#8592; Go back to Dashboard</button>` : ""}${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
         dashboardView === "orders" ? `<section class="page active" id="dashboard">${orderLookupPanel(own)}${selectedOrderNumber === orderNumber(own) ? ordersPanel(records, seeded) + shippingPanel(records, seeded) : sampleOrderPanel(selectedOrderNumber)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
-      ${bookingEnabled ? `<div class="shop-owner-banner" role="note"><strong>SHOP OWNER VIEW</strong><span>Here's what the shop sees the second you book.</span></div>` : ""}
+      ${bookingEnabled ? `<div class="shop-owner-banner" role="note"><strong>SHOP OWNER VIEW</strong><span>Here's what the shop sees the second a customer books.</span></div>` : ""}
       <div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
       <div class="cards"><div class="card"><span>${bookingEnabled ? "Today's Appointments" : "Today's Orders"}</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
       <div class="card"><span>${bookingEnabled ? "Barbers Working" : "To Pack & Ship"}</span><strong>${bookingEnabled ? config.barbers.length : complete ? 0 : 1}</strong><small>${bookingEnabled ? config.barbers.length + " scheduled today" : "Orders awaiting fulfillment"}</small></div>
