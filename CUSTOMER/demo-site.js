@@ -18,10 +18,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020g";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020h";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020g";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020h";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -881,7 +881,7 @@
       <main class="main"><header class="topbar"><div><h2>${title}</h2><div class="note" style="font-size:12px;color:#777">Business: ${escape(visitor?.business || config.shop.name)} - demo mode</div></div>
       <div class="access-controls"><span class="signed-in-badge">Signed in: Owner</span><div class="date">${escape(new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }))}</div>
       <button type="button" class="lock-btn" id="demo-lock">Lock</button></div></header>
-      <div class="content">${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
+      <div class="content">${dashboardView !== "dashboard" ? `<button type="button" class="back-to-dashboard" id="back-to-dashboard">&#8592; Go back to Dashboard</button>` : ""}${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
         dashboardView === "orders" ? `<section class="page active" id="dashboard">${ordersPanel(records, seeded)}${shippingPanel(records, seeded)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
       <div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
       <div class="cards"><div class="card"><span>${bookingEnabled ? "Today's Appointments" : "Today's Orders"}</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
@@ -893,6 +893,11 @@
       <div><button type="button" data-preview-live="${bookingEnabled ? "appointments" : "orders"}">Try ${bookingEnabled ? "Appointments" : "Orders"} &#8594;</button>
       <a href="${plansLink}">See plans</a></div></div></section>`;
     $("demo-lock").addEventListener("click", () => { location.href = "index.html"; });
+    $("back-to-dashboard")?.addEventListener("click", () => action(() => {
+      dashboardView = "dashboard";
+      renderDashboard();
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }));
     $("owner-menu-toggle").addEventListener("click", () => {
       clearTimeout(ownerMenuTimer);
       setOwnerMenuOpen(!ownerMenuOpen);

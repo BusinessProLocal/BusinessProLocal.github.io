@@ -1186,3 +1186,17 @@ color: #fff;
 #daily-dashboard .shipping-label-actions .packed-btn {
   margin: 18px 0 0;
 }
+/* Clear way back to the Dashboard from every other page */
+#daily-dashboard .back-to-dashboard {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto 16px;
+  padding: 12px 16px;
+  background: #000;
+  border: 2px solid #d4af37;
+  color: #d4af37;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
