@@ -291,3 +291,11 @@ footer { text-align: center; border-top: 1px solid var(--line); padding: 30px 16
 .booking-time-option:last-child { border-bottom: 0; }
 .booking-time-option.selected { background: #2a2208; font-weight: 700; }
 .booking-time-dropdown > p:not(.booking-time-heading) { padding: 12px; margin: 0; }
+/* Services drop down is narrower than the barber's name box (about 2/3) so it reads as "under" him */
+.booking-barber { border: 0; border-radius: 0; overflow: visible; }
+.booking-barber-button { border: 1px solid var(--gold); border-radius: 10px; }
+.booking-barber-button[aria-expanded="true"] { border-width: 2px; }
+.booking-service-list { width: 67%; margin: 6px auto 4px; border: 1px solid var(--gold); border-top: 1px solid var(--gold); border-radius: 10px; overflow: hidden; background: #0c0c0b; }
+.booking-service-option { padding: 9px 12px; font-size: .92rem; }
+.booking-barber-button:hover, .booking-barber-button:focus-visible { background: #1a1608; color: var(--gold); }
+.booking-service-option:hover, .booking-time-option:hover { background: #2a2208; color: var(--gold); }
