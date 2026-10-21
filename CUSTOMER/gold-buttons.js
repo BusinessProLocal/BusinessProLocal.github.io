@@ -3,7 +3,7 @@
   const scriptUrl = document.currentScript.src;
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
-  stylesheet.href = new URL("gold-buttons.css?v=20261021b", scriptUrl).href;
+  stylesheet.href = new URL("gold-buttons.css?v=20261021c", scriptUrl).href;
   document.head.append(stylesheet);
   const goldColors = new Set(["rgb(212, 175, 55)", "rgb(243, 215, 122)", "rgb(156, 122, 28)", "rgb(184, 134, 11)"]);
   const measure = document.createElement("canvas").getContext("2d");

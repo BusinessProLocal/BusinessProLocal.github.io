@@ -1241,3 +1241,17 @@ color: #fff;
 }
 #daily-dashboard .sample-order p { margin: 8px 0; }
 #daily-dashboard .sample-order-note { opacity: .75; font-size: .9rem; }
+/* Blink the LIVE pages (Appointments / Orders) until they've been opened once */
+@keyframes owner-live-blink {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); background-color: #000; }
+  50% { box-shadow: 0 0 14px 4px rgba(212, 175, 55, .75); background-color: #3a2e08; }
+}
+#daily-dashboard .nav > button.owner-live-blink,
+#daily-dashboard .mobile-menu-toggle.owner-live-blink {
+  animation: owner-live-blink 1.2s ease-in-out infinite;
+  border: 2px solid #d4af37 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  #daily-dashboard .nav > button.owner-live-blink,
+  #daily-dashboard .mobile-menu-toggle.owner-live-blink { animation: none; box-shadow: 0 0 12px 3px rgba(212, 175, 55, .7); }
+}

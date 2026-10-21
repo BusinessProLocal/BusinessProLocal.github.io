@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021b";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021c";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021b";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021c";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -59,7 +59,7 @@
   function ownerNavigation() {
     const button = (tab, child = false) => `<button type="button" data-owner-tab="${escape(tab.id)}"
       ${tab.children ? `aria-expanded="${expandedOwnerTabs.has(tab.id)}" aria-controls="demo-submenu-${tab.id}"` : ""}
-      class="${dashboardView === tab.id ? "active " : ""}${tab.live ? "owner-live-tab" : "owner-preview-tab"} ${tab.live && !visitedLiveTabs.has(tab.id) ? "owner-live-pulse" : ""} ${child ? "owner-subtab" : ""}">
+      class="${dashboardView === tab.id ? "active " : ""}${tab.live ? "owner-live-tab" : "owner-preview-tab"} ${tab.live && !visitedLiveTabs.has(tab.id) ? "owner-live-pulse" : ""} ${tab.live && tab.id !== "dashboard" && !visitedLiveTabs.has(tab.id) ? "owner-live-blink" : ""} ${child ? "owner-subtab" : ""}">
       <span>${escape(ownerTabLabel(tab))}</span><span class="owner-tab-tag">${tab.live ? "LIVE" : "Preview"}</span>${tab.children ? '<span class="nav-caret">&#9662;</span>' : ""}</button>`;
     return ownerTabs.map(tab => button(tab) + (tab.children ?
       `<div class="owner-demo-submenu" id="demo-submenu-${tab.id}" ${expandedOwnerTabs.has(tab.id) ? "" : "hidden"}>${tab.children.map(child => button(child, true)).join("")}</div>` : "")).join("");
@@ -862,7 +862,7 @@
     const showMenuOnLanding = !ownerMenuShown;
     if (showMenuOnLanding) {
       ownerMenuShown = true;
-      ownerMenuOpen = window.matchMedia("(max-width: 767px)").matches;
+      ownerMenuOpen = false;
     }
     document.body.classList.add("demo-owner-open");
     document.querySelector(".shop-header").hidden = true; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = true; });
@@ -873,7 +873,7 @@
     const price = bookingEnabled ? own.status === "Canceled" ? 0 : (config.services.find(service => service.id === own.serviceId)?.price || 0) * 100 : own.totalCents;
     const complete = bookingEnabled ? finished || own.status === "Canceled" : ["Shipped", "Ready for pickup"].includes(own.status);
     $("demo-content").innerHTML = `<section id="daily-dashboard"><div class="app"><aside class="sidebar${ownerMenuOpen ? " owner-menu-open" : ""}">
-      <button type="button" class="mobile-menu-toggle" id="owner-menu-toggle" aria-expanded="${ownerMenuOpen}" aria-controls="owner-tabs">
+      <button type="button" class="mobile-menu-toggle${ownerTabs.some(tab => tab.live && tab.id !== "dashboard" && !visitedLiveTabs.has(tab.id)) ? " owner-live-blink" : ""}" id="owner-menu-toggle" aria-expanded="${ownerMenuOpen}" aria-controls="owner-tabs">
         &#9776; Menu &middot; <span>${escape(title)}</span></button><div class="brand">
       <div class="business-name"><strong>${escape(visitor?.business || config.shop.name)}</strong></div>
       <h1>BUSINESS PRO</h1><p>${bookingEnabled ? "Professional" : "Business Pro"} Owner Portal</p></div>
