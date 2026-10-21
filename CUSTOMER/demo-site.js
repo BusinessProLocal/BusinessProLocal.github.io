@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021v";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021w";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021v";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021w";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -990,6 +990,7 @@
       <button type="button" class="lock-btn" id="demo-lock">Lock</button></div></header>
       <div class="content">${dashboardView !== "dashboard" ? `<button type="button" class="back-to-dashboard" id="back-to-dashboard">&#8592; Go back to Dashboard</button>` : ""}${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
         dashboardView === "orders" ? `<section class="page active" id="dashboard">${orderLookupPanel(own)}${selectedOrderNumber === orderNumber(own) ? ordersPanel(records, seeded) + shippingPanel(records, seeded) : sampleOrderPanel(selectedOrderNumber)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
+      ${bookingEnabled ? `<div class="shop-owner-banner" role="note"><strong>SHOP OWNER VIEW</strong><span>Here's what the shop sees the second you book.</span></div>` : ""}
       <div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
       <div class="cards"><div class="card"><span>${bookingEnabled ? "Today's Appointments" : "Today's Orders"}</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
       <div class="card"><span>${bookingEnabled ? "Barbers Working" : "To Pack & Ship"}</span><strong>${bookingEnabled ? config.barbers.length : complete ? 0 : 1}</strong><small>${bookingEnabled ? config.barbers.length + " scheduled today" : "Orders awaiting fulfillment"}</small></div>
@@ -1087,14 +1088,17 @@
       })));
     }
   }
+  function isNewBooking(item) {
+    return !item.example && !["Finished", "Canceled"].includes(item.status);
+  }
   function schedulePanel(records, state) {
     return `<div class="panel"><div class="panel-header"><h3>Today's Appointments</h3></div><div class="panel-body">
       ${records[0].date !== api.dates()[0] ? "<p>Your selected booking is included in this preview even if it is on another day.</p>" : ""}
-      <div class="completed-owner-grid">${config.barbers.map(staff => `<section class="completed-barber-block" style="border-top-color:${employeeColor(staff.id)}">
+      <div class="completed-owner-grid">${config.barbers.map(staff => `<section class="completed-barber-block${records.some(item => item.staffId === staff.id && isNewBooking(item)) ? " has-new-booking" : ""}" style="border-top-color:${employeeColor(staff.id)}">
       <div class="completed-barber-header"><div class="dashboard-barber-identity">${roundBarberPhoto(staff, state)}
       <button type="button" class="completed-barber-name compact-barber-name-btn">${escape(staff.name)}</button></div></div>
       <div class="completed-time-list">${records.filter(item => item.staffId === staff.id).map(item =>
-        `<button type="button" class="completed-time-btn ${item.status !== "Finished" ? "next-barber-appointment" : ""}" data-calendar-booking="${escape(item.id)}" title="${escape(item.name)} - ${escape(item.status || "Scheduled")}">${api.timeLabel(item.time)}</button>`).join("")}</div></section>`).join("")}</div>
+        `<button type="button" class="completed-time-btn ${item.status !== "Finished" ? "next-barber-appointment" : ""}" data-calendar-booking="${escape(item.id)}" title="${escape(item.name)} - ${escape(item.status || "Scheduled")}">${api.timeLabel(item.time)}</button>${isNewBooking(item) ? '<span class="new-booking-tag">NEW</span>' : ""}`).join("")}</div></section>`).join("")}</div>
       </div></div>`;
   }
   function roundBarberPhoto(staff, state) {

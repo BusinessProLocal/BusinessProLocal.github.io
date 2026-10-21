@@ -1357,3 +1357,45 @@ color: #fff;
   line-height: 1 !important;
 }
 #daily-dashboard .calendar-card-actions > button { padding: 0 10px !important; }
+
+/* Barber demo: SHOP OWNER VIEW banner + NEW tag on the visitor's booking */
+#daily-dashboard .page#dashboard .shop-owner-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--bp-gold);
+  color: var(--bp-black);
+  text-align: center;
+}
+#daily-dashboard .page#dashboard .shop-owner-banner strong {
+  font-size: 18px;
+  letter-spacing: .12em;
+  color: var(--bp-black);
+}
+#daily-dashboard .page#dashboard .shop-owner-banner span {
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--bp-black);
+}
+#daily-dashboard .page#dashboard .completed-barber-block.has-new-booking {
+  outline: 2px solid var(--bp-gold);
+  outline-offset: 2px;
+  box-shadow: 0 0 18px rgba(212, 175, 55, .55);
+}
+#daily-dashboard .page#dashboard .new-booking-tag {
+  display: inline-block;
+  align-self: center;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bp-gold);
+  color: var(--bp-black);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: .08em;
+  vertical-align: middle;
+}
