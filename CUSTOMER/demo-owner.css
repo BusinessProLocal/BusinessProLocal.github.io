@@ -1255,3 +1255,17 @@ color: #fff;
   #daily-dashboard .nav > button.owner-live-blink,
   #daily-dashboard .mobile-menu-toggle.owner-live-blink { animation: none; box-shadow: 0 0 12px 3px rgba(212, 175, 55, .7); }
 }
+/* The page name itself (Appointments / Orders) blinks big, not just the LIVE tag */
+@keyframes owner-live-word {
+  0%, 100% { transform: scale(1); color: #d4af37; text-shadow: none; opacity: 1; }
+  50% { transform: scale(1.18); color: #fff3c4; text-shadow: 0 0 10px rgba(212, 175, 55, .95), 0 0 22px rgba(212, 175, 55, .6); opacity: 1; }
+}
+#daily-dashboard .nav > button.owner-live-blink > span:first-child {
+  display: inline-block;
+  transform-origin: left center;
+  font-weight: 700;
+  animation: owner-live-word 1s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  #daily-dashboard .nav > button.owner-live-blink > span:first-child { animation: none; color: #fff3c4; text-shadow: 0 0 10px rgba(212, 175, 55, .95); }
+}
