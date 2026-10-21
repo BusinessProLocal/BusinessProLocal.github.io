@@ -369,6 +369,20 @@
     write(storage, config, state);
     return booking;
   }
+  function setTip(storage, config, id, input) {
+    if (config.demo.tier !== "professional") throw new Error("Tips are only part of the booking demo.");
+    const state = read(storage, config), booking = state.bookings.find(item => item.id === id);
+    if (!booking) throw new Error("This demo appointment was not found.");
+    if (booking.status === "Canceled") throw new Error("A canceled appointment can't take a tip.");
+    const text = String(input ?? "").replace(/[$,\s]/g, "");
+    if (text === "") { booking.tipCents = 0; write(storage, config, state); return booking; }
+    if (!/^\d+(\.\d{0,2})?$/.test(text)) throw new Error("Type the tip as dollars and cents, like 5 or 5.50.");
+    const cents = Math.round(Number(text) * 100);
+    if (cents > 100000) throw new Error("That tip looks too big. Double-check the amount.");
+    booking.tipCents = cents;
+    write(storage, config, state);
+    return booking;
+  }
   function shipBoxes(config, order) {
     if (!Array.isArray(order.items) || !order.items.length) throw new Error("An order must have items before packing.");
     const lines = order.items.map(item => {
@@ -440,7 +454,7 @@
   }
   const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, book, setQuantity, clearCart, total, taxCents, grandTotal, checkout,
     parseAddress, addressText, shippingTo, shippingFrom, isPickup, savePacking, printLabel, setCarrier, markShipped,
-    dashboard, bookingStatus, shipBox, shipBoxes, savePhoto, removePhoto };
+    dashboard, bookingStatus, setTip, shipBox, shipBoxes, savePhoto, removePhoto };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.BusinessProDemo = api;
 })(globalThis);

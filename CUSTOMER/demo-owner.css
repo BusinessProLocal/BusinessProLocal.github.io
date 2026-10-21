@@ -1310,3 +1310,8 @@ color: #fff;
 }
 #daily-dashboard .order-lookup-option:last-child { border-bottom: 0; }
 #daily-dashboard .order-lookup-option.selected { background: #2a2208; font-weight: 700; }
+/* Appointment popup: editable tip */
+#daily-dashboard .appointment-tip-row, .appointment-tip-row { display: flex; gap: 8px; align-items: stretch; }
+#daily-dashboard .appointment-tip-row input, .appointment-tip-row input { flex: 1; min-width: 0; padding: 10px; font-size: 1rem; }
+#daily-dashboard .appointment-tip-total, .appointment-tip-total { margin-top: 6px; font-weight: 700; }
+#daily-dashboard .appointment-tip-error, .appointment-tip-error { color: #ff8a8a; margin-top: 4px; }

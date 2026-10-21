@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021h";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021i";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021h";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021i";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -1182,14 +1182,31 @@
       $("appointment-popup-content").innerHTML = `<div class="appointment-detail-grid">${details.map(([label, value]) =>
         `<div class="appointment-detail"><label>${label}</label><strong>${escape(value)}</strong></div>`).join("")}</div>
         <div class="appointment-form-group"><label>Service Price</label><input type="text" value="${money(price * 100)}" readonly></div>
-        <div class="appointment-form-group"><label>Tip Amount</label><input type="text" value="$0.00" readonly></div>
+        <div class="appointment-form-group appointment-tip"><label for="appointment-tip">Tip Amount</label>
+          <div class="appointment-tip-row"><input type="text" id="appointment-tip" inputmode="decimal" autocomplete="off" placeholder="0.00"
+            value="${booking.tipCents ? (booking.tipCents / 100).toFixed(2) : ""}" ${booking.status === "Canceled" ? "disabled" : ""}>
+          <button type="button" class="modal-action-btn" id="save-tip" ${booking.status === "Canceled" ? "disabled" : ""}>Save tip</button></div>
+          <p class="appointment-tip-total" id="appointment-tip-total">Total: ${money(price * 100 + (booking.tipCents || 0))}${booking.tipCents ? ` (tip ${money(booking.tipCents)})` : ""}</p>
+          <p class="appointment-tip-error" id="appointment-tip-error" role="alert"></p></div>
         <div class="modal-actions"><button type="button" class="modal-action-btn" data-booking-status="Started" ${booking.status && booking.status !== "Scheduled" ? "disabled" : ""}>Start</button>
         <button type="button" class="modal-action-btn" id="completeAppointment" data-booking-status="Finished" ${booking.status !== "Started" ? "disabled" : ""}>Finish</button>
         <button type="button" class="modal-action-btn cancel-btn" data-booking-status="Canceled" ${["Finished", "Canceled"].includes(booking.status) ? "disabled" : ""}>Cancel Appointment</button></div>`;
       const popup = $("appointment-popup");
       popup.hidden = false; popup.classList.add("open");
       $("close-appointment").focus();
+      const saveTip = () => {
+        try {
+          const saved = api.setTip(localStorage, config, booking.id, $("appointment-tip").value);
+          $("appointment-tip").value = saved.tipCents ? (saved.tipCents / 100).toFixed(2) : "";
+          $("appointment-tip-total").textContent = `Total: ${money(price * 100 + (saved.tipCents || 0))}${saved.tipCents ? ` (tip ${money(saved.tipCents)})` : ""}`;
+          $("appointment-tip-error").textContent = "";
+          return true;
+        } catch (failure) { $("appointment-tip-error").textContent = failure.message; return false; }
+      };
+      $("save-tip")?.addEventListener("click", saveTip);
+      $("appointment-tip")?.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); saveTip(); } });
       document.querySelectorAll("[data-booking-status]").forEach(control => control.addEventListener("click", () => action(() => {
+        if (control.dataset.bookingStatus === "Finished" && $("appointment-tip").value.trim() && !saveTip()) return;
         api.bookingStatus(localStorage, config, booking.id, control.dataset.bookingStatus); renderDashboard();
       })));
       document.querySelectorAll('[data-calendar-booking][role="button"]').forEach(card => card.addEventListener("keydown", event => {
