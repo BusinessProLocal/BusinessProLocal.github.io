@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021s";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021t";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021s";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021t";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};

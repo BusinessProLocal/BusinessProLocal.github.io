@@ -7,7 +7,7 @@
   stylesheet.href = new URL("gold-word.css", scriptUrl).href;
   document.head.append(stylesheet);
   const buttons = document.createElement("script");
-  buttons.src = new URL("gold-buttons.js?v=20261021s", scriptUrl).href;
+  buttons.src = new URL("gold-buttons.js?v=20261021t", scriptUrl).href;
   buttons.addEventListener("error", () => console.error("Gold button script failed to load:", buttons.src));
   document.head.append(buttons);
   const widths = { "0":180,"1":129,"2":175,"3":165,"4":175,"5":162,"6":175,"7":183,"8":178,"9":175,
