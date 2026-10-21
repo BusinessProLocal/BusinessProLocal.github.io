@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021l";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021n";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021l";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021n";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -1174,8 +1174,32 @@
   function setupAppointmentDetails() {
     document.querySelectorAll("[data-calendar-tip]").forEach(button => button.addEventListener("click", event => {
       event.stopPropagation();
-      document.querySelector(`[data-calendar-booking="${button.dataset.calendarTip}"]`)?.click();
-      setTimeout(() => { $("appointment-tip")?.focus(); $("appointment-tip")?.select(); }, 50);
+      const id = button.dataset.calendarTip;
+      const booking = api.read(localStorage, config).bookings.find(item => item.id === id);
+      const editor = document.createElement("span");
+      editor.className = "calendar-tip-editor";
+      editor.innerHTML = `<span aria-hidden="true">$</span><input type="text" inputmode="decimal" autocomplete="off" aria-label="Tip amount" placeholder="0.00"
+        value="${booking?.tipCents ? (booking.tipCents / 100).toFixed(2) : ""}"><button type="button" aria-label="Save tip">&#10003;</button>`;
+      ["click", "keydown", "pointerdown", "mousedown", "touchstart"].forEach(type => editor.addEventListener(type, inner => inner.stopPropagation()));
+      button.replaceWith(editor);
+      const input = editor.querySelector("input");
+      input.focus(); input.select();
+      let done = false;
+      const save = () => {
+        if (done) return;
+        try {
+          const saved = api.setTip(localStorage, config, id, input.value);
+          done = true;
+          button.textContent = saved.tipCents ? `Tip ${money(saved.tipCents)}` : "+ Tip";
+          editor.replaceWith(button);
+        } catch (failure) { input.setCustomValidity(failure.message); input.reportValidity(); input.setCustomValidity(""); }
+      };
+      editor.querySelector("button").addEventListener("click", save);
+      input.addEventListener("keydown", key => {
+        if (key.key === "Enter") { key.preventDefault(); save(); }
+        if (key.key === "Escape") { done = true; editor.replaceWith(button); }
+      });
+      input.addEventListener("blur", () => setTimeout(() => { if (!done && !editor.contains(document.activeElement)) save(); }, 150));
     }));
     document.querySelectorAll("[data-calendar-booking]").forEach(button => button.addEventListener("click", () => action(() => {
       const booking = api.read(localStorage, config).bookings.find(item => item.id === button.dataset.calendarBooking);

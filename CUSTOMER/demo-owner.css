@@ -1329,3 +1329,10 @@ color: #fff;
   z-index: 2;
   background: inherit;
 }
+/* Tip typed right inside the appointment block */
+#daily-dashboard .calendar-tip-editor { display: inline-flex; align-items: center; gap: 3px; padding: 2px 4px; background: #000; border: 1px solid #d4af37; border-radius: 6px; color: #d4af37; font-weight: 700; }
+#daily-dashboard .calendar-tip-editor input { width: 56px; padding: 3px 4px; background: #fff; color: #000; border: 0; border-radius: 4px; font-size: 16px; }
+#daily-dashboard .calendar-tip-editor button { padding: 2px 7px; background: #d4af37; color: #000; border: 0; font-weight: 700; }
+#daily-dashboard .calendar-card-actions .calendar-tip-editor { display: inline-flex !important; flex-wrap: nowrap !important; white-space: nowrap; max-width: 100%; }
+#daily-dashboard .calendar-card-actions .calendar-tip-editor input { width: 58px !important; min-width: 0; height: 26px; padding: 2px 4px !important; font-size: 16px !important; line-height: 1 !important; }
+#daily-dashboard .calendar-card-actions .calendar-tip-editor button { height: 26px; padding: 0 8px !important; background: #d4af37 !important; color: #000 !important; border: 0 !important; font-size: 14px !important; }
