@@ -10,7 +10,7 @@
   const bookingEnabled = config.demo.tier === "professional", storeEnabled = config.demo.tier === "business-pro";
   const pageName = document.body.dataset.page || "home";
   let visitor, dashboardOpen = false, dashboardView = "dashboard", ownerMenuOpen = false, ownerMenuShown = false;
-  let selectedOrderNumber = null, orderListOpen = false;
+  let selectedOrderNumber = null, orderListOpen = false, timeListOpen = false, openBarberInBooking = () => {};
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all";
   let ownerCalendarObserver = null;
@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021f";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021g";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021f";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021g";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -323,8 +323,9 @@
       ${extraPhotos.length && !storeEnabled ? `<section id="photos"><h2>A Look Around</h2><div class="demo-gallery">
       ${extraPhotos.map(photo => image(photo.src, photo.alt)).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="barbers"><h2>Meet the Barbers</h2><div class="card-grid">${config.barbers.map((staff, index) =>
-        `<article class="card"><h3>${escape(staff.name)}</h3><p>${escape(staff.cardSpecialty)}</p><p>${escape(staff.bio)}</p>
-        ${barberPhotoControl(staff, index, state)}</article>`).join("")}</div></section>
+        `<article class="card barber-card" data-barber-card="${escape(staff.id)}"><h3>${escape(staff.name)}</h3><p>${escape(staff.cardSpecialty)}</p><p>${escape(staff.bio)}</p>
+        ${barberPhotoControl(staff, index, state)}
+        <button type="button" class="book-with-barber" data-book-with="${escape(staff.id)}">Book with ${escape(staff.name.split(" ")[0])}</button></article>`).join("")}</div></section>
       <section id="booking"><h2>Try Booking Your Customer's Appointment</h2><p>This is exactly how your customers will book an appointment.</p>
       ${bookingForm()}</section>` : ""}
       ${storeEnabled ? `<section id="store"><h2>Shop Coastal Favorites</h2><p>Ship to your address or choose free local pickup.</p>
@@ -380,19 +381,28 @@
     forms.addDemoButton($("booking-info"), fields, values);
   }
   function bookingForm() {
-    return `<form id="booking-form" class="demo-form"><fieldset><legend>1. Pick a service</legend>
-      <label>Choose a service<select id="demo-service" required><option value="">Select a service</option>
-      ${config.services.map(service => `<option value="${escape(service.id)}">${escape(service.name)} - ${money(service.price * 100)}</option>`).join("")}</select></label></fieldset>
-      <fieldset><legend>2. Pick your barber</legend><label>Choose your barber<select id="demo-staff" required disabled>
-      <option value="">Select a service first</option></select></label><p id="booking-with">Booking with: choose your barber</p></fieldset>
-      <fieldset><legend>3. Pick a day</legend><input id="demo-date" type="hidden">
+    return `<form id="booking-form" class="demo-form">
+      <div class="booking-hidden-fields" hidden><select id="demo-service" required><option value="">Select a service</option>
+      ${config.services.map(service => `<option value="${escape(service.id)}">${escape(service.name)}</option>`).join("")}</select>
+      <select id="demo-staff" required><option value="">Select a barber</option>
+      ${config.barbers.map(staff => `<option value="${escape(staff.id)}">${escape(staff.name)}</option>`).join("")}</select>
+      <select id="demo-time" required disabled><option value="">Choose a day first</option></select></div>
+      <fieldset id="booking-step-barber"><legend>1. Pick your barber</legend>
+      <div class="booking-barber-list">${config.barbers.map(staff => `<div class="booking-barber" data-barber-row="${escape(staff.id)}">
+        <button type="button" class="booking-barber-button" data-pick-barber="${escape(staff.id)}" aria-expanded="false" aria-controls="barber-services-${escape(staff.id)}">
+        <span class="booking-barber-name">${escape(staff.name)}</span><span class="booking-barber-specialty">${escape(staff.cardSpecialty || "")}</span><span class="booking-caret" aria-hidden="true">&#9662;</span></button>
+        <div class="booking-service-list" id="barber-services-${escape(staff.id)}" hidden>${config.services.filter(service => staff.serviceIds.includes(service.id)).map(service =>
+          `<button type="button" class="booking-service-option" data-pick-service="${escape(service.id)}" data-service-barber="${escape(staff.id)}">
+          <span>${escape(service.name)}</span><span>${money(service.price * 100)}</span></button>`).join("")}</div></div>`).join("")}</div>
+      <p id="booking-with" class="booking-choice" hidden></p></fieldset>
+      <fieldset><legend>2. Pick a day &amp; time</legend><input id="demo-date" type="hidden">
       <div class="booking-date-calendar" aria-label="Available appointment dates">
       <div class="booking-date-calendar-toolbar"><button id="calendar-prev" type="button" aria-label="Previous month">&lt;</button>
       <strong id="calendar-month"></strong><button id="calendar-next" type="button" aria-label="Next month">&gt;</button></div>
       <div class="booking-date-weekdays" aria-hidden="true">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => `<span>${day}</span>`).join("")}</div>
-      <div id="calendar-days" class="booking-date-grid"></div><p class="booking-date-note">Choose your barber to see available days. Unavailable days cannot be selected.</p></div></fieldset>
-      <fieldset><legend>4. Pick a time</legend><label>Choose an available time<select id="demo-time" required disabled><option value="">Choose a day first</option></select></label></fieldset>
-      <fieldset id="booking-info" disabled><legend>5. Your information</legend>${contactFields("demo")}</fieldset>
+      <div id="calendar-days" class="booking-date-grid"></div><p class="booking-date-note" id="booking-date-note">Pick your barber first, then tap a day to see open times.</p></div>
+      <p id="booking-time-choice" class="booking-choice" hidden></p></fieldset>
+      <fieldset id="booking-info" disabled><legend>3. Your information</legend>${contactFields("demo")}</fieldset>
       <div id="booking-summary" class="demo-summary" aria-live="polite"></div>
       <p>No payment or text consent is needed in demo mode. Nothing is sent.</p>
       <p id="booking-error" class="checkout-error" role="alert"></p>
@@ -415,14 +425,35 @@
         ${day}${!available.length && days.includes(key) && $("demo-staff").value ? "<small>OFF/FULL</small>" : ""}</button>`;
     }
     $("calendar-days").innerHTML = html;
+    const picked = $("demo-date").value && document.querySelector(`[data-day="${$("demo-date").value}"]`);
+    if (picked && timeListOpen) {
+      const cells = Array.from($("calendar-days").children);
+      const rowEnd = Math.min(cells.length - 1, Math.floor(cells.indexOf(picked) / 7) * 7 + 6);
+      const available = api.slots(config, state, $("demo-staff").value, $("demo-service").value, $("demo-date").value);
+      const label = new Date($("demo-date").value + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+      cells[rowEnd].insertAdjacentHTML("afterend", `<div class="booking-time-dropdown" role="listbox" aria-label="Open times on ${escape(label)}">
+        <p class="booking-time-heading">Open times · ${escape(label)}</p>
+        ${available.length ? available.map(time => `<button type="button" class="booking-time-option${$("demo-time").value === time ? " selected" : ""}" data-pick-time="${time}">${api.timeLabel(time)}</button>`).join("") :
+          "<p>No open times this day.</p>"}</div>`);
+    }
     document.querySelectorAll("[data-day]").forEach(button => button.addEventListener("click", () => action(() => {
+      const same = $("demo-date").value === button.dataset.day;
       $("demo-date").value = button.dataset.day;
-      renderCalendar(); refreshTimes();
+      timeListOpen = same ? !timeListOpen : true;
+      refreshTimes(); renderCalendar();
+    })));
+    document.querySelectorAll("[data-pick-time]").forEach(button => button.addEventListener("click", () => action(() => {
+      $("demo-time").value = button.dataset.pickTime;
+      timeListOpen = false;
+      refreshSummary(); renderCalendar();
+      $("booking-info").scrollIntoView({ block: "start", behavior: "smooth" });
     })));
   }
   function refreshTimes() {
     const available = api.slots(config, api.read(localStorage, config), $("demo-staff").value, $("demo-service").value, $("demo-date").value);
+    const keep = $("demo-time").value;
     $("demo-time").innerHTML = '<option value="">Select a time</option>' + available.map(time => `<option value="${time}">${api.timeLabel(time)}</option>`).join("");
+    if (available.includes(keep)) $("demo-time").value = keep;
     $("demo-time").disabled = !available.length;
     refreshSummary();
   }
@@ -430,6 +461,12 @@
     const service = config.services.find(item => item.id === $("demo-service").value);
     const staff = config.barbers.find(item => item.id === $("demo-staff").value);
     const ready = Boolean(service && staff && $("demo-date").value && $("demo-time").value);
+    const timeChoice = $("booking-time-choice");
+    if (timeChoice) {
+      timeChoice.hidden = !($("demo-date").value && $("demo-time").value);
+      if (!timeChoice.hidden) timeChoice.innerHTML = `<strong>${escape(new Date($("demo-date").value + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }))} · ${escape(api.timeLabel($("demo-time").value))}</strong> <button type="button" class="booking-change" data-change-time>Change</button>`;
+      timeChoice.querySelector("[data-change-time]")?.addEventListener("click", () => { timeListOpen = true; renderCalendar(); });
+    }
     $("booking-info").disabled = !ready;
     $("demo-confirm").disabled = !ready;
     $("booking-summary").textContent = ready ?
@@ -442,18 +479,47 @@
       $(id).addEventListener("input", refreshSummary);
       $(id).addEventListener("change", refreshSummary);
     });
-    $("demo-service").addEventListener("change", () => action(() => {
-      const staff = config.barbers.filter(item => item.serviceIds.includes($("demo-service").value));
-      $("demo-staff").innerHTML = '<option value="">Select a barber</option>' + staff.map(item =>
-        `<option value="${escape(item.id)}">${escape(item.name)}</option>`).join("");
-      $("demo-staff").disabled = !staff.length;
-      $("demo-date").value = "";
+    const pickBarberService = (staffId, serviceId) => {
+      const staff = config.barbers.find(item => item.id === staffId);
+      const service = config.services.find(item => item.id === serviceId);
+      $("demo-staff").value = staffId;
+      $("demo-service").value = serviceId;
+      $("demo-date").value = ""; $("demo-time").value = ""; timeListOpen = false;
+      document.querySelectorAll(".booking-service-list").forEach(list => { list.hidden = true; });
+      document.querySelectorAll("[data-pick-barber]").forEach(button => {
+        button.setAttribute("aria-expanded", "false");
+        button.closest(".booking-barber").classList.toggle("is-picked", button.dataset.pickBarber === staffId);
+      });
+      document.querySelector(".booking-barber-list").hidden = true;
+      $("booking-with").hidden = false;
+      $("booking-with").innerHTML = `<strong>${escape(staff.name)} · ${escape(service.name)} · ${money(service.price * 100)}</strong> <button type="button" class="booking-change" data-change-barber>Change</button>`;
+      $("booking-with").querySelector("[data-change-barber]").addEventListener("click", () => {
+        document.querySelector(".booking-barber-list").hidden = false; $("booking-with").hidden = true;
+      });
+      $("booking-date-note").textContent = "Tap a day to see open times. Grayed-out days are off or full.";
       renderCalendar(); refreshTimes();
+    };
+    openBarberInBooking = staffId => {
+      document.querySelector(".booking-barber-list").hidden = false; $("booking-with").hidden = true;
+      document.querySelectorAll("[data-pick-barber]").forEach(button => {
+        const open = button.dataset.pickBarber === staffId;
+        button.setAttribute("aria-expanded", String(open));
+        $("barber-services-" + button.dataset.pickBarber).hidden = !open;
+      });
+      $("booking-step-barber").scrollIntoView({ block: "start", behavior: "smooth" });
+    };
+    document.querySelectorAll("[data-pick-barber]").forEach(button => button.addEventListener("click", () => {
+      const list = $("barber-services-" + button.dataset.pickBarber), open = list.hidden;
+      document.querySelectorAll(".booking-service-list").forEach(other => { other.hidden = true; });
+      document.querySelectorAll("[data-pick-barber]").forEach(other => other.setAttribute("aria-expanded", "false"));
+      list.hidden = !open; button.setAttribute("aria-expanded", String(open));
     }));
-    $("demo-staff").addEventListener("change", () => action(() => {
-      $("booking-with").textContent = "Booking with: " + (config.barbers.find(item => item.id === $("demo-staff").value)?.name || "choose your barber");
-      $("demo-date").value = "";
-      renderCalendar(); refreshTimes();
+    document.querySelectorAll("[data-pick-service]").forEach(button => button.addEventListener("click", () => action(() =>
+      pickBarberService(button.dataset.serviceBarber, button.dataset.pickService))));
+    document.querySelectorAll("[data-book-with]").forEach(button => button.addEventListener("click", () => openBarberInBooking(button.dataset.bookWith)));
+    document.querySelectorAll("[data-barber-card] .barber-photo-frame").forEach(frame => frame.addEventListener("click", event => {
+      if (event.target.closest(".photo-remove, .photo-button, input")) return;
+      openBarberInBooking(frame.closest("[data-barber-card]").dataset.barberCard);
     }));
     [["calendar-prev", -1], ["calendar-next", 1]].forEach(([id, delta]) => $(id).addEventListener("click", () => action(() => {
       calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + delta, 1);

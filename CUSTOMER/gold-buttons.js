@@ -3,7 +3,7 @@
   const scriptUrl = document.currentScript.src;
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
-  stylesheet.href = new URL("gold-buttons.css?v=20261021f", scriptUrl).href;
+  stylesheet.href = new URL("gold-buttons.css?v=20261021g", scriptUrl).href;
   document.head.append(stylesheet);
   const goldColors = new Set(["rgb(212, 175, 55)", "rgb(243, 215, 122)", "rgb(156, 122, 28)", "rgb(184, 134, 11)"]);
   const measure = document.createElement("canvas").getContext("2d");
@@ -59,7 +59,7 @@
     observer.disconnect();
     setupMagnet();
     for (const element of document.querySelectorAll("button,a.btn,a.book-button,.owner-preview-popup a,[role=button]")) {
-      if (element.matches(".intro-splash,.ad-tab,.booking-date-day") || element.closest("#ad-popup")) continue;
+      if (element.matches(".intro-splash,.ad-tab,.booking-date-day,.booking-barber-button,.booking-service-option,.booking-time-option,.booking-change") || element.closest("#ad-popup")) continue;
       if ((element.closest("#daily-dashboard,.owner-preview-popup") || document.body.classList.contains("demo-owner-open")) && !element.matches(".packed-btn")) {
         if (element.classList.contains("gold-bar")) {
           const source = element.querySelector(":scope > .gold-bar-source");
