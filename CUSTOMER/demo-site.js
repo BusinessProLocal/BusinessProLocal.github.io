@@ -18,10 +18,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020f";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261020g";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020f";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261020g";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -1174,8 +1174,8 @@
         `<label>Carrier<select data-carrier="${escape(order.id)}">${["USPS", "UPS", "FedEx"].map(carrier =>
           `<option ${carrier === (order.carrier || label.carrier || "USPS") ? "selected" : ""}>${carrier}</option>`).join("")}</select></label>
         `}
-      <p>Demo label only. No postage purchased or carrier contacted.</p></div></div>`).join("")}<div class="shipping-label-actions"><button type="button" class="action-btn" data-print-label="${escape(order.id)}">Print Label</button>
-      ${order.status === "Shipped" ? "" : `<button type="button" class="action-btn" data-shipped="${escape(order.id)}">Shipped</button>`}</div></div>`;
+      <p>Demo label only. No postage purchased or carrier contacted.</p></div></div>`).join("")}<div class="shipping-label-actions"><button type="button" class="action-btn packed-btn" data-print-label="${escape(order.id)}">Print Label</button>
+      ${order.status === "Shipped" ? "" : `<button type="button" class="action-btn packed-btn" data-shipped="${escape(order.id)}">Shipped</button>`}</div></div>`;
   }
   try {
     visitor = api.lead(sessionStorage);
