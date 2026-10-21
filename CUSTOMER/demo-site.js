@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021u";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021v";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021u";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021v";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -376,7 +376,7 @@
   }
   function enhanceContact(form, prefix) {
     const fields = { name: `${prefix}-name`, phone: `${prefix}-phone`, email: `${prefix}-email` };
-    const values = () => ({ ...forms.leadValues(sessionStorage), name: "Jake Miller" });
+    const values = () => ({ ...forms.leadValues(sessionStorage), name: "Jake Miller", email: "jake.test@example.com" });
     forms.enhance(form);
     forms.addDemoButton($("booking-info"), fields, values);
   }
@@ -967,7 +967,7 @@
     const showMenuOnLanding = !ownerMenuShown;
     if (showMenuOnLanding) {
       ownerMenuShown = true;
-      ownerMenuOpen = window.matchMedia("(max-width: 767px)").matches;
+      ownerMenuOpen = window.matchMedia("(max-width: 900px)").matches;
     }
     document.body.classList.add("demo-owner-open");
     document.querySelector(".shop-header").hidden = true; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = true; });

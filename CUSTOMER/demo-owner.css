@@ -566,15 +566,12 @@ color: #fff;
         grid-template-columns: repeat(2, 1fr);
       }
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
 #daily-dashboard .app {
         display: block;
       }
 #daily-dashboard .sidebar {
         width: 100%;
-      }
-#daily-dashboard .cards {
-        grid-template-columns: 1fr;
       }
 #daily-dashboard .topbar,
 #daily-dashboard .content {
@@ -582,7 +579,12 @@ color: #fff;
         padding-right: 18px;
       }
 }
-@media (max-width: 767px) {
+@media (max-width: 760px) {
+#daily-dashboard .cards {
+        grid-template-columns: 1fr;
+      }
+}
+@media (max-width: 900px) {
   #daily-dashboard .sidebar {
     position: sticky;
     top: 0;
