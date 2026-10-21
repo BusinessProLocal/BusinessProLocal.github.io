@@ -1167,3 +1167,13 @@ color: #fff;
 #daily-dashboard .card > header:first-child {
   border-radius: 9px 9px 0 0;
 }
+/* Packed is the key step to reach Shipping: engraved gold bar (gold-buttons.js) */
+#daily-dashboard .packed-btn {
+  display: block;
+  margin: 18px auto 0;
+  background-color: transparent !important;
+  border-color: #d4af37;
+  color: #d4af37;
+  font-size: 1.05rem;
+}
+#daily-dashboard .packed-btn:disabled { opacity: .45; }
