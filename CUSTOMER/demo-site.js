@@ -19,10 +19,10 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021t";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021u";
   document.head.appendChild(ownerStyles);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021t";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021u";
   document.head.appendChild(goldWords);
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
   const previewPhotos = {};
@@ -1168,6 +1168,15 @@
       <div class="month-grid-scroll" tabindex="0" role="region" aria-label="Appointment calendar, scroll to browse">
       <div class="month-grid" style="grid-template-columns:90px repeat(${columns.length},minmax(${minimum}px,1fr));grid-template-rows:48px repeat(16,90px);min-width:${90 + columns.length * minimum}px;width:100%">${grid}</div></div></div></div></section>`;
   }
+  function renderKeepingPlace() {
+    const pageX = window.scrollX, pageY = window.scrollY;
+    const grid = document.querySelector("#owner-calendar .month-grid-scroll");
+    const gridTop = grid?.scrollTop || 0, gridLeft = grid?.scrollLeft || 0;
+    renderDashboard();
+    const fresh = document.querySelector("#owner-calendar .month-grid-scroll");
+    if (fresh) { fresh.scrollTop = gridTop; fresh.scrollLeft = gridLeft; }
+    window.scrollTo({ left: pageX, top: pageY, behavior: "instant" });
+  }
   function setupOwnerCalendar() {
     $("close-appointments").addEventListener("click", () => action(() => { dashboardView = "dashboard"; renderDashboard(); }));
     [["owner-previous", -1], ["owner-next", 1]].forEach(([id, delta]) => $(id).addEventListener("click", () => action(() => {
@@ -1196,7 +1205,7 @@
       event.stopPropagation();
       action(() => {
         api.bookingStatus(localStorage, config, button.dataset.id, button.dataset.calendarStatus);
-        renderDashboard();
+        renderKeepingPlace();
       });
     }));
   }
@@ -1270,7 +1279,7 @@
       $("appointment-tip")?.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); saveTip(); } });
       document.querySelectorAll("[data-booking-status]").forEach(control => control.addEventListener("click", () => action(() => {
         if (control.dataset.bookingStatus === "Finished" && $("appointment-tip").value.trim() && !saveTip()) return;
-        api.bookingStatus(localStorage, config, booking.id, control.dataset.bookingStatus); renderDashboard();
+        api.bookingStatus(localStorage, config, booking.id, control.dataset.bookingStatus); renderKeepingPlace();
       })));
       document.querySelectorAll('[data-calendar-booking][role="button"]').forEach(card => card.addEventListener("keydown", event => {
         if (event.target === card && (event.key === "Enter" || event.key === " ")) {

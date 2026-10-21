@@ -1344,3 +1344,14 @@ color: #fff;
 #daily-dashboard .calendar-card-actions .calendar-tip-editor input { width: 38px !important; text-align: right; }
 #daily-dashboard .calendar-tip-editor .tip-cents { color: #d4af37; font-weight: 700; margin-right: 2px; }
 #daily-dashboard .calendar-card-actions .calendar-tip-editor input { width: 60px !important; text-align: right; }
+/* Start/Finish, tip box and ✓ all the same height on the appointment block */
+#daily-dashboard .calendar-card-actions > button,
+#daily-dashboard .calendar-card-actions .calendar-tip-editor input,
+#daily-dashboard .calendar-card-actions .calendar-tip-editor button {
+  box-sizing: border-box !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+#daily-dashboard .calendar-card-actions > button { padding: 0 10px !important; }
