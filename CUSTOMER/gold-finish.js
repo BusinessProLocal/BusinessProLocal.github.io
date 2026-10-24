@@ -3,8 +3,7 @@
 
    House rules (Tom, 10/24/2026):
    1. Gold looks like real polished gold (the BP logo gold), not flat paint:
-      gold bars/buttons, gold edging and big gold letters use gold-texture.webp.
-      Small gold text (labels, fine print) stays flat gold so it reads clearly on a phone.
+      gold bars/buttons, gold edging and gold letters (menus, ghost buttons, titles) use gold-texture.webp.
    2. No square (90-degree) corners anywhere: every box, button, input and picture is rounded.
 
    How: after the page draws (and again whenever it redraws), this looks at what each
@@ -21,12 +20,13 @@
   const me = document.currentScript;
   const GOLD_URL = new URL("gold-texture.webp", (me && me.src) || location.href).href;
   const IMG = `url("${GOLD_URL}")`;
-  const BIG_TEXT_PX = 20;          // gold text this size or bigger gets the glossy finish
+  const BIG_TEXT_PX = 20;          // big gold letters: wider slice of the gold picture (more shine)
+  const MIN_TEXT_PX = 11;          // gold letters this size or bigger get the real-gold finish
   const RADIUS = "12px", SMALL_RADIUS = "7px";
   const SKIP_TAGS = new Set(["HTML", "BODY", "HEAD", "SCRIPT", "STYLE", "LINK", "META", "BR", "HR", "OPTION", "SVG", "PATH", "G", "LINE", "CIRCLE", "RECT", "POLYLINE", "POLYGON", "DEFS", "USE", "TITLE", "NOSCRIPT", "TEMPLATE", "TABLE", "THEAD", "TBODY", "TFOOT", "TR", "TD", "TH", "COL", "COLGROUP", "CAPTION"]);
   const ALWAYS_ROUND = new Set(["BUTTON", "INPUT", "SELECT", "TEXTAREA", "IMG", "VIDEO", "IFRAME", "CANVAS", "DIALOG"]);
   const PROPS = ["background-image", "background-color", "border-top-color", "border-right-color", "border-bottom-color", "border-left-color",
-    "border-radius", "-webkit-background-clip", "background-clip", "-webkit-text-fill-color", "text-shadow", "background-size", "background-position", "background-repeat", "background-origin"];
+    "border-radius", "-webkit-background-clip", "background-clip", "-webkit-text-fill-color", "text-shadow", "box-shadow", "background-size", "background-position", "background-repeat", "background-origin", "border-top-color", "border-right-color", "border-bottom-color", "border-left-color"];
   const touched = new Map(); // element → its own inline values before we changed anything
 
   function rgba(text) {
@@ -104,34 +104,38 @@
       if (rect.height <= 80) set(el, "text-shadow", "0 1px 0 rgba(255, 240, 190, .45)");
     }
 
-    // 2. Gold edging → real gold edging (solid borders only; dashed stays as it is)
+    // 2 + 3. Gold edging and gold letters → real gold, built as stacked background layers:
+    //   [real gold clipped to the letters] → [the element's own dark fill] → [real gold in the border ring]
+    // so a ghost button (dark inside, gold edge, gold words) gets glossy edging AND glossy words.
     const sides = ["top", "right", "bottom", "left"].filter(side =>
-      parseFloat(s[`border-${side}-width`] || s.getPropertyValue(`border-${side}-width`)) > 0 &&
+      parseFloat(s.getPropertyValue(`border-${side}-width`)) > 0 &&
       s.getPropertyValue(`border-${side}-style`) === "solid" &&
       isGold(rgba(s.getPropertyValue(`border-${side}-color`))));
-    if (sides.length && !hasOwnImage && !isGold(bg)) {
-      const inside = bg && bg.a > 0 ? bg : null;
-      const layers = [];
-      if (inside) layers.push(`linear-gradient(${css(inside)}, ${css(inside)}) padding-box`);
-      if (!inside || inside.a < 0.95) { const back = solidBehind(el); layers.push(`linear-gradient(${back}, ${back}) padding-box`); }
-      layers.push(`${IMG} center / cover border-box`);
-      set(el, "background-image", "none");
-      set(el, "background", layers.join(", "));
-      sides.forEach(side => set(el, `border-${side}-color`, "transparent"));
-    }
-
-    // 3. Big gold letters → glossy gold letters
     const color = rgba(s.color);
     const size = parseFloat(s.fontSize) || 0;
-    if (isGold(color) && size >= BIG_TEXT_PX && el.textContent.trim() && !hasOwnImage && !(bg && bg.a > 0) && !sides.length &&
-        !["INPUT", "SELECT", "TEXTAREA", "BUTTON"].includes(el.tagName) && allTextSameColor(el, s.color)) {
-      set(el, "background-image", IMG);
-      set(el, "background-size", "220% auto");
-      set(el, "background-position", "30% 68%");
-      set(el, "background-repeat", "no-repeat");
-      set(el, "-webkit-background-clip", "text");
-      set(el, "background-clip", "text");
-      set(el, "-webkit-text-fill-color", "transparent");
+    const goldText = isGold(color) && size >= MIN_TEXT_PX && el.textContent.trim() !== "" &&
+      !["INPUT", "SELECT", "TEXTAREA", "OPTION"].includes(el.tagName) && allTextSameColor(el, s.color);
+    if (!isGold(bg) && !hasOwnImage && (sides.length || goldText)) {
+      const images = [], clips = [], sizes = [], spots = [], repeats = [];
+      if (goldText) { images.push(IMG); clips.push("text"); sizes.push(size >= BIG_TEXT_PX ? "auto 320%" : "auto 190%"); spots.push(size >= BIG_TEXT_PX ? "30% 42%" : "0 55%"); repeats.push("repeat"); }
+      const inside = bg && bg.a > 0 ? bg : null;
+      if (inside) { images.push(`linear-gradient(${css(inside)}, ${css(inside)})`); clips.push(sides.length ? "padding-box" : "border-box"); sizes.push("auto"); spots.push("0 0"); repeats.push("no-repeat"); }
+      if (sides.length) {
+        if (!inside || inside.a < 0.95) { const back = solidBehind(el); images.push(`linear-gradient(${back}, ${back})`); clips.push("padding-box"); sizes.push("auto"); spots.push("0 0"); repeats.push("no-repeat"); }
+        images.push(IMG); clips.push("border-box"); sizes.push("cover"); spots.push("center"); repeats.push("no-repeat");
+        sides.forEach(side => set(el, `border-${side}-color`, "transparent"));
+      }
+      set(el, "background-color", "transparent");
+      set(el, "background-image", images.join(", "));
+      set(el, "-webkit-background-clip", clips.join(", "));
+      set(el, "background-clip", clips.join(", "));
+      set(el, "background-origin", clips.map(() => "border-box").join(", "));
+      set(el, "background-size", sizes.join(", "));
+      set(el, "background-position", spots.join(", "));
+      set(el, "background-repeat", repeats.join(", "));
+      if (goldText) { set(el, "-webkit-text-fill-color", "transparent"); set(el, "text-shadow", "none"); }
+      // Ghost buttons (gold edge + gold words): a soft gold glow inside so they read as gold, not black.
+      if (goldText && sides.length && s.boxShadow === "none") set(el, "box-shadow", "inset 0 0 14px rgba(212, 175, 55, .28), 0 0 6px rgba(212, 175, 55, .18)");
     }
 
     // 4. No square corners: anything that shows as a box gets rounded
