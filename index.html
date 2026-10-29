@@ -46,7 +46,7 @@ a{color:var(--gold)}
 nav{position:sticky;top:0;z-index:5;background:rgba(5,5,5,.92);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:center;gap:4px 22px;padding:10px 16px}
 nav a{color:var(--muted);text-decoration:none;font-size:.92rem;letter-spacing:.05em}
 nav a:hover,nav a:focus-visible{color:var(--gold)}
-.hero{position:relative;width:100%;aspect-ratio:1672/941;max-height:92vh;min-height:380px;background:#000 url("images/hero.jpg") center/cover no-repeat;overflow:hidden}
+.hero{position:relative;width:100%;aspect-ratio:1672/941;background:#000 url("images/hero.jpg") center/contain no-repeat;overflow:hidden}
 .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 55% 45% at 50% 22%,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)}
 .titleimg{display:block;width:min(62%,900px);height:auto;filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 10px #000) drop-shadow(0 0 22px rgba(0,0,0,.85))}
 @media (max-width:700px){.titleimg{width:94%}}
@@ -104,8 +104,12 @@ h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(
 .hero-demos:focus-visible{outline:2px solid #fff;outline-offset:4px}
 #demos,#plans{scroll-margin-top:70px}
 @media(max-width:700px){
-  .hero{background-position:left center}
-  .hero-demos{bottom:16px;width:80%}
+  /* 10/29 (Tom): the whole picture shows on phones, couch and all — title above it, View Demos below it */
+  .hero{aspect-ratio:auto;background:#000;display:flex;flex-direction:column;align-items:center;gap:10px;padding:10px 0 16px}
+  .hero::before{content:"";display:block;order:1;width:100%;aspect-ratio:1672/941;background:url("images/hero.jpg") center/contain no-repeat}
+  .hero::after{display:none}
+  .hero .title{position:static;order:0}
+  .hero-demos{position:static;order:2;transform:none;width:80%}
   #demos,#plans{scroll-margin-top:120px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-demos{transition:none}}
