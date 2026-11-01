@@ -32,13 +32,17 @@
     }
 
     :root {
-      --black: #050505;
-      --panel: #111110;
-      --line: #2b2820;
+      /* 11/1 (Tom): same colors as the new home page — navy night, electric blue, teal, purple, gold accents */
+      --black: #070b22;
+      --panel: #0f1640;
+      --line: #27367d;
+      --blue: #3b82f6;
+      --teal: #22d3ee;
+      --purple: #8b5cf6;
       --gold: #d4af37;
       --gold-hi: #f3d77a;
-      --ink: #f4efe2;
-      --muted: #c9c1ab;
+      --ink: #eef2ff;
+      --muted: #b9c3e8;
       --display: "Playfair Display", Georgia, serif;
       --ui: "Inter", system-ui, "Segoe UI", Arial, sans-serif;
       color-scheme: dark;
@@ -524,6 +528,35 @@
 
     }
 
+    /* ===== 11/1 (Tom): new Business Pro look, matching businessprolocal.com ===== */
+    body { background: radial-gradient(ellipse at 50% 0%, #1b1f5e 0%, var(--black) 60%) fixed, var(--black); }
+    body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: url("../images/circuit-blue.svg") 0 0 / 480px repeat; opacity: .42; }
+    header { background: linear-gradient(rgba(7,11,34,.55), rgba(7,11,34,.85)), url("../images/hero.jpg?v=snow") center 35% / cover no-repeat;
+      border-bottom: 1px solid var(--line); box-shadow: 0 1px 0 rgba(34,211,238,.25); padding: 44px 20px; }
+    header p { color: #fff; text-shadow: 0 2px 8px #000; }
+    .plan-card, .signup-section { background: linear-gradient(165deg, #152060, var(--panel)); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
+    .plan-card { border-top: 3px solid var(--blue); }
+    .plan-card[data-plan-card="professional"] { border-top-color: var(--purple); }
+    .plan-card[data-plan-card="business-pro"] { border-top-color: var(--teal); }
+    .plan-card:hover { border-color: var(--teal); }
+    .plan-card.selected { border-color: var(--teal); box-shadow: 0 0 0 1px var(--teal), 0 0 30px rgba(34,211,238,.25); }
+    .first-month-free { color: var(--teal); }
+    .setup-payment-option:hover, .advertising-option:hover { border-color: var(--teal); }
+    .setup-payment-option:has(input:checked), .advertising-option:has(input:checked) { border-color: var(--teal); box-shadow: 0 0 0 1px var(--teal); }
+    .ad-details, .agreement-preview { background: #0a1030; }
+    .ad-details { border-left-color: var(--teal); }
+    .ad-rate { color: var(--teal); }
+    input, textarea, select { background: #0a1030; }
+    input { accent-color: var(--teal); }
+    input:focus-visible, textarea:focus-visible { outline-color: var(--teal); }
+    .agreement-preview { scrollbar-color: var(--teal) #0a1030; }
+    .agreement-preview::-webkit-scrollbar-thumb { background: var(--teal); }
+    .continue-button { background: linear-gradient(90deg, var(--blue), var(--teal)); color: #fff; border: 2px solid transparent; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+    .continue-button:hover { background: linear-gradient(90deg, #4f8ff7, #3ddcf0); border-color: transparent; filter: drop-shadow(0 0 10px rgba(34,211,238,.45)); }
+    .payment-return-message { border-color: var(--teal); color: var(--teal); }
+    .test-bar { background: linear-gradient(90deg, var(--purple), var(--blue), var(--teal)); color: #fff; }
+    footer { background: rgba(7,11,34,.7); }
   </style>
 
 </head>
