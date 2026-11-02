@@ -1,7 +1,7 @@
 window.SHOP_CONFIG = {
-  demo: { id: "demo-main-street-bakery", tier: "basic", label: "Basic" },
+  demo: { id: "demo-main-street-bakery", tier: "basic", label: "ProGo" },
   shop: {
-    name: "Bakers Way Bakery", pageTitle: "Bakers Way Bakery | Basic DEMO",
+    name: "Bakers Way Bakery", pageTitle: "Bakers Way Bakery | ProGo DEMO",
     heroTitle: "Fresh from the oven. Made for your day.",
     heroSubtitle: "Small-batch bread, pastries, and sweet treats. Stop in or call to order.",
     addressLine1: "13 Bakers Way", addressLine2: "Portland, Maine",

@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Business Pro Local | Websites &amp; Online Booking for Maine Small Businesses</title>
-<meta name="description" content="Websites, online booking and online stores for local businesses in Sanford and across Maine. Business Pro Local offers local support and your first month free.">
+<meta name="description" content="Websites from $199 one time, plus online booking and online stores for local businesses in Sanford and across Maine. Google-ready SEO on every plan and local support.">
 <link rel="canonical" href="https://businessprolocal.com/">
 <meta property="og:title" content="Business Pro Local | Websites &amp; Online Booking for Maine Small Businesses">
-<meta property="og:description" content="Websites, online booking and online stores for local businesses in Sanford and across Maine. Business Pro Local offers local support and your first month free.">
+<meta property="og:description" content="Websites from $199 one time, plus online booking and online stores for local businesses in Sanford and across Maine. Google-ready SEO on every plan and local support.">
 <meta property="og:image" content="https://businessprolocal.com/images/hero.jpg">
 <meta property="og:url" content="https://businessprolocal.com/">
 <meta property="og:type" content="website">
@@ -74,8 +74,11 @@ h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(
 .grid .card:nth-child(4n+2){border-top-color:var(--teal)}.grid .card:nth-child(4n+3){border-top-color:var(--purple)}.grid .card:nth-child(4n+4){border-top-color:var(--gold)}
 .card h3{margin:0 0 6px;color:var(--ink);font-size:1.1rem}
 .card p{margin:0;color:var(--muted);font-size:.95rem}
-.tiers{display:grid;gap:20px;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
-@media(max-width:850px){.tiers{grid-template-columns:minmax(0,1fr)}}
+.tiers{display:grid;gap:20px;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch}
+/* 11/2 (Tom): 4 plans — 4 across on big screens, 2 + 2 on tablets, stacked on phones (always symmetrical) */
+section.block#plans{max-width:1280px}
+@media(max-width:1099px){.tiers{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.tiers{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}}
 .tier{background:linear-gradient(170deg,#152060,var(--panel));border:1px solid var(--line);box-shadow:0 8px 28px rgba(0,0,0,.35);border-radius:14px;padding:26px 22px;display:flex;flex-direction:column;gap:12px}
 .tier.top{border:2px solid var(--teal);box-shadow:0 0 0 1px rgba(34,211,238,.25),0 0 30px rgba(34,211,238,.25)}
@@ -87,6 +90,9 @@ h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(
 .tier .split-price{margin-top:-8px;color:var(--muted);font-size:.82rem}
 .tier ul{margin:0;padding-left:20px;color:var(--muted);font-size:.95rem;flex:1}
 .tier li{margin-bottom:4px}
+.tier .tier-for{margin:-6px 0 0;color:var(--ink);font-weight:700;font-size:.95rem}
+.tier .one-time{margin:0;color:var(--teal);font-weight:700}
+.tier li.seo{color:var(--ink);font-weight:700}
 .demo-grid{display:grid;gap:20px;grid-template-columns:repeat(4,minmax(0,1fr))}
 .demo-card{display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(170deg,#152060,var(--panel));border:1px solid var(--blue);border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
 .demo-card img,.demo-placeholder{width:100%;aspect-ratio:4/3;object-fit:cover}
@@ -209,7 +215,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
 
 <section class="block" id="what">
   <h2>One local company for your whole business</h2>
-  <p class="service-offer">Your first month of service is free.</p>
+  <p class="service-offer">First month free on every monthly plan.</p>
   <p class="cards-promo">100 free business cards when you sign up &mdash; printed with a QR code to your site.</p>
   <p class="lead">Business Pro connects Main Street shops with their customers online, and handles the busywork behind the counter, so you can get back to the work you love.</p>
   <div class="grid">
@@ -253,7 +259,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
   <div class="demo-grid">
     <article class="demo-card">
       <img src="DEMOS/assets/bakery-case.jpg" alt="Fresh bakery treats in the display case" loading="lazy">
-      <div class="demo-card-body"><h3>Bakery demo</h3><p>Basic</p><a class="btn solid" href="DEMOS/basic/index.html">Try Demo</a></div>
+      <div class="demo-card-body"><h3>Bakery demo</h3><p>ProGo</p><a class="btn solid" href="DEMOS/basic/index.html">Try Demo</a></div>
     </article>
     <article class="demo-card">
       <img src="CUSTOMER/images/barber-shop-hero.jpg" alt="Inside Classic Cuts Barbershop" loading="lazy">
@@ -291,7 +297,7 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
     </select><input id="fCustomType" autocomplete="off" maxlength="80" placeholder="Type your business (bakery, florist...)" spellcheck="true" lang="en-US" hidden disabled></label>
     <label class="question-field" for="fMsg">Questions? (optional)<textarea id="fMsg" autocomplete="off" rows="2" maxlength="2000" spellcheck="true" lang="en-US"></textarea></label>
     <div hidden aria-hidden="true"><label for="fWebsite">Leave this blank<input id="fWebsite" name="website" tabindex="-1" autocomplete="off"></label></div>
-    <p class="service-offer">Your first month of service is free.</p>
+    <p class="service-offer">First month free on every monthly plan.</p>
     <p class="cards-promo">100 free business cards when you sign up &mdash; printed with a QR code to your site.</p>
     <button class="btn solid" type="submit">Next: See Your Plans</button>
     <p id="formMsg" role="status"></p>
@@ -304,30 +310,41 @@ footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-
   <p id="plansThanks" class="plans-thanks" role="status" hidden></p>
   <div class="tiers">
     <div class="tier">
-      <h3>Basic</h3>
-      <div class="price"><b>$995</b> setup · <b>$49</b>/month</div>
-      <p class="first-month-free">First month free</p>
-      <p class="cards-promo">100 free business cards when you sign up, QR code to your site included.</p>
-      <p class="split-price" hidden>or 3 monthly payments of $331.67</p>
-      <ul><li>Mobile-friendly website</li><li>Services, hours and photos</li><li>Map and directions</li><li>Hosting, security and backups</li><li>Support and maintenance</li></ul>
-      <a class="btn solid" href="CUSTOMER/join.html?plan=basic">SELECT</a>
+      <h3>ProGo</h3>
+      <div class="price"><b>$199</b> one time</div>
+      <p class="tier-for">Your first real website</p>
+      <p class="one-time">No monthly fee &mdash; it&rsquo;s yours</p>
+      <ul><li class="seo">Google-ready SEO + Google Business Profile setup</li><li>5 pages: Home, Services, About, Gallery, Contact</li><li>Built to fit every phone</li><li>Tap to call, text and get directions</li><li>Your logo, colors and photos</li><li>We put it online, then hand it off to you</li></ul>
+      <a class="btn solid" href="CUSTOMER/join.html?plan=progo">SELECT</a>
     </div>
     <div class="tier">
       <h3>Professional</h3>
-      <div class="price"><b>$1,495</b> setup · <b>$79</b>/month</div>
+      <div class="price"><b>$299</b> setup · <b>$59</b>/month</div>
+      <p class="tier-for">For a one-person shop</p>
       <p class="first-month-free">First month free</p>
       <p class="cards-promo">100 free business cards when you sign up, QR code to your site included.</p>
-      <p class="split-price" hidden>or 3 monthly payments of $498.33</p>
-      <ul><li>Everything in Basic</li><li>Online appointment booking</li><li>Pick a service and staff member</li><li>Owner portal and schedules</li><li>Block days off and vacations</li></ul>
+      <p class="split-price" hidden>or 3 monthly payments of $99.67</p>
+      <ul><li class="seo">Google-ready SEO + Google Business Profile setup</li><li>Full Business Pro website</li><li>Online appointment booking</li><li>Owner portal and calendar</li><li>Booking texts and reminders</li><li>Point of sale for services and tips</li><li>Hosting, security, backups and local support</li></ul>
       <a class="btn solid" href="CUSTOMER/join.html?plan=professional">SELECT</a>
+    </div>
+    <div class="tier">
+      <h3>Professional Plus</h3>
+      <div class="price"><b>$349</b> setup · <b>$89</b>/month</div>
+      <p class="tier-for">For a shop with a team</p>
+      <p class="first-month-free">First month free</p>
+      <p class="cards-promo">100 free business cards when you sign up, QR code to your site included.</p>
+      <p class="split-price" hidden>or 3 monthly payments of $116.33</p>
+      <ul><li class="seo">Google-ready SEO + Google Business Profile setup</li><li>Everything in Professional</li><li>Unlimited staff</li><li>Staff portals and schedules</li><li>Hire, let go and chair renters</li><li>Staff income and pay reports</li><li>Bookkeeping ready for tax time</li></ul>
+      <a class="btn solid" href="CUSTOMER/join.html?plan=professional-plus">SELECT</a>
     </div>
     <div class="tier top">
       <h3>Business Pro</h3>
-      <div class="price"><b>$2,495</b> setup · <b>$149</b>/month</div>
+      <div class="price"><b>$599</b> setup · <b>$149</b>/month</div>
+      <p class="tier-for">For selling products online</p>
       <p class="first-month-free">First month free</p>
       <p class="cards-promo">100 free business cards when you sign up, QR code to your site included.</p>
-      <p class="split-price" hidden>or 3 monthly payments of $831.67</p>
-      <ul><li>Everything in Professional</li><li>Online storefront and shopping cart</li><li>Product photos and pricing</li><li>Orders, packing and shipping</li><li>Inventory and promotions</li></ul>
+      <p class="split-price" hidden>or 3 monthly payments of $199.67</p>
+      <ul><li class="seo">Google-ready SEO + Google Business Profile setup</li><li>Everything in Professional Plus</li><li>Online storefront and shopping cart</li><li>Product photos and pricing</li><li>Orders, packing and shipping</li><li>Inventory and promotions</li></ul>
       <a class="btn solid" href="CUSTOMER/join.html?plan=business-pro">SELECT</a>
     </div>
   </div>

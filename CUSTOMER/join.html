@@ -538,6 +538,14 @@
     .plan-card, .signup-section { background: linear-gradient(165deg, #152060, var(--panel)); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
     .plan-card { border-top: 3px solid var(--blue); }
     .plan-card[data-plan-card="professional"] { border-top-color: var(--purple); }
+    .plan-card[data-plan-card="professional-plus"] { border-top-color: var(--gold); }
+    /* 11/2 (Tom): 4 plans — 4 across, 2 + 2 on tablets, stacked on phones */
+    main:has(.plan-grid) { max-width: 1280px; }
+    .plan-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    @media (max-width: 1099px) { .plan-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 600px) { .plan-grid { grid-template-columns: minmax(0, 1fr); } }
+    .plan-card .plan-for { margin: 0; color: var(--ink); font-weight: 700; }
+    .plan-card li.seo { color: var(--ink); font-weight: 700; }
     .plan-card[data-plan-card="business-pro"] { border-top-color: var(--teal); }
     .plan-card:hover { border-color: var(--teal); }
     .plan-card.selected { border-color: var(--teal); box-shadow: 0 0 0 1px var(--teal), 0 0 30px rgba(34,211,238,.25); }
@@ -602,7 +610,7 @@
 
         <label
           class="plan-card"
-          data-plan-card="basic"
+          data-plan-card="progo"
         >
 
           <div>
@@ -610,83 +618,64 @@
             <input
               type="radio"
               name="website-plan"
-              value="basic"
+              value="progo"
             >
 
             <strong>
-              SELECT BASIC
+              SELECT PROGO
             </strong>
 
           </div>
 
           <h3>
-            Basic
+            ProGo
           </h3>
 
           <p class="setup-price">
-            $995 Setup
-          </p>
-
-          <p class="setup-installments" hidden>
-            or 3 monthly payments of $331.67
+            $199 One Time
           </p>
 
           <p class="monthly-price">
-            $49/month
+            No monthly fee
+          </p>
+
+          <p class="plan-for">
+            Your first real website
           </p>
 
           <p class="first-month-free">
-            First month free
+            One-time handoff &mdash; it&rsquo;s yours
           </p>
+
 
           <ul>
 
-            <li>
-              Mobile-friendly business website
+            <li class="seo">
+              Google-ready SEO + Google Business Profile setup
             </li>
 
             <li>
-              Business information
+              5 pages: Home, Services, About, Gallery, Contact
             </li>
 
             <li>
-              Services
+              Built to fit every phone
             </li>
 
             <li>
-              Business photos
+              Tap to call, text and get directions
             </li>
 
             <li>
-              Contact information
+              Your logo, colors and photos
             </li>
 
             <li>
-              Business hours
+              We put it online on a web address in your name
             </li>
 
             <li>
-              Google Maps and directions
-            </li>
-
-            <li>
-              Links to existing social media accounts
-            </li>
-
-            <li>
-              Hosting
-            </li>
-
-            <li>
-              Security and backups
-            </li>
-
-            <li>
-              Technical support
-            </li>
-
-            <li>
-              Website maintenance
+              We hand the finished website off to you
             </li>
 
           </ul>
@@ -718,37 +707,42 @@
           </h3>
 
           <p class="setup-price">
-            $1,495 Setup
+            $299 Setup
           </p>
 
           <p class="setup-installments" hidden>
-            or 3 monthly payments of $498.33
+            or 3 monthly payments of $99.67
           </p>
 
           <p class="monthly-price">
-            $79/month
+            $59/month
+          </p>
+
+          <p class="plan-for">
+            For a one-person shop
           </p>
 
           <p class="first-month-free">
             First month free
           </p>
 
+
           <ul>
 
-            <li>
-              Everything included in Basic
+            <li class="seo">
+              Google-ready SEO + Google Business Profile setup
             </li>
 
             <li>
-              Interactive customer features
+              Full Business Pro website
             </li>
 
             <li>
-              Appointment booking
+              Online appointment booking
             </li>
 
             <li>
-              Service or employee selection
+              Service selection
             </li>
 
             <li>
@@ -756,23 +750,7 @@
             </li>
 
             <li>
-              Customer intake forms
-            </li>
-
-            <li>
-              Restaurant takeout or order-ahead options
-            </li>
-
-            <li>
-              Photo galleries
-            </li>
-
-            <li>
-              Owner management interface
-            </li>
-
-            <li>
-              Manage schedules and availability
+              Owner portal and calendar
             </li>
 
             <li>
@@ -780,7 +758,102 @@
             </li>
 
             <li>
-              Update business photos and information
+              Booking texts and reminders
+            </li>
+
+            <li>
+              Point of sale for services and tips
+            </li>
+
+            <li>
+              Hosting, security and backups
+            </li>
+
+            <li>
+              Technical support and website maintenance
+            </li>
+
+          </ul>
+
+        </label>
+
+
+        <label
+          class="plan-card"
+          data-plan-card="professional-plus"
+        >
+
+          <div>
+
+            <input
+              type="radio"
+              name="website-plan"
+              value="professional-plus"
+            >
+
+            <strong>
+              SELECT PROFESSIONAL PLUS
+            </strong>
+
+          </div>
+
+          <h3>
+            Professional Plus
+          </h3>
+
+          <p class="setup-price">
+            $349 Setup
+          </p>
+
+          <p class="setup-installments" hidden>
+            or 3 monthly payments of $116.33
+          </p>
+
+          <p class="monthly-price">
+            $89/month
+          </p>
+
+          <p class="plan-for">
+            For a shop with a team
+          </p>
+
+          <p class="first-month-free">
+            First month free
+          </p>
+
+
+          <ul>
+
+            <li class="seo">
+              Google-ready SEO + Google Business Profile setup
+            </li>
+
+            <li>
+              Everything included in Professional
+            </li>
+
+            <li>
+              Unlimited staff
+            </li>
+
+            <li>
+              Customers pick their staff member
+            </li>
+
+            <li>
+              Staff portals and schedules
+            </li>
+
+            <li>
+              Hire, let go and chair renters
+            </li>
+
+            <li>
+              Staff income and pay reports
+            </li>
+
+            <li>
+              Bookkeeping ready for tax time
             </li>
 
           </ul>
@@ -812,25 +885,34 @@
           </h3>
 
           <p class="setup-price">
-            $2,495 Setup
+            $599 Setup
           </p>
 
           <p class="setup-installments" hidden>
-            or 3 monthly payments of $831.67
+            or 3 monthly payments of $199.67
           </p>
 
           <p class="monthly-price">
             $149/month
           </p>
 
+          <p class="plan-for">
+            For selling products online
+          </p>
+
           <p class="first-month-free">
             First month free
           </p>
 
+
           <ul>
 
+            <li class="seo">
+              Google-ready SEO + Google Business Profile setup
+            </li>
+
             <li>
-              Everything included in Professional
+              Everything included in Professional Plus
             </li>
 
             <li>
@@ -838,23 +920,11 @@
             </li>
 
             <li>
-              Product listings
+              Product listings, photos and pricing
             </li>
 
             <li>
-              Product photos and pricing
-            </li>
-
-            <li>
-              Shopping cart
-            </li>
-
-            <li>
-              Customer ordering
-            </li>
-
-            <li>
-              Online purchasing where appropriate
+              Shopping cart and customer ordering
             </li>
 
             <li>
@@ -1156,57 +1226,47 @@
 
 
       <div class="agreement-preview" id="agreement-preview" tabindex="0" role="region" aria-labelledby="agreement-title">
-
         <p>
           <strong>
             Business Pro Local Service Agreement
           </strong>
         </p>
-
         <p>
-          By selecting a Business Pro Local website package, you authorize Business Pro Local to design, host, maintain, and support a website for your business.
+          By selecting a Business Pro Local website package, you authorize Business Pro Local to design and set up a website for your business. On monthly plans, Business Pro Local also hosts, maintains, and supports your website.
         </p>
-
         <p>
-          Your selected package determines your one-time setup fee and monthly website service fee. Major redesigns, custom systems, or services outside your selected package may require a separate quote.
+          Your selected package determines your one-time setup fee and, on monthly plans, your monthly website service fee. Major redesigns, custom systems, or services outside your selected package may require a separate quote.
         </p>
-
         <p>
           Monthly service includes website hosting, routine maintenance, technical support, security assistance, backups, and reasonable minor website updates.
         </p>
-
         <p>
-          If you choose Business Pro Local Advertising, you authorize your business to be advertised on participating non-competing Business Pro Local websites according to the advertising rate and minimum associated with your selected package.
+          ProGo: the one-time fee covers a 5-page website, Google-ready SEO, and Google Business Profile setup. There is no monthly fee. We put your website online using hosting and a web address set up in your own name, then hand the finished website files over to you. After handoff, you are responsible for your own hosting and web address renewals, and changes are quoted separately. ProGo websites do not include online booking, owner portals, online payments, or monthly support.
         </p>
-
+        <p>
+          If you choose Business Pro Local Advertising (monthly plans only), you authorize your business to be advertised on participating non-competing Business Pro Local websites according to the advertising rate and minimum associated with your selected package.
+        </p>
         <p>
           Business Pro Local does not guarantee website traffic, advertising clicks, leads, customers, or sales.
         </p>
-
         <p>
           Website development begins after this agreement is accepted and payment requirements are completed. Once you approve your website preview, please allow 5 to 7 business days for your website to go live.
         </p>
-
         <p>
           Your website is built on the Business Pro design and customized with your logo, colors, photos, hours, services and contact details. Custom features or design changes beyond these can be quoted separately as an add-on.
         </p>
-
         <p>
-          Your first month of monthly service is free. After that, monthly service is billed in advance. You may cancel at any time by email or text. If you cancel partway through a paid month, you will receive a prorated refund for the unused days of that month.
+          On monthly plans, your first month of monthly service is free. After that, monthly service is billed in advance. You may cancel at any time by email or text. If you cancel partway through a paid month, you will receive a prorated refund for the unused days of that month.
         </p>
-
         <p>
           The setup fee is non-refundable once website development has begun.
         </p>
-
         <p>
           If a monthly payment is not received, Business Pro Local may pause or turn off your website until your account is brought up to date.
         </p>
-
         <p>
-          You keep ownership of your logo, photos, and business content. The Business Pro design, platform, and software remain the property of Business Pro Local.
+          You keep ownership of your logo, photos, and business content. The Business Pro design, platform, and software remain the property of Business Pro Local. ProGo customers own their finished website files after handoff.
         </p>
-
       </div>
 
 
@@ -1289,51 +1349,24 @@
     });
 
 
+    // 11/2 (Tom): ProGo is a one-time $199 handoff (no monthly, no ads). Must match the server's BUSINESS_PRO_PLANS.
     const setupPaymentRates = {
-
-      basic: {
-        setupFee: 995,
-        full: "$995",
-        installment: "$331.67",
-        installmentAmount: 331.67
-      },
-
-      professional: {
-        setupFee: 1495,
-        full: "$1,495",
-        installment: "$498.33",
-        installmentAmount: 498.33
-      },
-
-      "business-pro": {
-        setupFee: 2495,
-        full: "$2,495",
-        installment: "$831.67",
-        installmentAmount: 831.67
-      }
-
+      progo: { setupFee: 199, full: "$199", installment: null, installmentAmount: null, monthly: null },
+      professional: { setupFee: 299, full: "$299", installment: "$99.67", installmentAmount: 99.67, monthly: "$59" },
+      "professional-plus": { setupFee: 349, full: "$349", installment: "$116.33", installmentAmount: 116.33, monthly: "$89" },
+      "business-pro": { setupFee: 599, full: "$599", installment: "$199.67", installmentAmount: 199.67, monthly: "$149" }
     };
-
 
     const planRates = {
-
-      basic: {
-        clickRate: "$0.75 per click",
-        minimum: "$25 monthly minimum"
-      },
-
-      professional: {
-        clickRate: "$1.25 per click",
-        minimum: "$50 monthly minimum"
-      },
-
-      "business-pro": {
-        clickRate: "$2.00 per click",
-        minimum: "$75 monthly minimum"
-      }
-
+      progo: { clickRate: null, minimum: null },
+      professional: { clickRate: "$1.25 per click", minimum: "$50 monthly minimum" },
+      "professional-plus": { clickRate: "$1.25 per click", minimum: "$50 monthly minimum" },
+      "business-pro": { clickRate: "$2.00 per click", minimum: "$75 monthly minimum" }
     };
 
+    // The ad network is for monthly plans only, so it hides for ProGo.
+    const advertisingSection =
+      document.querySelector(".advertising-choice").closest(".signup-section");
 
     const planInputs =
       document.querySelectorAll(
@@ -1431,6 +1464,12 @@
       );
 
 
+      const oneTime = !setupPaymentRates[plan].monthly;
+      advertisingSection.hidden = oneTime;
+      if (oneTime) {
+        document.querySelector('input[name="advertising"][value="off"]').checked = true;
+      }
+
       updateAdvertisingRate();
       updateSetupPaymentAmounts();
 
@@ -1463,10 +1502,16 @@
         rate.full;
 
       setupInstallmentsAmount.textContent =
-        `3 payments of ${rate.installment}`;
+        rate.installment ? `3 payments of ${rate.installment}` : "Paid in full only";
+
+      if (!rate.monthly) {
+        setupFeeSummary.textContent =
+          `ProGo: ${rate.full} one time, paid today. No monthly fee.`;
+        return;
+      }
 
       setupFeeSummary.textContent =
-        `Setup fee: ${rate.full}, paid in full today. Your first month of service is free.`;
+        `Setup fee: ${rate.full}, paid in full today. Then ${rate.monthly}/month, and your first month of service is free.`;
 
     }
 
