@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta name="robots" content="noindex">
+<meta name="description" content="Palmer Salon in Sanford, ME. Beautiful Hair. Every Time. Call 207-555-0123.">
+<link rel="canonical" href="https://businessprolocal.com/DEMOS/progo/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Palmer Salon">
+<meta property="og:title" content="Palmer Salon | Sanford, ME">
+<meta property="og:description" content="Palmer Salon in Sanford, ME. Beautiful Hair. Every Time. Call 207-555-0123.">
+<meta property="og:url" content="https://businessprolocal.com/DEMOS/progo/">
+<meta property="og:image" content="https://businessprolocal.com/DEMOS/progo/images/demo-palmer-front-group.jpg">
+<link rel="icon" href="images/demo-palmer-logo.jpg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  "name": "Palmer Salon",
+  "url": "https://businessprolocal.com/DEMOS/progo/",
+  "telephone": "+12075550123",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "123 Main Street",
+    "addressLocality": "Sanford",
+    "addressRegion": "ME",
+    "postalCode": "04073",
+    "addressCountry": "US"
+  },
+  "logo": "https://businessprolocal.com/DEMOS/progo/images/demo-palmer-logo.jpg",
+  "image": "https://businessprolocal.com/DEMOS/progo/images/demo-palmer-front-group.jpg",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "09:00",
+      "closes": "19:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Saturday"
+      ],
+      "opens": "08:00",
+      "closes": "16:00"
+    }
+  ],
+  "sameAs": [
+    "https://www.google.com/search?q=Palmer+Salon+Sanford+ME"
+  ]
+}
+</script>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Palmer Salon | Sanford, ME</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <style>
+    /* ANNOUNCEMENT BANNER — sits above the header and stands out */
+    #customer-announcements.customer-announcements-section {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      box-sizing: border-box;
+      width: 100%;
+      margin: 0;
+      padding: 12px 20px;
+      background: #facc15;
+      color: #000;
+      border-bottom: 4px solid #000;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+      text-align: left;
+      position: relative;
+      z-index: 50;
+    }
+
+    #customer-announcements.customer-announcements-section[hidden] {
+      display: none;
+    }
+
+    #customer-announcements > h2::after {
+      content: none;
+      display: none;
+    }
+
+    #customer-announcements > h2 {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.2;
+      text-align: left;
+      padding: 4px 10px;
+      background: #000;
+      color: #facc15;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    #customer-announcements .customer-announcements-list {
+      display: flex;
+      flex: 1 1 300px;
+      flex-wrap: wrap;
+      gap: 6px 20px;
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    #customer-announcements .customer-announcements-list > * {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      color: #000;
+    }
+
+    #customer-announcements .customer-announcements-list * {
+      color: #000;
+    }
+
+    #customer-announcements .customer-announcement {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 2px 10px;
+    }
+
+    #customer-announcements .customer-announcement h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    #customer-announcements .customer-announcement p {
+      margin: 0;
+      font-size: 17px;
+      font-weight: bold;
+      line-height: 1.3;
+    }
+
+    #customer-announcements .customer-announcement-meta {
+      margin: 0;
+      font-size: 12px;
+      font-weight: normal;
+    }
+
+    @media (max-width: 600px) {
+      #customer-announcements.customer-announcements-section {
+        padding: 10px 14px;
+      }
+
+      #customer-announcements .customer-announcements-list {
+        font-size: 15px;
+      }
+    }
+  </style>
+
+</head>
+
+
+<body><div class="bp-demo-bar" style="background:#d4af37;color:#000;text-align:center;font:700 14px/1.3 Arial,Helvetica,sans-serif;padding:9px 16px">ProGo demo &middot; $199 one time &middot; <a href="../../demos/" style="color:#000;text-decoration:underline">Back to Business Pro demos</a></div>
+
+
+  <!-- ========================================
+       ANNOUNCEMENT BANNER — top of header, stands out
+       (same ids as before, so script.js still fills it;
+       stays hidden when there are no approved announcements)
+  ========================================= -->
+
+  <section
+    id="customer-announcements"
+    class="customer-announcements-section"
+    aria-label="Shop announcements"
+    hidden
+  >
+    <h2>&#128226; Shop Updates</h2>
+    <div id="customer-announcements-list" class="customer-announcements-list"></div>
+  </section>
+
+
+  <!-- ========================================
+       HEADER
+  ========================================= -->
+
+  <header>
+
+    <div class="brand-line">
+
+      <img
+        id="shop-logo"
+        class="shop-logo"
+        alt=""
+        hidden
+      >
+
+      <h1 id="shop-name">
+        BARBER SHOP
+      </h1>
+
+    </div>
+
+
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#home" class="open-booking" data-barber="">Book</a>
+      <a href="#barbers">Barbers</a>
+      <a href="#services">Services &amp; Prices</a>
+      <a href="#gallery" id="nav-gallery" hidden>Gallery</a>
+      <a href="#shop-photos" id="nav-shop-photos" hidden>Inside the Shop</a>
+      <a href="#reviews" id="nav-reviews" hidden>Reviews</a>
+      <a href="#contact">Location &amp; Hours</a>
+    </nav>
+
+
+    <button
+      type="button"
+      class="book-button open-booking"
+      data-barber=""
+    >
+      Book Appointment
+    </button>
+
+  </header>
+
+
+
+  <main>
+
+
+    <!-- ========================================
+         HERO
+    ========================================= -->
+
+    <section
+      id="home"
+      class="hero"
+    >
+
+      <div class="hero-content">
+
+        <img
+          id="hero-logo"
+          class="hero-logo"
+          alt=""
+          hidden
+        >
+
+        <h2 id="hero-title">
+          LOOK SHARP. FEEL SHARP.
+        </h2>
+
+        <p id="hero-subtitle">
+          Classic cuts. Modern styles. Your barber. Your time.
+        </p>
+
+        <button
+          type="button"
+          class="book-button open-booking"
+          data-barber=""
+        >
+          Book Appointment
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ========================================
+         MEET OUR BARBERS
+    ========================================= -->
+
+    <section
+      id="barbers"
+      class="barbers-section"
+    >
+
+      <h2>
+        Meet Our Barbers
+      </h2>
+
+
+      <!--
+        The Owner profile represents the actual
+        barber shop owner.
+
+        Tom represents Business Pro Local and
+        explains what Business Pro Local can
+        provide for the business.
+      -->
+
+      <div
+        id="barber-selector"
+        class="barber-selector"
+      >
+      </div>
+
+    </section>
+
+
+
+    <!-- ========================================
+         SERVICES
+    ========================================= -->
+
+    <section id="services">
+
+      <h2>
+        Services &amp; Prices
+      </h2>
+
+      <div
+        id="services-list"
+        class="services"
+      >
+      </div>
+
+    </section>
+
+
+
+    <!-- ========================================
+         GALLERY / OUR WORK (11/1 Tom): every stylist's work photos in one grid,
+         filter buttons by stylist; tap a photo to book that look
+    ========================================= -->
+
+    <section
+      id="gallery"
+      hidden
+    >
+
+      <h2>
+        Our Work
+      </h2>
+
+      <div
+        id="gallery-filters"
+        class="gallery-filters"
+      >
+      </div>
+
+      <div
+        id="gallery-grid"
+        class="gallery-grid"
+      >
+      </div>
+
+    </section>
+
+
+
+    <!-- ========================================
+         INSIDE THE SHOP (shop photos from the setup form)
+    ========================================= -->
+
+    <section
+      id="shop-photos"
+      hidden
+    >
+
+      <h2>
+        Inside the Shop
+      </h2>
+
+      <div
+        id="shop-photos-grid"
+        class="shop-photos"
+      >
+      </div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ========================================
+         REVIEWS (shows when the shop has a Google link)
+    ========================================= -->
+
+    <section id="reviews" hidden>
+      <h2>Reviews</h2>
+      <p>See what our customers say, or leave us a review.</p>
+      <p class="social-links">
+        <a id="reviews-read" href="#" target="_blank" rel="noopener">Read our Google reviews</a>
+        <a id="reviews-write" href="#" target="_blank" rel="noopener">Leave a review</a>
+      </p>
+    </section>
+
+
+
+    <!-- ========================================
+         CONTACT
+    ========================================= -->
+
+    <section id="contact">
+
+      <h2>
+        Location &amp; Hours
+      </h2>
+
+
+      <p id="shop-address-line1">
+      </p>
+
+
+      <p id="shop-address-line2">
+      </p>
+
+
+      <p>
+
+        <a
+          id="shop-phone-link"
+          href="#"
+        >
+        </a>
+
+      </p>
+
+
+      <div
+        id="shop-links"
+        class="social-links"
+        hidden
+      >
+      </div>
+
+
+      <div id="shop-hours">
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- ========================================
+       BARBER / BUSINESS PRO PROFILE POPUP
+  ========================================= -->
+
+  <div
+    id="barber-profile-modal"
+    class="barber-profile-modal"
+  >
+
+    <div class="barber-profile-modal-content">
+
+
+      <button
+        type="button"
+        id="close-barber-profile"
+        class="close-barber-profile"
+        aria-label="Close profile"
+      >
+        &times;
+      </button>
+
+
+      <div id="barber-profile-content">
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ========================================
+       BOOKING POPUP
+  ========================================= -->
+
+  <div
+    id="booking-modal"
+    class="booking-modal"
+  >
+
+    <div class="booking-modal-content">
+
+
+      <button
+        type="button"
+        id="close-booking"
+        class="close-booking"
+        aria-label="Close booking window"
+      >
+        &times;
+      </button>
+
+
+      <h2>
+        Book Your Appointment
+      </h2>
+
+
+
+      <!-- BARBER -->
+
+      <label for="barber-select">
+        Choose Your Barber
+      </label>
+
+      <select id="barber-select">
+
+        <option value="">
+          Select a barber
+        </option>
+
+      </select>
+
+
+      <p class="booking-with">
+
+        Booking with
+
+        <strong id="selected-barber">
+          Select a Barber
+        </strong>
+
+      </p>
+
+
+
+      <div class="booking-form">
+
+
+        <!-- SERVICE -->
+
+        <label for="service">
+          Choose a Service
+        </label>
+
+        <select id="service">
+
+          <option value="">
+            Select a service
+          </option>
+
+        </select>
+
+
+
+        <!-- DATE -->
+
+        <label for="appointment-date">
+          Choose a Date
+        </label>
+
+        <input
+          type="hidden"
+          id="appointment-date"
+        >
+
+        <div
+          class="booking-date-calendar"
+          id="booking-date-calendar"
+          aria-label="Available appointment dates"
+        >
+          <div class="booking-date-calendar-toolbar">
+            <button
+              type="button"
+              class="booking-date-nav"
+              id="booking-date-prev"
+              aria-label="Previous month"
+            >
+              ←
+            </button>
+
+            <strong id="booking-date-month-label"></strong>
+
+            <button
+              type="button"
+              class="booking-date-nav"
+              id="booking-date-next"
+              aria-label="Next month"
+            >
+              →
+            </button>
+          </div>
+
+          <div class="booking-date-weekdays" aria-hidden="true">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          </div>
+
+          <div
+            class="booking-date-grid"
+            id="booking-date-grid"
+          ></div>
+
+          <p
+            class="booking-date-note"
+            id="booking-date-note"
+          >
+            Choose a barber to see available dates.
+          </p>
+        </div>
+
+
+
+        <!-- TIME -->
+
+        <label for="appointment-time">
+          Choose an Available Time
+        </label>
+
+        <select id="appointment-time">
+
+          <option value="">
+            Select a time
+          </option>
+
+        </select>
+
+
+
+        <!-- 11/1 (Tom): rebooking after the shop canceled — the discount shows here -->
+        <p class="reschedule-discount" id="reschedule-discount" hidden></p>
+
+        <!-- CUSTOMER NAME -->
+
+        <label for="customer-name">
+          Your Name
+        </label>
+
+        <input
+          type="text"
+          id="customer-name"
+          placeholder="Enter your name"
+        >
+
+
+
+        <!-- PHONE -->
+
+        <label for="customer-phone">
+          Mobile Phone
+        </label>
+
+        <input
+          type="tel"
+          id="customer-phone"
+          inputmode="tel"
+          autocomplete="tel"
+          placeholder="555-123-4567"
+        >
+
+
+
+        <!-- SMS CONSENT -->
+
+        <label class="sms-consent">
+
+          <input
+            type="checkbox"
+            id="sms-consent"
+            required
+          >
+
+          <span>
+
+            I agree to receive appointment texts. Reply STOP to opt out.
+            Message and data rates may apply. Reply HELP for help.
+            Required for online booking.
+
+          </span>
+
+        </label>
+
+
+        <p
+          class="sms-policy-links"
+          id="sms-policy-links"
+          hidden
+        >
+
+          <a
+            id="privacy-policy-link"
+            href="#"
+            target="_blank"
+            rel="noopener"
+          >
+            Privacy Policy
+          </a>
+
+          |
+
+          <a
+            id="terms-policy-link"
+            href="#"
+            target="_blank"
+            rel="noopener"
+          >
+            Terms &amp; Conditions
+          </a>
+
+        </p>
+
+
+
+        <!-- CONFIRM -->
+
+        <button
+          type="button"
+          id="confirm-booking"
+        >
+          Confirm Appointment
+        </button>
+
+
+        <div id="confirmation-message">
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ========================================
+       FOOTER
+  ========================================= -->
+
+  <footer>
+
+    <p id="footer-shop-name">
+      Barber Shop
+    </p>
+
+    <p class="site-credit">
+      <a href="https://businessprolocal.com" target="_blank" rel="noopener">Website by Business Pro Local</a>
+    </p>
+
+    
+
+  </footer>
+
+
+
+  <!-- ========================================
+       CONFIG + WEBSITE ENGINE
+  ========================================= -->
+
+  <script>window.SITE_STATIC = true; window.SITE_PAGE = "home";</script>
+  <script>window.SHOP_CONFIG = {"siteStyle":"luxury","theme":{"pageBg":"#0a0a0a","surfaceDark":"#000000","accent":"#d4af37","accentDark":"#a8871f","accentLight":"#f0dc8c","onAccent":"#000000","surfaceSoft":"#131313","border":"#3a3220","textOnDark":"#ffffff","softText":"#ffffff"},"shop":{"name":"Palmer Salon","heroTitle":"Beautiful Hair. Every Time.","heroSubtitle":"","logo":"images/demo-palmer-logo.jpg","photos":["images/demo-palmer-inside-front-desk.jpg","images/demo-palmer-inside-styling-floor.jpg","images/demo-palmer-inside-shampoo.jpg","images/demo-palmer-inside-waiting.jpg"],"pageBanners":{"stylists":"images/demo-palmer-banner-stylists.jpg","services":"images/demo-palmer-banner-services.jpg","gallery":"images/demo-palmer-banner-gallery.jpg","reviews":"images/demo-palmer-banner-reviews.jpg","contact":"images/demo-palmer-banner-contact.jpg"},"heroImage":"images/demo-palmer-front-group.jpg","heroFit":"group","headerPhotos":["images/demo-palmer-top-ponytail.jpg","images/demo-palmer-top-pixie.jpg","images/demo-palmer-top-braided-updo.jpg","images/demo-palmer-top-curls.jpg"],"links":{"google":"https://www.google.com/search?q=Palmer+Salon+Sanford+ME"},"addressLine1":"123 Main Street","addressLine2":"Sanford, ME 04073","phoneDisplay":"207-555-0123","phoneLink":"+12075550123","hours":[{"days":"Tuesday - Friday","hours":"9:00 AM - 7:00 PM"},{"days":"Saturday","hours":"8:00 AM - 4:00 PM"},{"days":"Sunday - Monday","hours":"Closed"}],"pageTitle":"Palmer Salon | Sanford, ME"},"services":[{"id":"womens-cut-style","name":"Women's Cut & Style","price":55,"durationMinutes":60},{"id":"pixie-short-cut","name":"Pixie & Short Cut","price":45,"durationMinutes":45},{"id":"blowout","name":"Blowout","price":40,"durationMinutes":45},{"id":"full-color","name":"Full Color","price":95,"durationMinutes":120},{"id":"balayage","name":"Balayage","price":165,"durationMinutes":180},{"id":"highlights","name":"Full Highlights","price":150,"durationMinutes":150},{"id":"knotless-braids","name":"Knotless Braids","price":180,"durationMinutes":240},{"id":"cornrows","name":"Cornrows","price":85,"durationMinutes":90},{"id":"event-updo","name":"Event Updo","price":75,"durationMinutes":60},{"id":"curl-styling","name":"Curl Styling","price":60,"durationMinutes":60}],"barbers":[{"id":"dana","name":"Dana","profileType":"barber","cardSpecialty":"Short Hair Specialist","specialties":["Pixie cuts","Bobs","Precision cuts"],"bio":"Dana has been shaping short hair for over 15 years. From sharp bobs to bold pixies, she finds the cut that fits your face and your life.","profilePhoto":"images/demo-palmer-dana.jpg","uploadSlots":3,"schedule":{"workingDays":[2,3,4,5,6],"startTime":"09:00","endTime":"17:00","breaks":[{"start":"12:00","end":"12:30"}]},"serviceIds":["womens-cut-style","pixie-short-cut","blowout","highlights"],"gallery":[{"image":"images/demo-palmer-work-platinum-pixie.jpg","caption":"Platinum pixie"},{"image":"images/demo-palmer-work-sleek-bob.jpg","caption":"Sleek bob"},{"image":"images/demo-palmer-work-textured-crop.jpg","caption":"Textured crop"}]},{"id":"jessica","name":"Jessica","profileType":"barber","cardSpecialty":"Long Hair Specialist","specialties":["Balayage","Long layers","Blowouts"],"bio":"Jessica lives for long, glossy hair. Balayage, soft layers and blowouts that turn heads are her signature.","profilePhoto":"images/demo-palmer-jessica.jpg","uploadSlots":3,"schedule":{"workingDays":[2,3,4,5,6],"startTime":"09:00","endTime":"17:00","breaks":[{"start":"12:00","end":"12:30"}]},"serviceIds":["womens-cut-style","blowout","full-color","balayage","highlights"],"gallery":[{"image":"images/demo-palmer-work-brunette-waves.jpg","caption":"Glossy waves"},{"image":"images/demo-palmer-work-straight-black.jpg","caption":"Sleek and straight"},{"image":"images/demo-palmer-work-balayage.jpg","caption":"Balayage layers"}]},{"id":"maya","name":"Maya","profileType":"barber","cardSpecialty":"Braid Specialist","specialties":["Dutch braids","Updos","Event styling"],"bio":"Maya turns braids into art. Dutch braids, updos and event styling for weddings, proms and every big night.","profilePhoto":"images/demo-palmer-maya.jpg","uploadSlots":3,"schedule":{"workingDays":[2,3,4,5,6],"startTime":"09:00","endTime":"17:00","breaks":[{"start":"12:00","end":"12:30"}]},"serviceIds":["event-updo","curl-styling","blowout"],"gallery":[{"image":"images/demo-palmer-work-dutch-braids.jpg","caption":"Dutch braids"}]},{"id":"nicole","name":"Nicole","profileType":"barber","cardSpecialty":"Braids & Cornrows","specialties":["Knotless braids","Cornrows","Protective styles"],"bio":"Nicole is Palmer Salon's braid and cornrow queen. Neat parts, long-lasting protective styles and designs that stand out.","profilePhoto":"images/demo-palmer-nicole.jpg","uploadSlots":5,"schedule":{"workingDays":[2,3,4,5,6],"startTime":"09:00","endTime":"17:00","breaks":[{"start":"12:00","end":"12:30"}]},"serviceIds":["knotless-braids","cornrows","event-updo"],"gallery":[{"image":"images/demo-palmer-work-knotless-braids.jpg","caption":"Knotless braids"},{"image":"images/demo-palmer-work-crown-braid.jpg","caption":"Crown braid"},{"image":"images/demo-palmer-work-straight-back-cornrows.jpg","caption":"Straight-back cornrows"},{"image":"images/demo-palmer-work-feed-in-cornrows.jpg","caption":"Feed-in cornrows"},{"image":"images/demo-palmer-work-cornrow-bun.jpg","caption":"Cornrows into a high bun"}]}],"staffWord":"Stylist","staffPlural":"Stylists","features":{"website":true,"quotes":false,"ownerPortal":false,"booking":false,"staffPortals":false,"pos":false,"store":false}};</script>
+  <link rel="stylesheet" href="fonts.css">
+  
+
+  <script src="script.js"></script>
+
+
+</body>
+
+</html>

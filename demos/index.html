@@ -149,7 +149,7 @@ footer a{color:inherit;text-underline-offset:3px}
 nav.site-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px 22px}
 nav.site-nav .nav-side{display:flex;gap:4px 22px;flex-wrap:wrap}
 nav.site-nav .nav-side:first-child{justify-content:flex-end}
-nav.site-nav .nav-brand{font-family:var(--display);font-weight:800;font-size:1.25rem;color:var(--gold);text-decoration:none;letter-spacing:.02em;white-space:nowrap}
+nav.site-nav .nav-brand{display:block;line-height:0;border-radius:50%;box-shadow:0 0 0 1px rgba(212,175,55,.55),0 0 14px rgba(212,175,55,.25)}nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:50%}nav.site-nav .nav-side{gap:4px 0!important;align-items:center}nav.site-nav .nav-side a{padding:4px 16px;border-radius:0;border-top:0;border-right:0;border-bottom:0}nav.site-nav .nav-side a+a{border-left:1px solid rgba(212,175,55,.55)}
 nav.site-nav a.current{color:var(--teal);text-decoration:underline;text-underline-offset:6px}
 nav.site-nav .nav-menu{display:none}
 .nav-menu summary{list-style:none;cursor:pointer;color:var(--ink);font-weight:700;border:1px solid var(--line);border-radius:10px;padding:8px 18px;text-align:center}
@@ -164,14 +164,16 @@ nav.site-nav .nav-menu{display:none}
   nav.site-nav .nav-side{display:none}
   nav.site-nav .nav-menu{display:block;width:min(100%,320px)}
 }
+/* 11/3 (Tom): a demo for every tier, Your Business Here full width underneath */
+.demo-card.your-business{grid-column:1/-1;flex-direction:row;align-items:stretch}.demo-card.your-business .demo-placeholder{width:40%;aspect-ratio:auto;min-height:180px}.demo-card.your-business .demo-card-body{justify-content:center;align-items:center;text-align:center}.demo-card.your-business .btn{margin-top:0}@media(max-width:640px){.demo-card.your-business{flex-direction:column}.demo-card.your-business .demo-placeholder{width:100%;aspect-ratio:4/3;min-height:0}}
 </style>
 </head>
 <body>
 <nav class="site-nav" aria-label="Pages">
-  <div class="nav-side"><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="plans/">Plans</a></div>
-  <a class="nav-brand" href="./">Business Pro</a>
-  <div class="nav-side"><a href="demos/" class="current" aria-current="page">Demos</a><a href="my-story/">My Story</a><a href="get-started/">Get Started</a></div>
-  <details class="nav-menu"><summary>☰ Menu</summary><div class="nav-menu-list"><a href="./">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="plans/">Plans</a><a href="demos/" class="current" aria-current="page">Demos</a><a href="my-story/">My Story</a><a href="get-started/">Get Started</a></div></details>
+  <div class="nav-side" data-no-gold><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="my-story/">My Story</a></div>
+  <a class="nav-brand" href="./"><img src="images/bp-logo.png" width="64" height="64" alt="Business Pro home"></a>
+  <div class="nav-side" data-no-gold><a href="demos/" class="current" aria-current="page">Demos</a><a href="plans/">Plans</a><a href="get-started/">Get Started</a></div>
+  <details class="nav-menu"><summary>☰ Menu</summary><div class="nav-menu-list"><a href="./">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="my-story/">My Story</a><a href="demos/" class="current" aria-current="page">Demos</a><a href="plans/">Plans</a><a href="get-started/">Get Started</a></div></details>
 </nav>
 
 <section class="block" id="demos">
@@ -179,12 +181,16 @@ nav.site-nav .nav-menu{display:none}
   <p class="lead">Try a demo to see exactly what your customers will see. No signup required.</p>
   <div class="demo-grid">
     <article class="demo-card">
+      <img src="DEMOS/progo/images/demo-palmer-front-group.jpg" alt="Palmer Salon, a ProGo website" loading="lazy">
+      <div class="demo-card-body"><h3>Salon demo</h3><p>ProGo &middot; $199 one time</p><a class="btn solid" href="DEMOS/progo/">Try Demo</a></div>
+    </article>
+    <article class="demo-card">
       <img src="DEMOS/assets/bakery-case.jpg" alt="Fresh bakery treats in the display case" loading="lazy">
-      <div class="demo-card-body"><h3>Bakery demo</h3><p>ProGo</p><a class="btn solid" href="DEMOS/basic/index.html">Try Demo</a></div>
+      <div class="demo-card-body"><h3>Bakery demo</h3><p>Professional</p><a class="btn solid" href="DEMOS/basic/index.html">Try Demo</a></div>
     </article>
     <article class="demo-card">
       <img src="CUSTOMER/images/barber-shop-hero.jpg" alt="Inside Classic Cuts Barbershop" loading="lazy">
-      <div class="demo-card-body"><h3>Barbershop demo</h3><p>Professional</p><a class="btn solid" href="DEMOS/professional/index.html">Try Demo</a></div>
+      <div class="demo-card-body"><h3>Barbershop demo</h3><p>Professional Plus</p><a class="btn solid" href="DEMOS/professional/index.html">Try Demo</a></div>
     </article>
     <article class="demo-card">
       <img src="DEMOS/assets/gift-shop.jpg" alt="Coastal gifts on display" loading="lazy">
@@ -200,7 +206,7 @@ nav.site-nav .nav-menu{display:none}
 <footer>
   <div class="brand">Business Pro Local</div>
   <p>Sanford, Maine · <a href="sms:+12074087983">Text 207-408-7983</a> · <a href="mailto:businessprolocal207@gmail.com">businessprolocal207@gmail.com</a></p>
-  <nav class="footer-nav" aria-label="All pages"><a href="./">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="plans/">Plans</a><a href="demos/">Demos</a><a href="my-story/">My Story</a><a href="get-started/">Get Started</a></nav>
+  <nav class="footer-nav" aria-label="All pages"><a href="./">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="my-story/">My Story</a><a href="demos/">Demos</a><a href="plans/">Plans</a><a href="get-started/">Get Started</a></nav>
 </footer>
 
 </body>

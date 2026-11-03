@@ -148,7 +148,7 @@ footer a{color:inherit;text-underline-offset:3px}
 nav.site-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px 22px}
 nav.site-nav .nav-side{display:flex;gap:4px 22px;flex-wrap:wrap}
 nav.site-nav .nav-side:first-child{justify-content:flex-end}
-nav.site-nav .nav-brand{font-family:var(--display);font-weight:800;font-size:1.25rem;color:var(--gold);text-decoration:none;letter-spacing:.02em;white-space:nowrap}
+nav.site-nav .nav-brand{display:block;line-height:0;border-radius:50%;box-shadow:0 0 0 1px rgba(212,175,55,.55),0 0 14px rgba(212,175,55,.25)}nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:50%}nav.site-nav .nav-side{gap:4px 0!important;align-items:center}nav.site-nav .nav-side a{padding:4px 16px;border-radius:0;border-top:0;border-right:0;border-bottom:0}nav.site-nav .nav-side a+a{border-left:1px solid rgba(212,175,55,.55)}
 nav.site-nav a.current{color:var(--teal);text-decoration:underline;text-underline-offset:6px}
 nav.site-nav .nav-menu{display:none}
 .nav-menu summary{list-style:none;cursor:pointer;color:var(--ink);font-weight:700;border:1px solid var(--line);border-radius:10px;padding:8px 18px;text-align:center}
@@ -189,10 +189,10 @@ nav.site-nav .nav-menu{display:none}
 </head>
 <body>
 <nav class="site-nav" aria-label="Pages">
-  <div class="nav-side"><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="plans/">Plans</a></div>
-  <a class="nav-brand" href="./" aria-current="page">Business Pro</a>
-  <div class="nav-side"><a href="demos/">Demos</a><a href="my-story/">My Story</a><a href="get-started/">Get Started</a></div>
-  <details class="nav-menu"><summary>☰ Menu</summary><div class="nav-menu-list"><a href="./" aria-current="page">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="plans/">Plans</a><a href="demos/">Demos</a><a href="my-story/">My Story</a><a href="get-started/">Get Started</a></div></details>
+  <div class="nav-side" data-no-gold><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="my-story/">My Story</a></div>
+  <a class="nav-brand" href="./" aria-current="page"><img src="images/bp-logo.png" width="64" height="64" alt="Business Pro home"></a>
+  <div class="nav-side" data-no-gold><a href="demos/">Demos</a><a href="plans/">Plans</a><a href="get-started/">Get Started</a></div>
+  <details class="nav-menu"><summary>☰ Menu</summary><div class="nav-menu-list"><a href="./" aria-current="page">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="my-story/">My Story</a><a href="demos/">Demos</a><a href="plans/">Plans</a><a href="get-started/">Get Started</a></div></details>
 </nav>
 
 <section class="hero" aria-label="Business Pro">
@@ -222,7 +222,7 @@ nav.site-nav .nav-menu{display:none}
 <footer>
   <div class="brand">Business Pro Local</div>
   <p>Sanford, Maine · <a href="sms:+12074087983">Text 207-408-7983</a> · <a href="mailto:businessprolocal207@gmail.com">businessprolocal207@gmail.com</a></p>
-  <nav class="footer-nav" aria-label="All pages"><a href="./">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="plans/">Plans</a><a href="demos/">Demos</a><a href="my-story/">My Story</a><a href="get-started/">Get Started</a></nav>
+  <nav class="footer-nav" aria-label="All pages"><a href="./">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="my-story/">My Story</a><a href="demos/">Demos</a><a href="plans/">Plans</a><a href="get-started/">Get Started</a></nav>
 </footer>
 
 </body>
