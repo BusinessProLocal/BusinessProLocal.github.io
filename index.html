@@ -145,46 +145,7 @@ footer a{color:inherit;text-underline-offset:3px}
 </style>
 </head>
 <body>
-<button type="button" id="introSplash" class="intro-splash" aria-label="First month free. Click or press Escape to skip introduction." hidden>
-  <span aria-hidden="true">FIRST MONTH FREE</span>
-</button>
-<script>
-(() => {
-  const splash = document.getElementById("introSplash");
-  const visitKey = "businessProIntroSeen";
-  try {
-    if (sessionStorage.getItem(visitKey)) return;
-    sessionStorage.setItem(visitKey, "true");
-  } catch (error) {
-    console.warn("Intro skipped: visit storage is unavailable.", error);
-    return;
-  }
-
-  const previousFocus = document.activeElement;
-  let fadeTimer;
-  let hideTimer;
-  function dismiss() {
-    clearTimeout(fadeTimer);
-    clearTimeout(hideTimer);
-    splash.hidden = true;
-    if (document.activeElement === splash) previousFocus.focus({ preventScroll: true });
-    document.removeEventListener("keydown", skipWithKeyboard);
-    window.removeEventListener("pagehide", dismiss);
-  }
-  function skipWithKeyboard(event) {
-    if (event.key === "Escape") dismiss();
-  }
-  splash.hidden = false;
-  splash.focus({ preventScroll: true });
-  splash.addEventListener("click", dismiss);
-  document.addEventListener("keydown", skipWithKeyboard);
-  window.addEventListener("pagehide", dismiss);
-  fadeTimer = setTimeout(() => {
-    splash.classList.add("is-fading");
-    hideTimer = setTimeout(dismiss, 350);
-  }, 750);
-})();
-</script>
+<!-- 11/3 (Tom): FIRST MONTH FREE splash removed — ProGo has no monthly; it shows on the 3 monthly plan cards instead -->
 <nav>
   <a href="#why-online">Why Online</a><a href="#what">What You Get</a><a href="#who">Who It's For</a><a href="#story">My Story</a><a href="#start">Get Started</a>
 </nav>
@@ -217,7 +178,6 @@ footer a{color:inherit;text-underline-offset:3px}
 
 <section class="block" id="what">
   <h2>One local company for your whole business</h2>
-  <p class="service-offer">First month free on every monthly plan.</p>
   <p class="cards-promo">100 free business cards when you sign up &mdash; printed with a QR code to your site.</p>
   <p class="lead">Business Pro connects Main Street shops with their customers online, and handles the busywork behind the counter, so you can get back to the work you love.</p>
   <div class="grid">
@@ -299,8 +259,7 @@ footer a{color:inherit;text-underline-offset:3px}
     </select><input id="fCustomType" autocomplete="off" maxlength="80" placeholder="Type your business (bakery, florist...)" spellcheck="true" lang="en-US" hidden disabled></label>
     <label class="question-field" for="fMsg">Questions? (optional)<textarea id="fMsg" autocomplete="off" rows="2" maxlength="2000" spellcheck="true" lang="en-US"></textarea></label>
     <div hidden aria-hidden="true"><label for="fWebsite">Leave this blank<input id="fWebsite" name="website" tabindex="-1" autocomplete="off"></label></div>
-    <p class="service-offer">First month free on every monthly plan.</p>
-    <p class="cards-promo">100 free business cards when you sign up &mdash; printed with a QR code to your site.</p>
+      <p class="cards-promo">100 free business cards when you sign up &mdash; printed with a QR code to your site.</p>
     <button class="btn solid" type="submit">Next: See Your Plans</button>
     <p id="formMsg" role="status"></p>
   </form>
