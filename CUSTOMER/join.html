@@ -1662,6 +1662,17 @@
     updateSetupPaymentAmounts();
 
 
+    // 11/3 (Tom): a TEST SIGNUP link from Admin (?testpass=...) runs Stripe in TEST mode — no real money
+    const TEST_PASS = /^\d{10,13}\.[A-Za-z0-9_-]{43}$/.test(params.get("testpass") || "") ? params.get("testpass") : "";
+    if (TEST_PASS) {
+      const bar = document.createElement("div");
+      bar.className = "test-signup-bar";
+      bar.setAttribute("role", "note");
+      bar.style.cssText = "position:sticky;top:0;z-index:50;background:#22d3ee;color:#000;text-align:center;font:700 15px/1.35 Arial,Helvetica,sans-serif;padding:10px 16px";
+      bar.textContent = "TEST SIGNUP: no real money. At checkout use card 4242 4242 4242 4242, any future date, any 3 numbers.";
+      document.body.insertBefore(bar, document.body.firstChild);
+    }
+
     const paymentStatus =
       params.get(
         "payment"
@@ -1671,7 +1682,21 @@
     const paymentReturnMessage =
       document.getElementById("payment-return-message");
 
-    if (paymentStatus === "success") {
+    if (paymentStatus === "success" && TEST_PASS && params.get("session_id")) {
+      // 11/3 (Tom): TEST signup came back from Stripe TEST mode: save it + send the [TEST] emails/text
+      paymentReturnMessage.textContent = "TEST signup paid (no real money). Finishing up...";
+      paymentReturnMessage.hidden = false;
+      fetch(CHECKOUT_ENDPOINT.replace("/create-checkout-session", "/confirm-test-signup"), {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: params.get("session_id"), testPass: TEST_PASS })
+      }).then(response => response.json()).then(result => {
+        paymentReturnMessage.textContent = result.success
+          ? "TEST signup done (no real money): it's in Admin now. Check the email and your text."
+          : (result.error || "The test signup couldn't finish.");
+      }).catch(() => {
+        paymentReturnMessage.textContent = "The test signup couldn't finish. Reload this page to try again.";
+      });
+    } else if (paymentStatus === "success") {
       paymentReturnMessage.textContent =
         "Payment received, welcome to Business Pro Local! Check your email.";
       paymentReturnMessage.hidden = false;
@@ -1907,7 +1932,8 @@
                   setupInstallmentAmount:
                     selectedSetupPayment.value === "installments"
                       ? paymentRate.installmentAmount
-                      : null
+                      : null,
+                  testPass: TEST_PASS || undefined
                 })
               }
             );
