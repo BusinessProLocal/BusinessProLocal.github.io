@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,800;1,900&display=swap");
 /* ============================================================
    BUSINESS PRO BARBER TEMPLATE
    MASTER CUSTOMER WEBSITE STYLES
@@ -4139,4 +4139,25 @@ body.style-luxury .gallery-filters button.has-face,
 body.style-luxury,
 body.style-luxury *:not(svg):not(path) {
   font-family: "Playfair Display", Georgia, "Times New Roman", serif !important;
+}
+
+/* ============================================================
+   11/7 (Tom): LUXURY SKIN - HEADINGS + GOLD METAL WORDS
+   h2, h3 and every heading after: bold italic, like the logo.
+   .lux-gold-text is added by script.js to every gold word.
+============================================================ */
+body.style-luxury h2,
+body.style-luxury h3,
+body.style-luxury h4,
+body.style-luxury h5,
+body.style-luxury h6 {
+  font-style: italic !important;
+  font-weight: 800 !important;
+}
+
+body.style-luxury .lux-gold-text {
+  background: var(--gold-metal) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
 }

@@ -4667,3 +4667,54 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+/* ============================================================
+   11/7 (Tom): LUXURY SKIN - EVERY GOLD WORD GETS THE GOLD METAL
+   Any text that shows in the gold color (any size) gets the
+   real gold metal finish, same as the headline. Text sitting on
+   a colored button/box is left alone so it stays readable.
+============================================================ */
+(function goldMetalWords() {
+  var SKIP = { SCRIPT: 1, STYLE: 1, IMG: 1, INPUT: 1, TEXTAREA: 1, SELECT: 1, OPTION: 1, svg: 1, path: 1, SVG: 1, PATH: 1 };
+  function goldColors() {
+    var probe = document.createElement("span");
+    probe.style.display = "none";
+    document.body.appendChild(probe);
+    var out = ["--accent", "--accent-light"].map(function (v) {
+      probe.style.color = "var(" + v + ")";
+      return getComputedStyle(probe).color;
+    });
+    probe.remove();
+    return out;
+  }
+  function rgb(c) { return (c.match(/[\d.]+/g) || []).slice(0, 3).map(Number); }
+  function isGold(c, golds) {
+    var a = rgb(c);
+    return golds.some(function (g) {
+      var b = rgb(g);
+      return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) < 40;
+    });
+  }
+  function paint() {
+    if (!document.body || !document.body.classList.contains("style-luxury")) return;
+    var golds = goldColors();
+    document.querySelectorAll("body *").forEach(function (el) {
+      if (SKIP[el.tagName] || el.closest("svg") || el.classList.contains("lux-gold-text")) return;
+      var hasText = Array.prototype.some.call(el.childNodes, function (n) { return n.nodeType === 3 && n.textContent.trim(); });
+      if (!hasText) return;
+      var s = getComputedStyle(el);
+      if (!isGold(s.color, golds)) return;
+      var bg = s.backgroundColor;
+      if (s.backgroundImage !== "none" || (bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)")) return;
+      el.classList.add("lux-gold-text");
+    });
+  }
+  var timer = null;
+  function later() { clearTimeout(timer); timer = setTimeout(paint, 150); }
+  function start() {
+    paint();
+    setTimeout(paint, 600);
+    new MutationObserver(later).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
