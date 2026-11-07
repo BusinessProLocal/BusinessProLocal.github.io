@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap");
 /* ============================================================
    BUSINESS PRO BARBER TEMPLATE
    MASTER CUSTOMER WEBSITE STYLES
@@ -4126,4 +4127,16 @@ body.style-luxury .gallery-filters button.has-face,
   /* stacked footer: pin on top, address and a Get Directions button centered under it */
   .lux-footer-directions .dir-line { flex-direction: column; gap: 6px; white-space: normal; }
   .lux-footer-directions small { margin-top: 8px; padding: 7px 16px; border: 1px solid #f0d78a; border-radius: 999px; }
+}
+
+/* ============================================================
+   LUXURY SKIN (hair salon): ONE FONT EVERYWHERE  -  2026-11-06
+   Tom: every word on the salon skin uses the same font as the
+   header (Playfair Display). Replaces the Arial/Georgia mix.
+   Full weights come from Google Fonts (@import at the top);
+   if offline, the local playfair-800 file still covers it.
+============================================================ */
+body.style-luxury,
+body.style-luxury *:not(svg):not(path) {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif !important;
 }
