@@ -28,6 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const tierFeatures = config.features || {};
   const BOOKING_ON = tierFeatures.booking !== false;
   const STORE_ON = tierFeatures.store !== false;
+  // 11/10 (Tom): ProGo is a 5-page website (Home, Stylists, Services, Gallery, Contact).
+  // Inside the Shop photos go on the Gallery page and the Google reviews on the Contact page.
+  const FIVE_PAGES = Boolean(config.features) && tierFeatures.booking === false && tierFeatures.ownerPortal === false && tierFeatures.quotes === false;
   const BUSINESS_ID = new URLSearchParams(window.location.search).get("businessId") || bookingSettings.businessId || "business-001";
   let sharedAvailability = [];
   let ownBookings = [];
@@ -823,7 +826,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function sitePages() {
-    return [
+    const pages = [
       { key: "home", section: "home", label: "Home", anchor: "#home" },
       { key: staffPageKey(), section: "barbers", label: `Meet Our ${STAFF_MANY}`, anchor: "#barbers" },
       { key: "services", section: "services", label: "Services & Prices", anchor: "#services" },
@@ -832,6 +835,15 @@ document.addEventListener("DOMContentLoaded", () => {
       { key: "reviews", section: "reviews", label: "Reviews", anchor: "#reviews" },
       { key: "contact", section: "contact", label: CONTACT_LABEL === "Contact" ? "Contact Us" : CONTACT_LABEL, anchor: "#contact" }
     ];
+    if (!FIVE_PAGES) return pages;
+    return pages
+      .filter(page => page.key !== "photos" && page.key !== "reviews")
+      .map(page => page.key === "gallery" ? { ...page, sections: ["gallery", "shop-photos"] }
+        : page.key === "contact" ? { ...page, sections: ["contact", "reviews"] } : page);
+  }
+
+  function pageSections(page) {
+    return page.sections || [page.section];
   }
 
   // The shop's own address (/book/<shop>) when the server sent this page; none in previews.
@@ -879,7 +891,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let page = pages.find(row => row.key === key);
     const wantsBooking = key === "book";
     // a page with nothing on it (no shop photos, no Google link) = Home
-    if (!page || (page.key !== "home" && !sectionShows(page.section))) page = pages[0];
+    if (!page || (page.key !== "home" && !pageSections(page).some(sectionShows))) page = pages[0];
 
     const main = document.querySelector("main");
     const sections = main ? [...main.querySelectorAll(":scope > section")] : [];
@@ -889,7 +901,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sections.forEach(section => {
       const off = page.key === "home"
         ? homeOnlyHero && section.id !== "home"
-        : section.id !== page.section;
+        : !pageSections(page).includes(section.id);
       section.classList.toggle("page-off", off);
     });
     document.body.dataset.page = page.key;
@@ -973,6 +985,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function setUpSitePages() {
     setUpPhoneMenu();
     const pages = sitePages();
+
+    if (FIVE_PAGES) {
+      ["nav-shop-photos", "nav-reviews"].forEach(id => {
+        const link = document.getElementById(id);
+        if (link) link.remove();
+      });
+      const navGallery = document.getElementById("nav-gallery");
+      if (navGallery) navGallery.hidden = !(sectionShows("gallery") || sectionShows("shop-photos"));
+      const reviews = document.getElementById("reviews");
+      const contact = document.getElementById("contact");
+      if (reviews && contact && reviews.parentNode === contact.parentNode) contact.after(reviews);
+    }
 
     // menu links: real web addresses, switched in place
     document.querySelectorAll("nav a").forEach(link => {

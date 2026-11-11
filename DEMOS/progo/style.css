@@ -4293,3 +4293,10 @@ body.style-luxury .lux-gold-text {
     background-size: 100% 100%, auto 88% !important;
   }
 }
+
+/* 11/10 (Tom): ProGo's 5 tabs on phones: 3 on top, 2 centered under them */
+@media (max-width: 640px) {
+  body.style-luxury header nav:not(:has(> a:nth-of-type(6))) a {
+    flex-basis: 33.333% !important;
+  }
+}
