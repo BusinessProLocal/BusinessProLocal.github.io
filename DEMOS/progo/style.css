@@ -4161,3 +4161,135 @@ body.style-luxury .lux-gold-text {
   background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
+
+/* ============================================================
+   11/10 (Tom): the salon look stays the same at EVERY screen size —
+   laptop, tablet and phone all show the computer layout, sized down:
+   logo with the 4 women on top, Call Now top right, the tab bar
+   (no ☰ Menu button), words + stylists on the left, the women on the right.
+   Sizes follow the screen width (vw = 1% of the screen width), with
+   small minimums so words stay readable and buttons stay tappable.
+============================================================ */
+@media (max-width: 1199px) {
+  /* top bar */
+  body.style-luxury header {
+    padding: max(6px, 1.375vw) 7vw 0 !important;
+    gap: 0 !important;
+  }
+  body.style-luxury.header-has-photos .brand-line {
+    flex-wrap: nowrap !important;
+    gap: 1.1vw !important;
+    padding: 0 !important;
+  }
+  body.style-luxury .header-photos { display: flex !important; }
+  body.style-luxury .header-photos img {
+    width: 6.5vw !important;
+    height: 7vw !important;
+    margin: 0 -0.4vw !important;
+  }
+  body.style-luxury.header-logo-only header .shop-logo {
+    height: max(24px, 6vw) !important;
+    width: auto !important;
+    margin: 0 !important;
+  }
+  body.style-luxury header .header-call {
+    position: absolute !important;
+    top: max(5px, 1.25vw) !important;
+    right: 7vw !important;
+    left: auto !important;
+    width: auto !important;
+    display: block !important;
+    margin: 0 !important;
+    order: 0 !important;
+  }
+  body.style-luxury header .header-call a {
+    font-size: max(10px, 0.94vw) !important;
+    padding: max(5px, 0.625vw) max(10px, 1.375vw) !important;
+    min-height: 0 !important;
+  }
+
+  /* the tab bar: always showing, no ☰ Menu button */
+  body.style-luxury header .site-menu-toggle { display: none !important; }
+  body.style-luxury header nav,
+  body.style-luxury header.has-site-menu nav,
+  body.style-luxury header.has-site-menu:not(.site-menu-open) nav {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+    order: 3 !important;
+    width: 100% !important;
+    gap: 0 !important;
+    margin: max(4px, 0.9vw) 0 0 !important;
+  }
+  body.style-luxury header nav a {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 10px 10px 0 0 !important;
+    padding: max(6px, 0.625vw) max(8px, 1.5vw) max(8px, 0.75vw) !important;
+    font-size: max(10px, 1.0625vw) !important;
+    letter-spacing: 0.2px !important;
+    text-align: center !important;
+    white-space: nowrap;
+  }
+  body.style-luxury header nav a:not([hidden]) ~ a:not([hidden])::before { display: block !important; }
+
+  /* front picture: words on the left, the women on the right */
+  body.style-luxury .hero.hero-photo {
+    min-height: 47vw !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: max(18px, 4vw) 7vw !important;
+    text-align: left !important;
+  }
+  body.style-luxury .hero.hero-photo.hero-fit-group {
+    background-size: 100% 100%, auto 100% !important;
+    background-position: 0 0, right bottom !important;
+  }
+  body.style-luxury .hero.hero-photo::after {
+    background: linear-gradient(90deg, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.55) 30%, rgba(10, 10, 10, 0) 48%) !important;
+  }
+  body.style-luxury .hero.hero-photo .hero-content {
+    width: max(150px, 35vw) !important;
+    text-align: center !important;
+  }
+  body.style-luxury .hero.hero-photo h2 {
+    font-size: max(19px, 4.375vw) !important;
+  }
+  body.style-luxury .hero h2::after {
+    height: max(12px, 1.6vw) !important;
+    margin: max(4px, 0.75vw) auto 0 !important;
+  }
+  body.style-luxury .hero .call-button {
+    font-size: max(12px, 1.125vw) !important;
+    padding: max(8px, 0.875vw) max(16px, 1.875vw) !important;
+    margin-top: max(8px, 1.2vw) !important;
+  }
+  body.style-luxury .hero.hero-photo .call-text-buttons { display: flex !important; justify-content: center !important; width: 100% !important; }
+  body.style-luxury .hero-team-wrap { margin-top: max(10px, 1.9vw) !important; display: flex !important; flex-direction: column !important; align-items: center !important; width: 100% !important; }
+  body.style-luxury .hero-team { gap: max(5px, 1vw) !important; flex-wrap: nowrap !important; justify-content: center !important; }
+  body.style-luxury .hero-team-member { font-size: max(9px, 0.94vw) !important; gap: 3px !important; }
+  body.style-luxury .hero-team-member img {
+    width: max(30px, 4.75vw) !important;
+    height: max(30px, 4.75vw) !important;
+    padding: 2px !important;
+  }
+  body.style-luxury .hero-team-caption { white-space: nowrap; font-size: max(12px, 1.5vw) !important; margin-top: max(4px, 0.9vw) !important; }
+}
+
+/* phones: the 7 tabs sit in 2 even rows (4 on top, the rest centered under them) */
+@media (max-width: 640px) {
+  body.style-luxury header nav a {
+    flex: 0 0 25% !important;
+    padding: 9px 2px 10px !important;
+    font-size: 10px !important;
+    white-space: normal;
+  }
+  body.style-luxury header nav a:not([hidden]) ~ a:not([hidden])::before { display: none !important; }
+  body.style-luxury .hero.hero-photo.hero-fit-group {
+    background-size: 100% 100%, auto 88% !important;
+  }
+}
