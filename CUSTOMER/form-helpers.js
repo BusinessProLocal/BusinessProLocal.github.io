@@ -2,7 +2,7 @@
   "use strict";
   const domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "aol.com"];
   const sample = { name: "Joe Test", business: "Joe's Barbershop", phone: "207-555-0101", email: "joe.test@gmail.com",
-    address: "7 Clipper Lane, Sanford, Maine 04073", businessType: "Barbershop" };
+    address: "7 Clipper Lane, Kennebunk, Maine 04043", businessType: "Barbershop" };
   const leadFields = ["name", "business", "phone", "email", "address", "businessType", "questions"];
   function clearLegacyVisitor(storage) {
     for (const key of ["businessProLeads", "businessProGetStartedDraft_v1", "businessProSignupDraft_v1", "businessProSignups"]) {

@@ -136,7 +136,7 @@
       <p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
       <main id="demo-content"></main>
-      <div class="demo-pricing"><a class="book-button" href="../../index.html#plans">Like what you see? See Plans &amp; Pricing &rarr;</a></div>
+      <div class="demo-pricing"><a class="book-button" href="../../get-started/">Like what you see? Get Started &rarr;</a></div>
       <footer><span class="demo-footer-label">${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo by Business Pro</span>
         <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div></footer>`;
     if (pageName === "home") renderAds();
