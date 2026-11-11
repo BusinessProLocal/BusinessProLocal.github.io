@@ -201,7 +201,8 @@ nav.site-nav .nav-menu{display:none}
   </form>
 </section>
 
-<section class="block" id="plans">
+<!-- 11/10 (Tom): plans stay hidden until the Get Started form is filled out -->
+<section class="block" id="plans" hidden>
   <h2>Plans &amp; Pricing</h2>
   <p class="lead">Prices are the same for every business.</p>
   <p id="plansThanks" class="plans-thanks" role="status" hidden></p>
@@ -334,12 +335,20 @@ document.getElementById("startForm").addEventListener("submit", function (e) {
 
   document.getElementById("formMsg").textContent = "";
   const plans = document.getElementById("plans");
+  plans.hidden = false;
   const thanks = document.getElementById("plansThanks");
   thanks.textContent = `Thanks for joining us, ${name.split(/\s+/)[0]}! Here are your plans.`;
   thanks.hidden = false;
   plans.scrollIntoView({ behavior: "smooth", block: "start" });
   void sendLeadAlert(lead, document.getElementById("fWebsite").value);
 });
+</script>
+<script>
+// 11/10 (Tom): plans show only after the form is sent. Same visit (same tab) keeps them showing so they don't retype.
+try {
+  const seen = JSON.parse(sessionStorage.getItem("businessProLeads") || "[]");
+  if (Array.isArray(seen) && seen.length) document.getElementById("plans").hidden = false;
+} catch (e) {}
 </script>
 <script src="CUSTOMER/form-helpers.js"></script>
 </body>
