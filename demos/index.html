@@ -97,7 +97,8 @@ section.block#plans{max-width:1280px}
 .tier li.seo{color:var(--ink);font-weight:700}
 .demo-grid{display:grid;gap:20px;grid-template-columns:repeat(4,minmax(0,1fr))}
 .demo-card{display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(170deg,#152060,var(--panel));border:1px solid var(--blue);border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
-.demo-card img,.demo-placeholder{width:100%;aspect-ratio:4/3;object-fit:cover}
+/* 11/10 (Tom): wide 16:9 boxes so the Salon card shows the whole Model Salon home page, like Bot's design */
+.demo-card img,.demo-placeholder{width:100%;aspect-ratio:16/9;object-fit:cover}
 .demo-placeholder{display:grid;place-items:center;background:var(--gold);color:#111;font-family:var(--display);font-size:2rem;text-align:center;padding:20px}
 .demo-card-body{display:flex;flex-direction:column;gap:12px;padding:20px;flex:1}
 .demo-card h3{margin:0;font-family:var(--display);color:var(--gold);font-size:1.4rem}
@@ -188,7 +189,7 @@ nav.site-nav .nav-menu{display:none}
   <p class="lead">Try a demo to see exactly what your customers will see. No signup required.</p>
   <div class="demo-grid">
     <article class="demo-card">
-      <img class="skin-shot" src="images/demo-model-salon-skin.jpg" width="1280" height="960" alt="The Model Salon home page, a ProGo website" loading="lazy">
+      <img class="skin-shot" src="images/demo-model-salon-skin.jpg?v=169" width="1600" height="900" alt="The Model Salon home page, a ProGo website" loading="lazy">
       <div class="demo-card-body"><h3>Salon demo</h3><p>ProGo &middot; $199 one time</p><a class="btn solid" href="DEMOS/progo/">Try Demo</a></div>
     </article>
     <article class="demo-card">
