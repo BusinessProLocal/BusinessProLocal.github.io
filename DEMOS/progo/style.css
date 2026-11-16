@@ -4307,3 +4307,17 @@ body.style-luxury .lux-gold-text {
     flex-basis: 33.333% !important;
   }
 }
+
+/* 11/16 (Tom): computers too — the women's picture never gets wider than the room on the right,
+   so "Beautiful Hair. Every Time.", Call Now and the stylists never sit on top of it (tall browser windows included) */
+@media (min-width: 1200px) {
+  body.style-luxury .hero.hero-photo.hero-fit-group {
+    background-size: 100% 100%, min(74vw, calc(max(560px, 100svh - 145px) * 1.7768)) auto !important;
+    background-position: 0 0, right bottom !important;
+  }
+  body.style-luxury .hero.hero-photo.hero-fit-group::after {
+    background:
+      linear-gradient(180deg, #0a0a0a 0, #0a0a0a calc(100% - min(41.6vw, 100%)), rgba(10, 10, 10, 0) calc(100% - min(41.6vw, 100%) + 40px)),
+      radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0) 48%) !important;
+  }
+}
