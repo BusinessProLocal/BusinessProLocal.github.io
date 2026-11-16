@@ -4246,7 +4246,8 @@ body.style-luxury .lux-gold-text {
     text-align: left !important;
   }
   body.style-luxury .hero.hero-photo.hero-fit-group {
-    background-size: 100% 100%, auto 100% !important;
+    /* 11/16 (Tom): the women's picture shrinks with the screen and stays on the right, so the words never sit on top of it */
+    background-size: 100% 100%, 70vw auto !important;
     background-position: 0 0, right bottom !important;
   }
   body.style-luxury .hero.hero-photo::after {
@@ -4290,7 +4291,13 @@ body.style-luxury .lux-gold-text {
   }
   body.style-luxury header nav a:not([hidden]) ~ a:not([hidden])::before { display: none !important; }
   body.style-luxury .hero.hero-photo.hero-fit-group {
-    background-size: 100% 100%, auto 88% !important;
+    background-size: 100% 100%, 62vw auto !important;
+  }
+  /* 11/16 (Tom): soften the top edge of the smaller picture into the black */
+  body.style-luxury .hero.hero-photo.hero-fit-group::after {
+    background:
+      linear-gradient(180deg, #0a0a0a 0, #0a0a0a calc(100% - 34.9vw), rgba(10, 10, 10, 0) calc(100% - 34.9vw + 22px)),
+      linear-gradient(90deg, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.55) 30%, rgba(10, 10, 10, 0) 48%) !important;
   }
 }
 
