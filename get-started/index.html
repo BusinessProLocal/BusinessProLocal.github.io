@@ -195,9 +195,11 @@ nav.site-nav .nav-menu{display:none}
     <label for="fAddress">Business address<input id="fAddress" required maxlength="500" autocomplete="off" spellcheck="true" lang="en-US"></label>
     <label for="fType">Type of business<select id="fType" autocomplete="off" required>
       <option value="">Choose your business type</option>
-      <option>Barbershop</option><option>Hair salon</option><option>Retail &amp; gift shop</option>
-      <option>Auto shop</option><option>Tattoo &amp; piercing</option><option>Home services</option>
-      <option>Pet services</option><option>Nail salon &amp; spa</option><option>Custom</option>
+      <option>Barbershop</option><option>Hair salon</option><option>Nail salon &amp; spa</option>
+      <option>Tattoo &amp; piercing</option><option>Pet services</option><option>Auto shop</option>
+      <option>Repair shop</option><option>Retail &amp; gift shop</option><option>Pet shop</option>
+      <option>Makers &amp; crafts</option><option>Home services</option><option>Lawn care</option>
+      <option>Handyman</option><option>Construction &amp; home building</option><option>Custom</option>
     </select><input id="fCustomType" autocomplete="off" maxlength="80" placeholder="Type your business (bakery, florist...)" spellcheck="true" lang="en-US" hidden disabled></label>
     <label class="question-field" for="fMsg">Questions? (optional)<textarea id="fMsg" autocomplete="off" rows="2" maxlength="2000" spellcheck="true" lang="en-US"></textarea></label>
     <div hidden aria-hidden="true"><label for="fWebsite">Leave this blank<input id="fWebsite" name="website" tabindex="-1" autocomplete="off"></label></div>
@@ -276,6 +278,21 @@ typeSelect.addEventListener("change", function (event) {
   showCustomType(this.value === "Custom");
   if (this.value === "Custom" && event.isTrusted) customType.focus();
 });
+// 11/12 (Tom): industry links on the home page open this form with that industry already picked (?type=...)
+(function () {
+  const picked = new URLSearchParams(location.search).get("type");
+  if (!picked) return;
+  const match = [...typeSelect.options].find(o => o.value && o.value.toLowerCase() === picked.toLowerCase());
+  if (!match) return;
+  function apply() {
+    if (typeSelect.value) return; // something already picked on this visit wins
+    typeSelect.value = match.value;
+    showCustomType(match.value === "Custom");
+  }
+  apply();
+  // the form helper refills the form after the page shows, so pick again right after it
+  window.addEventListener("pageshow", () => requestAnimationFrame(() => requestAnimationFrame(apply)));
+})();
 customType.addEventListener("blur", function () {
   if (!this.value.trim()) { typeSelect.value = ""; showCustomType(false); }
 });

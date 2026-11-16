@@ -4,171 +4,175 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Business Pro Local | Websites for Maine Small Businesses</title>
-<meta name="description" content="Websites from $199 one time, plus online booking and online stores for local businesses across Maine. SEO and Google Business Profile setup on every plan.">
+<meta name="description" content="Websites, online booking, online stores and bookkeeping for local businesses across Maine. SEO and Google Business Profile setup on every plan.">
 <link rel="canonical" href="https://businessprolocal.com/">
 <meta property="og:title" content="Business Pro Local | Websites for Maine Small Businesses">
-<meta property="og:description" content="Websites from $199 one time, plus online booking and online stores for local businesses across Maine. SEO and Google Business Profile setup on every plan.">
-<meta property="og:image" content="https://businessprolocal.com/images/hero.jpg">
+<meta property="og:description" content="Websites, online booking, online stores and bookkeeping for local businesses across Maine. SEO and Google Business Profile setup on every plan.">
+<meta property="og:image" content="https://businessprolocal.com/images/hero-day.jpg">
 <meta property="og:url" content="https://businessprolocal.com/">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
 <link rel="stylesheet" href="CUSTOMER/form-helpers.css">
 <script src="CUSTOMER/gold-word.js" defer></script>
 <script src="CUSTOMER/gold-finish.js" defer></script>
-<script>
-history.scrollRestoration = "manual";
-window.addEventListener("pageshow", event => {
-  if (!event.persisted && !location.hash) window.scrollTo(0, 0);
-});
-</script>
 <style>
-/* TEST PAGE — opens by double-click. Fonts load from ../fonts, demos from ../DEMOS */
 @font-face { font-family:"Playfair Display"; font-weight:800; src:url("fonts/playfair-800.ttf") format("truetype"); }
-@font-face { font-family:"Inter"; font-weight:400 700; src:url("fonts/inter.ttf") format("truetype"); }
 :root{
-  /* 11/1 (Tom): colors from the new snowy Old Port picture — navy night, electric blue, teal glow, purple sky, gold accents */
-  --black:#070b22; --panel:#0f1640; --line:#27367d;
-  --gold:#d4af37; --gold-hi:#f3d77a; --gold-lo:#9c7a1c;
-  --blue:#3b82f6; --teal:#22d3ee; --purple:#8b5cf6;
-  --ink:#eef2ff; --muted:#b9c3e8;
+  /* 11/12 (Tom): one-screen home page — white business look; no black and gold except the BP logo itself.
+     The picture is the page; 11/16: the 4 plans are cards in one row (Layout B), a little black OK. */
+  --black:#000; --ink:#000; --muted:#1a1a1a; --line:#e4e4e7; --soft:#f6f6f4;
+  --gold:#d4af37; --gold-hi:#f3d77a; --gold-lo:#9c7a1c; --gold-ink:#8a6a12;
   --display:"Playfair Display",Georgia,serif;
   --ui:"Inter",system-ui,"Segoe UI",Arial,sans-serif;
-  color-scheme:dark;
+  --nav-h:84px;
+  color-scheme:light;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(ellipse at 50% 0%,#1b1f5e 0%,var(--black) 60%) fixed,var(--black);color:var(--ink);font-family:var(--ui);line-height:1.6}
-/* circuit board behind everything (like the Admin page), in the picture's colors */
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("images/circuit-blue.svg") 0 0/480px repeat;opacity:.42}
-a{color:var(--teal)}
-.intro-splash{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:0;background:rgba(0,0,0,.88);cursor:pointer;overflow:hidden;opacity:1;transition:opacity .35s ease}
-.intro-splash > span{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,8vw,9rem);line-height:1.2;white-space:nowrap;color:var(--gold);text-shadow:0 0 24px rgba(212,175,55,.3);transform:rotate(-20deg);pointer-events:none}
-.intro-splash.is-fading{opacity:0;pointer-events:none}
-.intro-splash:focus-visible{outline:3px solid var(--gold);outline-offset:-6px}
-@media(prefers-reduced-motion:reduce){.intro-splash{transition:none}}
-.test-bar{background:linear-gradient(90deg,var(--purple),var(--blue),var(--teal));color:#fff;text-align:center;font-weight:700;font-size:.85rem;padding:6px 12px;letter-spacing:.06em}
-nav{position:sticky;top:0;z-index:5;background:rgba(7,11,34,.92);border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(34,211,238,.25);display:flex;flex-wrap:wrap;justify-content:center;gap:4px 22px;padding:10px 16px}
-nav a{color:var(--muted);text-decoration:none;font-size:.92rem;letter-spacing:.05em}
-nav a:hover,nav a:focus-visible{color:var(--teal)}
-.hero{position:relative;width:100%;aspect-ratio:1672/941;background:var(--black) url("images/hero.jpg?v=snow") center/contain no-repeat;overflow:hidden}
-.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 55% 45% at 50% 22%,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)}
-.titleimg{display:block;width:min(62%,900px);height:auto;filter:drop-shadow(0 0 8px rgba(0,0,0,.7)) drop-shadow(0 0 22px rgba(7,11,34,.8))}
-@media (max-width:700px){.titleimg{width:94%}}
+html,body{margin:0}
+body{background:#fff;color:var(--ink);font-family:var(--ui);line-height:1.45;overflow-x:hidden}
+a{color:inherit}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.card .fine{margin-top:8px;font-size:.8rem;opacity:.75}
-.title{position:absolute;z-index:1;left:0;right:0;top:1%;display:grid;justify-items:center;gap:6px;text-align:center;padding-inline:16px}
-.word{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,8vw,6.6rem);line-height:1;letter-spacing:.02em;
-  background:linear-gradient(180deg,var(--gold-hi),var(--gold) 45%,var(--gold-lo));-webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 4px 18px rgba(212,175,55,.35)) drop-shadow(0 2px 2px rgba(0,0,0,.9))}
-.rule{width:min(260px,40vw);height:2px;background:linear-gradient(90deg,transparent,var(--teal),var(--gold),var(--purple),transparent)}
-.tag{margin:0;font-size:clamp(.95rem,2vw,1.35rem);letter-spacing:.06em;text-shadow:0 2px 8px #000}
-.tag2{margin:0;font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(1rem,2.4vw,1.6rem);text-shadow:0 2px 10px #000}
-section.block{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:64px 20px}
-h2{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(1.7rem,4vw,2.6rem);text-align:center;margin:0 0 10px;text-wrap:balance}
-.lead{text-align:center;color:var(--muted);max-width:62ch;margin:0 auto 34px}
-.service-offer{margin:0 0 14px;text-align:center;color:var(--teal);font-weight:700}
-.cards-promo{margin:-8px 0 14px;text-align:center;color:var(--teal);font-weight:700;font-size:.95rem}
-.section-copy{max-width:760px;margin:0 auto 34px;color:var(--muted)}
-.grid{display:grid;gap:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
-.card{background:linear-gradient(160deg,#152060,var(--panel));border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:12px;padding:22px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
-.grid .card:nth-child(4n+2){border-top-color:var(--teal)}.grid .card:nth-child(4n+3){border-top-color:var(--purple)}.grid .card:nth-child(4n+4){border-top-color:var(--gold)}
-.card h3{margin:0 0 6px;color:var(--ink);font-size:1.1rem}
-.card p{margin:0;color:var(--muted);font-size:.95rem}
-.tiers{display:grid;gap:20px;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch}
-/* 11/2 (Tom): 4 plans — 4 across on big screens, 2 + 2 on tablets, stacked on phones (always symmetrical) */
-section.block#plans{max-width:1280px}
-@media(max-width:1099px){.tiers{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){.tiers{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
-.tier{background:linear-gradient(170deg,#152060,var(--panel));border:1px solid var(--line);box-shadow:0 8px 28px rgba(0,0,0,.35);border-radius:14px;padding:26px 22px;display:flex;flex-direction:column;gap:12px}
-.tier.top{border:2px solid var(--teal);box-shadow:0 0 0 1px rgba(34,211,238,.25),0 0 30px rgba(34,211,238,.25)}
-.tier h3{margin:0;font-family:var(--display);font-weight:800;font-size:1.8rem;color:var(--gold)}
-.price{font-size:1.05rem}
-.price b{font-size:1.6rem;color:var(--ink)}
-.tier .first-month-free{margin:0;color:var(--teal);font-weight:700}
-.tier .cards-promo{margin:-6px 0 0;font-size:.88rem;text-align:center}
-.tier .split-price{margin-top:-8px;color:var(--muted);font-size:.82rem}
-.tier ul{margin:0;padding-left:20px;color:var(--muted);font-size:.95rem;flex:1}
-.tier li{margin-bottom:4px}
-.tier .tier-for{margin:-6px 0 0;color:var(--ink);font-weight:700;font-size:.95rem}
-.tier .one-time{margin:0;color:var(--teal);font-weight:700}
-.tier .ready-time{margin:-6px 0 0;color:var(--muted);font-size:.88rem}
-.tier li.seo{color:var(--ink);font-weight:700}
-.demo-grid{display:grid;gap:20px;grid-template-columns:repeat(4,minmax(0,1fr))}
-.demo-card{display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(170deg,#152060,var(--panel));border:1px solid var(--blue);border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
-.demo-card img,.demo-placeholder{width:100%;aspect-ratio:4/3;object-fit:cover}
-.demo-placeholder{display:grid;place-items:center;background:var(--gold);color:#111;font-family:var(--display);font-size:2rem;text-align:center;padding:20px}
-.demo-card-body{display:flex;flex-direction:column;gap:12px;padding:20px;flex:1}
-.demo-card h3{margin:0;font-family:var(--display);color:var(--gold);font-size:1.4rem}
-.demo-card p{margin:0;color:var(--muted)}
-.demo-card .btn{margin-top:auto}
-.demo-card.your-business{background:linear-gradient(160deg,var(--purple),var(--blue));border-color:var(--teal)}
-.demo-card.your-business h3,.demo-card.your-business p{color:#fff}
-.demo-card.your-business .btn{background:var(--gold);border-color:var(--gold);color:#111}
-@media(max-width:1023px){.demo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){.demo-grid{grid-template-columns:1fr}}
-.btn{display:block;text-align:center;padding:12px 10px;border-radius:6px;font-weight:700;letter-spacing:.05em;text-decoration:none;font-size:.9rem}
-.btn.solid{background:linear-gradient(90deg,var(--blue),var(--teal));color:#fff;border:2px solid transparent;text-shadow:0 1px 2px rgba(0,0,0,.35)}
-.btn.ghost{border:2px solid var(--teal);color:var(--teal)}
-.btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.hero-demos{position:absolute;z-index:2;left:50%;bottom:6%;transform:translateX(-50%);width:36%;max-width:520px;display:block;background:none;border:0;transition:transform .2s ease,filter .2s ease}
-.hero-demos img{display:block;width:100%;height:auto}
-.hero-demos:focus-visible{outline:2px solid #fff;outline-offset:4px}
-.hero-demos:hover{transform:translateX(-50%) scale(1.04);filter:drop-shadow(0 0 18px rgba(34,211,238,.55))}
-@media(max-width:700px){.hero-demos:hover{transform:scale(1.03)}}
-#demos,#plans{scroll-margin-top:70px}
-@media(max-width:700px){
-  /* 10/29 (Tom): the whole picture shows on phones, couch and all — title above it, View Demos below it */
-  .hero{aspect-ratio:auto;background:var(--black);display:flex;flex-direction:column;align-items:center;gap:10px;padding:10px 0 16px}
-  .hero::before{content:"";display:block;order:1;width:100%;aspect-ratio:1672/941;background:url("images/hero.jpg?v=snow") center/contain no-repeat}
-  .hero::after{display:none}
-  .hero .title{position:static;order:0}
-  .hero-demos{position:static;order:2;transform:none;width:80%}
-  #demos,#plans{scroll-margin-top:120px}
-}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-demos{transition:none}}
-.story{max-width:760px;margin:0 auto;background:linear-gradient(160deg,#152060,var(--panel));border-left:4px solid var(--teal);border-radius:0 12px 12px 0;padding:26px 28px}
-.story p{margin:0 0 14px;color:var(--muted)}
-.story .sig{margin:0;color:var(--ink);font-weight:700}
-form{max-width:640px;margin:0 auto;display:grid;gap:14px}
-label{display:grid;gap:6px;font-weight:600;font-size:.92rem}
-input,textarea,select{width:100%;padding:12px;border-radius:6px;border:1px solid var(--line);background:#0a1030;color:var(--ink);font:inherit}
-input:focus,textarea:focus,select:focus{outline:2px solid var(--teal);outline-offset:1px}
-.two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-#formMsg{text-align:center;color:var(--teal);min-height:1.4em;margin:0}
-.question-field textarea{min-height:74px;resize:vertical}
-[hidden]{display:none !important}
-.plans-thanks{text-align:center;color:var(--teal);font-weight:700;margin:0 auto 18px}
-footer{margin-top:70px;border-top:1px solid var(--line);background:rgba(7,11,34,.7);padding:30px 16px;text-align:center;color:var(--muted);font-size:.92rem}
-footer .brand{font-family:var(--display);font-weight:800;color:var(--gold);font-size:1.3rem}
-footer a{color:inherit;text-underline-offset:3px}
 
-/* 11/3 (Tom): a real menu — every item is its own page (SEO). Business Pro sits in the middle and is the Home link.
-   Phones: the brand on top and a ☰ Menu that opens the page list. */
-nav.site-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px 22px}
-nav.site-nav .nav-side{display:flex;gap:4px 22px;flex-wrap:wrap}
+/* ---------- NAV (white, same links as every page; only the BP logo keeps its black and gold) ---------- */
+nav.site-nav{position:sticky;top:0;z-index:20;height:var(--nav-h);background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);box-shadow:0 2px 14px rgba(0,0,0,.06);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px 22px;padding:0 16px}
+nav.site-nav a{color:#000;font-weight:700;text-decoration:none;font-size:.92rem;letter-spacing:.05em}
+nav.site-nav a:hover,nav.site-nav a:focus-visible{color:var(--muted);text-decoration:underline;text-underline-offset:6px}
+nav.site-nav .nav-side{display:flex;flex-wrap:wrap;align-items:center}
 nav.site-nav .nav-side:first-child{justify-content:flex-end}
-nav.site-nav .nav-brand{display:block;line-height:0;border-radius:50%;box-shadow:0 0 0 1px rgba(212,175,55,.55),0 0 14px rgba(212,175,55,.25)}nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:50%}nav.site-nav .nav-side{gap:4px 0!important;align-items:center}nav.site-nav .nav-side a{padding:4px 16px;border-radius:0;border-top:0;border-right:0;border-bottom:0}nav.site-nav .nav-side a+a{border-left:1px solid rgba(212,175,55,.55)}
-nav.site-nav a.current{color:var(--teal);text-decoration:underline;text-underline-offset:6px}
-nav.site-nav .nav-menu{display:none}
-.nav-menu summary{list-style:none;cursor:pointer;color:var(--ink);font-weight:700;border:1px solid var(--line);border-radius:10px;padding:8px 18px;text-align:center}
-.nav-menu summary::-webkit-details-marker{display:none}
-.nav-menu-list{display:grid;gap:6px;margin-top:8px}
-.nav-menu-list a{display:block;padding:12px;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:1rem}
-.page-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:10px auto 0}
-.footer-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin:8px 0}
-.footer-nav a{color:var(--muted);text-decoration:none}
-/* 11/10 (Tom): phones keep the nav bar look (no ☰ Menu button) — 3 links stacked on each side, logo in the middle */
+nav.site-nav .nav-side a{padding:4px 16px}
+nav.site-nav .nav-side a+a{border-left:1px solid var(--line)}
+nav.site-nav .nav-brand{display:block;line-height:0;border-radius:50%;box-shadow:0 0 0 1px rgba(212,175,55,.6),0 0 14px rgba(212,175,55,.3)}
+nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:50%}
+
+/* ---------- ONE-SCREEN STAGE ---------- */
+.stage{position:relative;overflow:hidden;min-height:calc(100vh - var(--nav-h));display:grid;grid-template-columns:minmax(0,1fr);gap:0 clamp(14px,1.6vw,28px);padding:0 clamp(12px,1.6vw,28px) 14px}
+/* the picture: full width across the top, full color, fading out into the white page at its bottom edge.
+   (11/12 Tom: the picture fades into the white — no white wash over the picture) */
+/* 11/12 (Tom): the picture IS the page (the skin) — it fills the whole screen behind everything,
+   melting into white at the sides and bottom; the words, plans and side lists sit on top of it */
+.stage::before{content:"";position:absolute;z-index:0;inset:0;background:url("images/hero-day.jpg?v=4") center top/cover no-repeat;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 86%,transparent 100%),linear-gradient(to right,transparent 0,#000 3%,#000 97%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to bottom,#000 0,#000 86%,transparent 100%),linear-gradient(to right,transparent 0,#000 3%,#000 97%,transparent 100%);
+  mask-composite:intersect}
+.stage > *{position:relative;z-index:1}
+
+/* center column: words over the fade, then the plans */
+/* 11/12 (Tom): plans sit in the 4 corners so the picture shows in the middle */
+.center{display:grid;grid-template-columns:clamp(220px,18vw,300px) minmax(0,1fr) clamp(220px,18vw,300px);grid-template-rows:auto 1fr auto;
+  grid-template-areas:"c1 head c2" ". . ." "c3 lines c4";gap:12px;padding:14px 0 0;text-align:center}
+.headline{grid-area:head;align-self:start;justify-self:center;text-shadow:0 0 3px #fff,0 0 8px #fff,0 0 16px rgba(255,255,255,.95),0 0 26px rgba(255,255,255,.8)}
+.lines{grid-area:lines;align-self:end;display:flex;flex-direction:column;align-items:center;gap:8px}
+.c1{grid-area:c1;align-self:start}.c2{grid-area:c2;align-self:start}.c3{grid-area:c3;align-self:end}.c4{grid-area:c4;align-self:end}
+.pitch{margin:10px auto 0;max-width:900px;text-wrap:balance;font-size:clamp(.82rem,.95vw,1rem);font-weight:700;line-height:1.35;color:#000;text-decoration:none}
+.pitch a{color:#000;font-weight:800;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.pitch a:hover,.pitch a:focus-visible{color:#1a1a1a;text-decoration-thickness:3px}
+.why{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:6px}
+.why-title{margin:0;font-family:var(--display);font-weight:800;font-style:italic;font-size:clamp(1rem,1.3vw,1.3rem);color:#000}
+.why ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,auto));gap:2px 26px;text-align:left}
+.why li{position:relative;padding-left:20px;font-size:clamp(.78rem,.9vw,.95rem);font-weight:600;color:#000}
+.why li::before{content:"✓";position:absolute;left:0;font-weight:900}
+.why b{font-weight:900}
+.center h1{margin:0;font-family:var(--display);font-weight:800;color:var(--black);font-size:clamp(1.2rem,1.9vw,2rem);line-height:1.1;text-wrap:balance}
+.center .motto{margin:4px 0 0;font-family:var(--display);font-style:italic;font-weight:800;color:#000;font-size:clamp(.9rem,1.2vw,1.1rem)}
+.tier{display:flex;flex-direction:column;color:inherit;text-decoration:none;text-align:left;transition:transform .15s ease,box-shadow .15s ease;background:none;border:0;box-shadow:none;text-shadow:0 0 3px #fff,0 0 8px #fff,0 0 16px rgba(255,255,255,.95),0 0 26px rgba(255,255,255,.8)}
+.tier:hover,.tier:focus-visible{transform:translateY(-3px);outline:none}
+.tier:hover h2{text-decoration:underline;text-underline-offset:5px}
+.tier:focus-visible h2{text-decoration:underline;text-underline-offset:5px}
+.tier-head{background:transparent;border-bottom:0;padding:8px 10px 6px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.tier-head h2{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(1.15rem,1.6vw,1.55rem);color:var(--black)}
+.tier-head p{margin:2px 0 0;color:#000;font-weight:700;font-size:.8rem}
+.tier ul{margin:0;padding:7px 10px 6px;list-style:none}
+.tier li{position:relative;padding-left:18px;margin-bottom:2px;font-size:.8rem;font-weight:700;color:#000}
+.tier li::before{content:"✓";position:absolute;left:0;color:var(--ink);font-weight:700}
+.custom,.foot{text-shadow:0 0 3px #fff,0 0 8px #fff,0 0 16px rgba(255,255,255,.95),0 0 26px rgba(255,255,255,.8)}
+.custom{margin:4px 0 0;font-size:.92rem;color:var(--muted)}
+.custom a{color:var(--black);font-weight:700;text-underline-offset:3px}
+.foot{margin:2px 0 0;font-size:.78rem;color:var(--muted)}
+.foot a{color:inherit;text-underline-offset:3px}
+
+
+
+/* no boxes — a soft white glow with no edges sits behind each plan so the small words stay readable over the picture */
+.tier{position:relative;isolation:isolate;overflow:visible}
+.tier::before{content:"";position:absolute;z-index:-1;inset:-18px -26px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.82),rgba(255,255,255,.55) 55%,rgba(255,255,255,0));pointer-events:none}
+.headline{position:relative;isolation:isolate}
+.headline::before{content:"";position:absolute;z-index:-1;inset:-14px -40px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.7),rgba(255,255,255,.4) 60%,rgba(255,255,255,0));pointer-events:none}
+/* short laptop screens: trim the plan lists so it all fits on one screen */
+
+/* 11/12 (Tom): all letters darker — heaviest weights in pure black, with a stronger white glow so they stand out on the picture */
+.stage,.stage a{color:#000}
+.tier li,.tier-head p,.custom,.foot,.pitch,.center .motto,.why li{font-weight:800}
+.tier li::before{font-weight:900}
+.tier,.headline,.custom,.foot,.why{text-shadow:0 0 2px #fff,0 0 4px #fff,0 0 10px #fff,0 0 18px rgba(255,255,255,.95),0 0 28px rgba(255,255,255,.85)}
+@media(max-height:760px) and (min-width:1001px){.tier li{font-size:.7rem;margin-bottom:0;line-height:1.3}.tier ul{padding:4px 8px 5px}.tier-head{padding:5px 8px 4px}.tier-head h2{font-size:1.1rem}.center{gap:6px}.center h1{font-size:clamp(1.1rem,1.75vw,1.6rem)}.center .motto{font-size:.85rem}.tier-head p{font-size:.74rem}.stage{padding-bottom:8px}}
+
+/* tablets + phones: stack and scroll */
+@media(max-width:1000px){
+  .stage{grid-template-columns:1fr;padding:0 12px 20px;gap:14px}
+  .stage::before{bottom:auto;height:56.3vw;background-size:100% auto;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 78%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 78%,transparent 100%)}
+  .center{grid-column:1/-1;order:-1;padding-top:calc(56.3vw - 40px);grid-template-columns:1fr 1fr;grid-template-rows:auto;grid-template-areas:"head head" "c1 c2" "c3 c4" "lines lines";gap:10px}
+  .c1,.c2,.c3,.c4{align-self:stretch}
+  .why ul{grid-template-columns:1fr}
+
+  .tier li{white-space:normal}
+}
 @media(max-width:820px){
-  nav.site-nav{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:0 10px;padding:8px}
-  nav.site-nav .nav-side{flex-direction:column;flex-wrap:nowrap;align-items:stretch}
+  nav.site-nav{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:0 10px;padding:8px;height:auto}
+  nav.site-nav .nav-side{flex-direction:column;align-items:stretch}
   nav.site-nav .nav-side:first-child a{text-align:right}
   nav.site-nav .nav-brand + .nav-side a{text-align:left}
   nav.site-nav .nav-side a{padding:6px 4px;font-size:.82rem;white-space:nowrap}
-  nav.site-nav .nav-side a+a{border-left:0;border-top:1px solid rgba(212,175,55,.55)}
+  nav.site-nav .nav-side a+a{border-left:0;border-top:1px solid var(--line)}
   nav.site-nav .nav-brand img{width:56px;height:56px}
-  nav.site-nav .nav-menu{display:none!important}
 }
+@media(max-width:520px){
+  .tier-head{min-height:64px}
+  .tier ul{padding:8px 10px 2px}
+  .tier li{font-size:.76rem}
+}
+/* 11/16 (Tom): tablets + phones, each plan is a card (border, rounded corners, light shadow) like the 3-package ads */
+@media(max-width:1000px){
+  .tier{background:#fff;border:1px solid #d6d6d6;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.10);text-shadow:none;overflow:hidden}
+  .tier::before{display:none}
+  .tier-head{background:#f4f4f4;border-bottom:1px solid #e2e2e2;padding:10px 8px 8px}
+  .tier ul{padding:10px 10px 8px}
+  .tier-head{min-height:88px}
+  .tier:hover,.tier:focus-visible{box-shadow:0 8px 20px rgba(0,0,0,.16)}
+}
+
+/* 11/16 (Tom picked Layout B): computer = 4 cards in one row across the bottom, Professional Plus raised as Most popular */
+@media(min-width:1001px){
+  .center{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto 1fr auto auto;
+    grid-template-areas:"head head head head" ". . . ." "c1 c2 c3 c4" "lines lines lines lines";
+    max-width:1240px;width:100%;margin:0 auto;gap:14px 16px;min-height:calc(100vh - var(--nav-h) - 14px)}
+  .c1,.c2,.c3,.c4{align-self:stretch}
+  .tier{background:rgba(255,255,255,.94);border:1px solid #d6d6d6;border-radius:16px;box-shadow:0 6px 22px rgba(0,0,0,.18);text-shadow:none;overflow:hidden}
+  .tier::before{display:none}
+  .tier-head{background:#f4f4f4;border-bottom:1px solid #e2e2e2;padding:10px 10px 8px;min-height:100px}
+  .tier ul{padding:10px 14px 10px}
+  .tier li{font-size:.84rem;margin-bottom:3px}
+  .tier:hover,.tier:focus-visible{box-shadow:0 10px 28px rgba(0,0,0,.24)}
+  .tier.c3 .tier-head::before{content:"MOST POPULAR";display:block;margin:0 auto 4px;padding:2px 10px;border-radius:999px;background:#111;color:#fff;font-size:.66rem;font-weight:900;letter-spacing:.08em}
+  .lines{margin-top:4px}
+}
+@media(max-height:760px) and (min-width:1001px){
+  .tier li{font-size:.72rem;margin-bottom:0;line-height:1.3}
+  .tier-head{min-height:80px;padding:6px 8px 5px}
+  .tier ul{padding:6px 10px 6px}
+  .why{margin-bottom:0}
+}
+/* 11/16 (Tom): a card turns black when you point at it or click/tap it — computer, tablet and phone */
+  .tier{transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease,border-color .15s ease}
+  .tier:hover,.tier:focus-visible,.tier:active,.tier.picked{background:#111;border-color:#111}
+  .tier:hover .tier-head,.tier:focus-visible .tier-head,.tier:active .tier-head,.tier.picked .tier-head{background:#000;border-bottom-color:#333}
+  .tier:hover h2,.tier:hover p,.tier:hover li,.tier:hover li::before,
+  .tier:focus-visible h2,.tier:focus-visible p,.tier:focus-visible li,.tier:focus-visible li::before,
+  .tier:active h2,.tier:active p,.tier:active li,.tier:active li::before,
+  .tier.picked h2,.tier.picked p,.tier.picked li,.tier.picked li::before{color:#fff}
+  .tier.c3:hover .tier-head::before,.tier.c3:focus-visible .tier-head::before,.tier.c3:active .tier-head::before,.tier.c3.picked .tier-head::before{background:#fff;color:#111}
 </style>
 <script type="application/ld+json">
 {
@@ -176,7 +180,7 @@ nav.site-nav .nav-menu{display:none}
   "@type": "ProfessionalService",
   "name": "Business Pro Local",
   "url": "https://businessprolocal.com/",
-  "image": "https://businessprolocal.com/images/hero.jpg",
+  "image": "https://businessprolocal.com/images/hero-day.jpg",
   "email": "businessprolocal207@gmail.com",
   "address": {
     "@type": "PostalAddress",
@@ -185,47 +189,102 @@ nav.site-nav .nav-menu{display:none}
   },
   "areaServed": "Maine",
   "priceRange": "$199+",
-  "description": "Websites, online booking and online stores for small businesses across Maine."
+  "description": "Websites, online booking, online stores and bookkeeping for small businesses across Maine."
 }
 </script>
-<script>(function(){var m={"#why-online":"why-online/","#what":"what-you-get/","#story":"my-story/","#demos":"demos/","#start":"get-started/","#plans":"get-started/"};var t=m[location.hash];if(t)location.replace(t);})();</script>
+<script>(function(){var m={"#why-online":"why-online/","#what":"what-you-get/","#story":"my-story/","#start":"get-started/","#plans":"get-started/"};var t=m[location.hash];if(t)location.replace(t);})();</script>
 </head>
 <body>
 <nav class="site-nav" aria-label="Pages">
   <div class="nav-side" data-no-gold><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="my-story/">My Story</a></div>
   <a class="nav-brand" href="./" aria-current="page"><img src="images/bp-logo.png" width="64" height="64" alt="Business Pro home"></a>
-  <div class="nav-side" data-no-gold><a href="demos/">Demos</a><a href="faq/">FAQ</a><a href="get-started/">Get Started</a></div>
-  <details class="nav-menu"><summary>☰ Menu</summary><div class="nav-menu-list"><a href="./" aria-current="page">Home</a><a href="why-online/">Why Online</a><a href="what-you-get/">What You Get</a><a href="my-story/">My Story</a><a href="demos/">Demos</a><a href="faq/">FAQ</a><a href="get-started/">Get Started</a></div></details>
+  <div class="nav-side" data-no-gold><a href="faq/">FAQ</a><a href="get-started/">Get Started</a></div>
 </nav>
 
-<section class="hero" aria-label="Business Pro">
-  <div class="title">
-    <h1 class="sr">Business Pro</h1>
-    <img class="titleimg" src="images/title3.png" width="1400" height="358" alt="Business Pro. Start small, grow big, join the Business Pro family. Bring your business to every customer's couch.">
-  </div>
-  <a class="hero-demos" href="demos/"><img src="images/view-demos-blue.png" alt="View Demos" width="1200" height="400"></a>
-</section>
-
-<section class="block" id="who">
-  <h2>Built for local businesses</h2>
-  <p class="lead">Set up for the way your business works, with new industries added all the time.</p>
-  <div class="grid">
-    <div class="card"><h3>Barbershops</h3><p>Booking, chairs, tips and chair renters.</p></div>
-    <div class="card"><h3>Hair salons</h3><p>Stylists, services and appointments.</p></div>
-    <div class="card"><h3>Retail &amp; gift shops</h3><p>An online storefront that keeps selling after the season ends.</p></div>
-    <div class="card"><h3>Auto shops</h3><p>Service menus, estimates and scheduling.</p></div>
-    <div class="card"><h3>Tattoo &amp; piercing shops</h3><p>Artist booking, deposits and portfolio photos.</p></div>
-    <div class="card"><h3>Home services</h3><p>Cleaning, landscaping and snow plowing, with estimates and scheduling.</p></div>
-    <div class="card"><h3>Pet services</h3><p>Grooming, boarding and vet visits, with pet details and reminders.</p></div>
-    <div class="card"><h3>Nail salons &amp; spas</h3><p>Manicures, massages and treatments, booked online.</p></div>
-  </div>
-<div class="page-cta"><a class="btn solid" href="get-started/">Get Started</a></div>
-</section>
-
-<footer>
-  <div class="brand">Business Pro Local</div>
-  <p>Serving all of Maine · <a href="sms:+12075604262">Text us</a> · Message us: <a href="mailto:businessprolocal207@gmail.com">businessprolocal207@gmail.com</a></p>
-</footer>
-
+<main class="stage">
+  <section class="center" aria-label="Plans">
+    <div class="headline">
+      <h1>Websites, booking and online stores for Maine businesses</h1>
+      <p class="motto">Start small, grow big, join the Business Pro family.</p>
+      <p class="pitch">You’ve seen the TV ads from AI and website builders like Base44, Wix, GoDaddy and Squarespace saying they can build your business website in minutes. Here’s <b>what they don’t tell you</b>.<!-- 11/16: link to pitch/ comes back when the pitch page is built --></p>
+    </div>
+      <a class="tier c1" href="get-started/">
+        <div class="tier-head"><h2>ProGo</h2><p>Your website</p></div>
+        <ul>
+          <li>Google-ready SEO</li>
+          <li>Google Business Profile setup</li>
+          <li>5 pages with their own links</li>
+          <li>Free logo design</li>
+          <li>Your colors and photos</li>
+          <li>Tap to call, email, directions</li>
+          <li>4 rounds of changes</li>
+          <li>One-time, no monthly fee</li>
+        </ul>
+      </a>
+      <a class="tier c2" href="get-started/">
+        <div class="tier-head"><h2>Professional</h2><p>Customers ask for quotes</p></div>
+        <ul>
+          <li>Google-ready SEO</li>
+          <li>Google Business Profile setup</li>
+          <li>Full Business Pro website</li>
+          <li>Online quote requests</li>
+          <li>A text when a request comes in</li>
+          <li>Owner portal for every job</li>
+          <li>Hosting, security, backups</li>
+          <li>Local tech support</li>
+          <li>100 free business cards</li>
+          <li>First month free</li>
+        </ul>
+      </a>
+      <a class="tier c3" href="get-started/">
+        <div class="tier-head"><h2>Professional Plus</h2><p>Book and pay online</p></div>
+        <ul>
+          <li>Everything in Professional</li>
+          <li>Online booking, 24/7</li>
+          <li>Booking texts + reminders</li>
+          <li>Staff portals + schedules</li>
+          <li>Point of sale + tips</li>
+          <li>Staff pay reports</li>
+          <li>Bookkeeping</li>
+          <li>Local tech support</li>
+          <li>First month free</li>
+        </ul>
+      </a>
+      <a class="tier c4" href="get-started/">
+        <div class="tier-head"><h2>Business Pro</h2><p>Sell products online</p></div>
+        <ul>
+          <li>Everything in Professional Plus</li>
+          <li>Online store + shopping cart</li>
+          <li>Product photos + pricing</li>
+          <li>Orders, packing, shipping</li>
+          <li>Inventory + promotions</li>
+          <li>Maine sales tax added</li>
+          <li>Local tech support</li>
+          <li>First month free</li>
+        </ul>
+      </a>
+    <div class="lines">
+    <div class="why">
+      <p class="why-title">The Business Pro difference</p>
+      <ul>
+        <li><b>We build it for you.</b> No typing prompts, no fixing it yourself.</li>
+        <li><b>You approve it</b> before it ever goes live.</li>
+        <li><b>A real person in Maine</b>, not a chat box, when you need help.</li>
+        <li><b>One company</b> for your website, booking and books.</li>
+      </ul>
+    </div>
+    <p class="custom">Don't see your business? <a href="get-started/?type=Custom">We build custom too.</a></p>
+    <p class="foot">Proudly serving all of Maine. Have a question? <a href="sms:+12075604262">Message us</a> anytime.</p>
+    </div>
+  </section>
+</main>
+<script>
+/* 11/16 (Tom): tapping a plan turns its card black for a moment, then opens Get Started */
+document.querySelectorAll('a.tier').forEach(function(a){a.addEventListener('click',function(e){
+  if(e.metaKey||e.ctrlKey||e.shiftKey)return; e.preventDefault();
+  document.querySelectorAll('a.tier.picked').forEach(function(x){x.classList.remove('picked')});
+  a.classList.add('picked'); setTimeout(function(){location.href=a.href},350);});});
+window.addEventListener('pageshow',function(){document.querySelectorAll('a.tier.picked').forEach(function(x){x.classList.remove('picked')})});
+</script>
 </body>
 </html>
