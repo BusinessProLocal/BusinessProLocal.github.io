@@ -173,6 +173,15 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
   .tier:active h2,.tier:active p,.tier:active li,.tier:active li::before,
   .tier.picked h2,.tier.picked p,.tier.picked li,.tier.picked li::before{color:#fff}
   .tier.c3:hover .tier-head::before,.tier.c3:focus-visible .tier-head::before,.tier.c3:active .tier-head::before,.tier.c3.picked .tier-head::before{background:#fff;color:#111}
+
+/* 11/16 (Tom): answer "what they don't tell you" right under the line */
+.dont{margin:6px auto 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,auto));gap:2px 26px;justify-content:center;text-align:left}
+.dont li{position:relative;padding-left:20px;font-size:clamp(.78rem,.9vw,.95rem);font-weight:700;color:#000}
+.dont li::before{content:"✗";position:absolute;left:0;color:#b00020;font-weight:900}
+.dont b{font-weight:900}
+.dont li:last-child:nth-child(odd){grid-column:1/-1;justify-self:center}
+@media(max-height:760px) and (min-width:1001px){.dont{margin-top:3px}.dont li{font-size:.76rem}.pitch{margin-top:6px}.lines{margin-top:0}.center{row-gap:8px}}
+@media(max-width:820px){.dont{grid-template-columns:1fr;max-width:340px}.dont li:last-child:nth-child(odd){justify-self:start}}
 </style>
 <script type="application/ld+json">
 {
@@ -206,7 +215,14 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
     <div class="headline">
       <h1>Websites, booking and online stores for Maine businesses</h1>
       <p class="motto">Start small, grow big, join the Business Pro family.</p>
-      <p class="pitch">You’ve seen the TV ads from AI and website builders like Base44, Wix, GoDaddy and Squarespace saying they can build your business website in minutes. Here’s <b>what they don’t tell you</b>.<!-- 11/16: link to pitch/ comes back when the pitch page is built --></p>
+      <p class="pitch">You’ve seen the TV ads from AI and website builders like Base44, Wix, GoDaddy and Squarespace saying they can build your business website in minutes. Here’s what they don’t tell you:</p>
+      <ul class="dont">
+        <li><b>You build it yourself.</b> Every word, photo and fix is on you.</li>
+        <li><b>Help is a chat box</b>, not a real person in Maine.</li>
+        <li><b>Booking, payments and stores</b> usually cost more every month.</li>
+        <li><b>Getting found on Google</b> is up to you.</li>
+        <li><b>Testing is on you too.</b> Every page, link and button has to be checked, and that takes a long time.</li>
+      </ul>
     </div>
       <a class="tier c1" href="get-started/">
         <div class="tier-head"><h2>ProGo</h2><p>Your website</p></div>
