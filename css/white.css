@@ -1,0 +1,66 @@
+/* 11/16 (Tom): every inside page matches the home page — mostly white and black.
+   Loaded last on each page so it wins over that page's old navy/teal/gold colors. Only the BP logo keeps black and gold. */
+:root{--black:#fff;--panel:#fff;--line:#e4e4e7;--ink:#000;--muted:#1a1a1a;--blue:#111;--teal:#000;--purple:#111;--gold:#000;--gold-hi:#000;--gold-lo:#000;color-scheme:light}
+html body{background:#fff!important;color:#000}
+body::before{display:none!important}
+a{color:#000}
+
+/* NAV — same as the home page */
+nav.site-nav{position:sticky;top:0;z-index:20;height:84px;background:rgba(255,255,255,.96);border-bottom:1px solid #e4e4e7;box-shadow:0 2px 14px rgba(0,0,0,.06);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px 22px;padding:0 16px}
+nav.site-nav a{color:#000;font-weight:700;text-decoration:none;font-size:.92rem;letter-spacing:.05em}
+nav.site-nav a:hover,nav.site-nav a:focus-visible,nav.site-nav a[aria-current="page"]{color:#000;text-decoration:underline;text-underline-offset:6px}
+nav.site-nav .nav-side{display:flex;flex-wrap:wrap;align-items:center;gap:0!important}
+nav.site-nav .nav-side:first-child{justify-content:flex-end}
+nav.site-nav .nav-side a{padding:4px 16px}
+nav.site-nav .nav-side a+a{border-left:1px solid #e4e4e7}
+nav.site-nav .nav-brand{display:block;line-height:0;border-radius:50%;box-shadow:0 0 0 1px rgba(212,175,55,.6),0 0 14px rgba(212,175,55,.3)}
+nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:50%}
+nav.site-nav .nav-menu{display:none!important}
+@media(max-width:820px){
+  nav.site-nav{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:0 10px;padding:8px;height:auto}
+  nav.site-nav .nav-side{flex-direction:column;flex-wrap:nowrap;align-items:stretch}
+  nav.site-nav .nav-side:first-child a{text-align:right}
+  nav.site-nav .nav-brand + .nav-side a{text-align:left}
+  nav.site-nav .nav-side a{padding:6px 4px;font-size:.82rem;white-space:nowrap}
+  nav.site-nav .nav-side a+a{border-left:0;border-top:1px solid #e4e4e7}
+  nav.site-nav .nav-brand img{width:56px;height:56px}
+}
+
+/* headings + words */
+h1,h2,.word,.tag2{color:#000!important;-webkit-text-fill-color:#000;background:none!important;filter:none!important;text-shadow:none!important}
+h2{font-family:"Playfair Display",Georgia,serif}
+.lead,.section-copy,.card p,.tier ul,.story p,.demo-card p,.faq-list details p,.tier .split-price,.tier .ready-time{color:#1a1a1a}
+.service-offer,.cards-promo,.tier .first-month-free,.tier .one-time,.plans-thanks,#formMsg{color:#000}
+.rule{background:#000}
+
+/* cards — white with a light border, rounded corners and a soft shadow, like the home page plan cards */
+.card,.tier,.demo-card,.story,.faq-list details{background:#fff!important;border:1px solid #d6d6d6!important;border-radius:16px!important;box-shadow:0 4px 14px rgba(0,0,0,.08)!important;color:#000}
+.card h3,.tier h3,.demo-card h3,.faq-list summary,.story .sig,.price b{color:#000!important}
+.tier.top{border:2px solid #111!important}
+.faq-list summary::after{color:#000}
+.demo-card.your-business{background:#111!important;border-color:#111!important}
+.demo-card.your-business h3,.demo-card.your-business p{color:#fff!important}
+.demo-card.your-business .btn{background:#fff!important;color:#111!important;border-color:#fff!important}
+.demo-placeholder{background:#f4f4f4;color:#000}
+
+/* buttons — black, rounded */
+.btn{border-radius:999px}
+.btn.solid{background:#111!important;color:#fff!important;border:2px solid #111!important;text-shadow:none}
+.btn.solid:hover,.btn.solid:focus-visible{background:#000!important}
+.btn.ghost{border:2px solid #111;color:#111}
+.btn:focus-visible{outline:2px solid #000}
+
+/* forms */
+input,textarea,select{background:#fff!important;color:#000!important;border:1px solid #cfcfd4!important;border-radius:10px}
+input:focus,textarea:focus,select:focus{outline:2px solid #000}
+label{color:#000}
+
+/* test bar + splash */
+.test-bar{background:#111!important;color:#fff}
+.intro-splash{background:rgba(255,255,255,.92)!important}
+.intro-splash > span{color:#000!important;text-shadow:none!important}
+
+/* footer — same line as the home page */
+footer{margin-top:50px;border-top:1px solid #e4e4e7;background:#fff!important;color:#1a1a1a;padding:26px 16px;font-weight:600}
+footer .brand{color:#000!important}
+footer a{color:#000}
