@@ -48,7 +48,7 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
 
 /* TOP: the street picture fading into white, with the title on it */
 .top{position:relative;text-align:center;padding:clamp(40px,9vw,110px) 16px 18px}
-.top::before{content:"";position:absolute;inset:0;z-index:0;background:url("images/hero-day.jpg?v=4") center 30%/cover no-repeat;
+.top::before{content:"";position:absolute;inset:0;z-index:0;background:url("images/hero-real.jpg?v=1") center 30%/cover no-repeat;
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 45%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 45%,transparent 100%)}
 .top > *{position:relative;z-index:1}
 .top h1{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.1;text-shadow:0 0 3px #fff,0 0 10px #fff,0 0 22px rgba(255,255,255,.95),0 0 34px rgba(255,255,255,.85)}
@@ -90,6 +90,7 @@ main{max-width:1100px;margin:0 auto;padding:0 16px 40px}
 .cta:hover,.cta:focus-visible{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.25);outline:none}
 .foot{margin:34px 0 0;text-align:center;font-size:.9rem;color:var(--muted);font-weight:600}
 .foot a{text-underline-offset:3px}
+.credit{display:block;margin-top:2px;font-size:.68rem;font-weight:600;opacity:.8}
 </style>
 </head>
 <body>
@@ -123,7 +124,7 @@ main{max-width:1100px;margin:0 auto;padding:0 16px 40px}
     <a class="cta" href="get-started/">Get Started</a>
   </section>
 
-  <p class="foot">Proudly serving all of Maine. Have a question? <a href="sms:+12075604262">Message us</a> anytime.</p>
+  <p class="foot">Proudly serving all of Maine. Have a question? <a href="sms:+12075604262">Message us</a> anytime. <span class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Hay_Building_-_Portland_ME_-_IMG_7732.JPG" target="_blank" rel="noopener">Hay Building, Portland, ME</a> via Wikimedia Commons.</span></p>
 </main>
 </body>
 </html>

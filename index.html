@@ -52,7 +52,7 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
    (11/12 Tom: the picture fades into the white — no white wash over the picture) */
 /* 11/12 (Tom): the picture IS the page (the skin) — it fills the whole screen behind everything,
    melting into white at the sides and bottom; the words, plans and side lists sit on top of it */
-.stage::before{content:"";position:absolute;z-index:0;inset:0;background:url("images/hero-day.jpg?v=4") center top/cover no-repeat;
+.stage::before{content:"";position:absolute;z-index:0;inset:0;background:url("images/hero-real.jpg?v=1") center top/cover no-repeat;
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 86%,transparent 100%),linear-gradient(to right,transparent 0,#000 3%,#000 97%,transparent 100%);
   -webkit-mask-composite:source-in;
   mask-image:linear-gradient(to bottom,#000 0,#000 86%,transparent 100%),linear-gradient(to right,transparent 0,#000 3%,#000 97%,transparent 100%);
@@ -182,6 +182,7 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
 .dont li:last-child:nth-child(odd){grid-column:1/-1;justify-self:center}
 @media(max-height:760px) and (min-width:1001px){.dont{margin-top:3px}.dont li{font-size:.76rem}.pitch{margin-top:6px}.lines{margin-top:0}.center{row-gap:8px}}
 @media(max-width:820px){.dont{grid-template-columns:1fr;max-width:340px}.dont li:last-child:nth-child(odd){justify-self:start}}
+.credit{display:block;margin-top:2px;font-size:.68rem;font-weight:600;opacity:.8}
 </style>
 <script type="application/ld+json">
 {
@@ -290,7 +291,7 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
       </ul>
     </div>
     <p class="custom">Don't see your business? <a href="get-started/?type=Custom">We build custom too.</a></p>
-    <p class="foot">Proudly serving all of Maine. Have a question? <a href="sms:+12075604262">Message us</a> anytime.</p>
+    <p class="foot">Proudly serving all of Maine. Have a question? <a href="sms:+12075604262">Message us</a> anytime. <span class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Hay_Building_-_Portland_ME_-_IMG_7732.JPG" target="_blank" rel="noopener">Hay Building, Portland, ME</a> via Wikimedia Commons.</span></p>
     </div>
   </section>
 </main>
