@@ -2,7 +2,8 @@
    Loaded last on each page so it wins over that page's old navy/teal/gold colors. Only the BP logo keeps black and gold. */
 :root{--black:#fff;--panel:#fff;--line:#e4e4e7;--ink:#000;--muted:#1a1a1a;--blue:#111;--teal:#000;--purple:#111;--gold:#000;--gold-hi:#000;--gold-lo:#000;color-scheme:light}
 html body{background:#fff!important;color:#000}
-body::before{display:none!important}
+/* 11/16 (Tom): the motherboard (circuit board) look stays — faint black lines on the white */
+body::before{content:""!important;display:block!important;position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("../images/circuit-black.svg") 0 0/480px repeat!important;opacity:.13!important}
 a{color:#000}
 
 /* NAV — same as the home page */

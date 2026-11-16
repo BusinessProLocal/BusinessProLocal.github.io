@@ -25,7 +25,7 @@ window.addEventListener("pageshow", event => {
 <style>
 /* TEST PAGE — opens by double-click. Fonts load from ../fonts, demos from ../DEMOS */
 @font-face { font-family:"Playfair Display"; font-weight:800; src:url("fonts/playfair-800.ttf") format("truetype"); }
-@font-face { font-family:"Inter"; font-weight:400 700; src:url("fonts/inter.ttf") format("truetype"); }
+
 :root{
   /* 11/1 (Tom): colors from the new snowy Old Port picture — navy night, electric blue, teal glow, purple sky, gold accents */
   --black:#070b22; --panel:#0f1640; --line:#27367d;
@@ -175,7 +175,9 @@ nav.site-nav .nav-menu{display:none}
 /* 11/3 (Tom): a demo for every tier, Your Business Here full width underneath */
 .demo-card.your-business{grid-column:1/-1;flex-direction:row;align-items:stretch}.demo-card.your-business .demo-placeholder{width:40%;aspect-ratio:auto;min-height:180px}.demo-card.your-business .demo-card-body{justify-content:center;align-items:center;text-align:center}.demo-card.your-business .btn{margin-top:0}@media(max-width:640px){.demo-card.your-business{flex-direction:column}.demo-card.your-business .demo-placeholder{width:100%;aspect-ratio:4/3;min-height:0}}
 </style>
-<link rel="stylesheet" href="css/white.css?v=1">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
+<link rel="stylesheet" href="css/white.css?v=2">
 </head>
 <body>
 <nav class="site-nav" aria-label="Pages">

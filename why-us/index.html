@@ -22,6 +22,8 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:#fff;color:var(--ink);font-family:var(--ui);line-height:1.45;overflow-x:hidden}
+/* 11/16 (Tom): motherboard look — faint black circuit lines on the white */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("images/circuit-black.svg") 0 0/480px repeat;opacity:.13}
 a{color:inherit}
 
 /* NAV — same as the home page */
