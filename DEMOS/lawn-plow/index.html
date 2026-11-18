@@ -519,7 +519,11 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
     if(phone.replace(/\D/g,"").length<10) miss.push("a 10-digit cell number");
     if(!addr) miss.push("the address");
     if(!svcs.length) miss.push("at least one service");
-    if(miss.length){ $("q-msg").textContent="Please add "+miss.join(", ")+"."; return; }
+    // 11/18 (Tom): "a, b, and c" — the "and" was missing before the last one
+    if(miss.length){ $("q-msg").textContent="Please add "+(miss.length<2?miss[0]:miss.slice(0,-1).join(", ")+(miss.length>2?",":"")+" and "+miss[miss.length-1])+"."; return; }
+    // 11/18 (Tom): phone numbers always show with dashes (207-555-0199), however they were typed
+    var digits=phone.replace(/\D/g,"").replace(/^1(?=\d{10}$)/,"");
+    if(digits.length===10) phone=digits.slice(0,3)+"-"+digits.slice(3,6)+"-"+digits.slice(6);
     state.req={name:name,phone:phone,address:addr,services:svcs,details:$("q-details").value.trim(),photo:state.photo||null,num:1042};
     $("qform").hidden=true; $("q-sent").hidden=false; $("q-msg").textContent="";
     setStep(2);

@@ -1,5 +1,5 @@
 window.SHOP_CONFIG = {
-  demo: { id: "demo-classic-cuts", tier: "professional", label: "Professional", staffHeading: "Meet the Barbers", staffLabel: "a barber" },
+  demo: { id: "demo-classic-cuts", tier: "professional", label: "Professional Plus", staffHeading: "Meet the Barbers", staffLabel: "a barber" },
   ownerTabs: [
     { id: "dashboard", label: "Dashboard", live: true },
     { id: "business-status", label: "Open / Close" },
@@ -25,7 +25,7 @@ window.SHOP_CONFIG = {
     { id: "settings", label: "Settings" }
   ],
   shop: {
-    name: "Classic Cuts Barbershop", pageTitle: "Classic Cuts Barbershop | Professional DEMO",
+    name: "Classic Cuts Barbershop", pageTitle: "Classic Cuts Barbershop | Professional Plus DEMO",
     heroTitle: "A fresh cut. A classic experience.",
     heroSubtitle: "Precision cuts and easy scheduling. This is a demo. Book an appointment like your customer would, then see what you'll see as the owner.",
     addressLine1: "7 Clipper Lane", addressLine2: "Kennebunk, Maine",

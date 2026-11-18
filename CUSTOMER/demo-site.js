@@ -137,7 +137,7 @@
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
       <main id="demo-content"></main>
       <div class="demo-pricing"><a class="book-button" href="../../get-started/">Like what you see? Get Started &rarr;</a></div>
-      <footer><span class="demo-footer-label">${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo by Business Pro</span>
+      <footer><span class="demo-footer-label">${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo${config.demo.label === "Business Pro" ? "" : " by Business Pro"}</span>
         <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div></footer>`;
     if (pageName === "home") renderAds();
   }
@@ -469,7 +469,7 @@
     $("booking-info").disabled = !ready;
     $("demo-confirm").disabled = !ready;
     $("booking-summary").textContent = ready ?
-      `${service.name} with ${staff.name} on ${$("demo-date").value} at ${api.timeLabel($("demo-time").value)}. ${money(service.price * 100)}; nothing charged in this demo. ` +
+      `${service.name} with ${staff.name} on ${new Date($("demo-date").value + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })} at ${api.timeLabel($("demo-time").value)}. ${money(service.price * 100)}; nothing charged in this demo. ` +
       [$("demo-name").value, $("demo-phone").value, $("demo-email").value].filter(Boolean).join(" · ") : "";
   }
   function showTextPreview(booking) {
@@ -980,7 +980,7 @@
       <button type="button" class="mobile-menu-toggle${ownerTabs.some(tab => tab.live && tab.id !== "dashboard" && !visitedLiveTabs.has(tab.id)) ? " owner-live-blink" : ""}" id="owner-menu-toggle" aria-expanded="${ownerMenuOpen}" aria-controls="owner-tabs">
         &#9776; Menu &middot; <span>${escape(title)}</span></button><div class="brand">
       <div class="business-name"><strong>${escape(visitor?.business || config.shop.name)}</strong></div>
-      <h1>BUSINESS PRO</h1><p>${bookingEnabled ? "Professional" : "Business Pro"} Owner Portal</p></div>
+      <h1>BUSINESS PRO</h1><p>${bookingEnabled ? escape(config.demo.label) : "Business Pro"} Owner Portal</p></div>
       <nav class="nav" id="owner-tabs" aria-label="Owner portal menu">${ownerNavigation()}</nav>
       <div class="support-box"><h3>Need Help?</h3><p>Having a problem with your website or owner portal? Contact Business Pro directly.</p>
       <div class="support-buttons"><button type="button" aria-disabled="true">&#9993; Email Me</button><button type="button" aria-disabled="true">&#128172; Text Me</button></div></div></aside>
@@ -1045,7 +1045,12 @@
       document.querySelectorAll("[data-packed]").forEach(button => button.addEventListener("click", () => action(() => {
         const order = api.read(localStorage, config).orders.find(item => item.id === button.dataset.packed);
         const checklist = Array.from(document.querySelectorAll("[data-order-pack]")).filter(input => input.dataset.order === order.id);
-        if (checklist.some(input => !input.checked)) throw new Error("Check each item in every box on the packing checklist before tapping Packed.");
+        if (checklist.some(input => !input.checked)) {
+          let note = button.parentElement.querySelector(".pack-warning");
+          if (!note) { note = document.createElement("p"); note.className = "demo-error pack-warning"; note.setAttribute("role", "alert"); button.after(note); }
+          note.textContent = "Check off each item in every box first, then tap Packed.";
+          return;
+        }
         const checked = [...new Set(checklist.map(input => input.dataset.orderPack))];
         const first = (order.boxes || api.shipBoxes(config, order))[0];
         api.savePacking(localStorage, config, order.id, { packedIds: checked, shippingAddress: order.shippingAddress,

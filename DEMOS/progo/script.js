@@ -1114,6 +1114,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // 11/18 (Tom): ProGo stylist popup — "Call to Book" in place of "Schedule Appointment"
+  function popupCallToBook() {
+    const digits = String(shop.phoneLink || shop.phoneDisplay || "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+    return digits.length === 10 ? `<a class="call-button barber-popup-book-button barber-popup-call" href="tel:+1${digits}">Call to Book</a>` : "";
+  }
+
   function callTextButtons() {
     const digits = String(shop.phoneLink || shop.phoneDisplay || "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
     if (digits.length !== 10) return;
@@ -1844,13 +1850,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             ${buildProfilePhoto(barber, "large")}
 
-            <button
+            ${BOOKING_ON ? `<button
               type="button"
               class="book-button barber-popup-book-button"
               id="barber-popup-book-button"
             >
               Schedule Appointment
-            </button>
+            </button>` : popupCallToBook()}
 
           </div>
 
@@ -1935,6 +1941,14 @@ document.addEventListener("DOMContentLoaded", () => {
           openBookingModal(barber.id);
         }
       );
+    }
+
+    // 11/18 (Tom): no online booking (ProGo) — the popup's button is Call to Book:
+    // dials the shop on a phone, opens the Contact page on a computer
+    const popupCall = profileContent.querySelector(".barber-popup-call");
+    if (popupCall) {
+      popupCall.addEventListener("click", () => closeProfile(false));
+      callNowGoesToContact(popupCall);
     }
 
   }
