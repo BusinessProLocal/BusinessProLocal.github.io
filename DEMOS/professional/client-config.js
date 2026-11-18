@@ -1,4 +1,6 @@
 window.SHOP_CONFIG = {
+  // 11/18 (Tom): the Classic Grooming look (layout 6C), same as real barbershop sites
+  siteStyle: "classic",
   demo: { id: "demo-classic-cuts", tier: "professional", label: "Professional Plus", staffHeading: "Meet the Barbers", staffLabel: "a barber" },
   ownerTabs: [
     { id: "dashboard", label: "Dashboard", live: true },
@@ -25,6 +27,7 @@ window.SHOP_CONFIG = {
     { id: "settings", label: "Settings" }
   ],
   shop: {
+    logo: "../../CUSTOMER/images/classic-cuts-logo.png", heroImage: "../../CUSTOMER/images/barber-interior.jpg",
     name: "Classic Cuts Barbershop", pageTitle: "Classic Cuts Barbershop | Professional Plus DEMO",
     heroTitle: "A fresh cut. A classic experience.",
     heroSubtitle: "Precision cuts and easy scheduling. This is a demo. Book an appointment like your customer would, then see what you'll see as the owner.",

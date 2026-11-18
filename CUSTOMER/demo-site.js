@@ -65,6 +65,46 @@
       `<div class="owner-demo-submenu" id="demo-submenu-${tab.id}" ${expandedOwnerTabs.has(tab.id) ? "" : "hidden"}>${tab.children.map(child => button(child, true)).join("")}</div>` : "")).join("");
   }
   const extraPhotos = config.photos.slice(1).filter(photo => photo.src !== config.photos[0].src);
+  // 11/18 (Tom): the barbershop demo wears the Classic Grooming look (layout 6C) — same look as real barbershop sites
+  const CLASSIC = bookingEnabled && String(config.siteStyle || "").toLowerCase() === "classic";
+  const CLASSIC_ICONS = {
+    cal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    cut: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg>',
+    team: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>'
+  };
+  function classicHeader() {
+    const shop = config.shop;
+    // the shop's name is the page's main heading: their logo (its alt words = the name for Google), or the name itself
+    const badge = shop.logo ? `<img src="${escape(shop.logo)}" alt="${escape(shop.name)}">` : `<span>${escape(shop.name)}</span>`;
+    return `<header class="shop-header classic-header">
+      <nav aria-label="Main navigation" class="classic-nav"><span class="classic-nav-left"><a href="index.html#home">Home</a><a href="index.html#barbers">Barbers</a><a href="index.html#services">Services</a></span>
+      <h1 class="classic-name"><a class="classic-badge" href="index.html#home">${badge}</a></h1>
+      <span class="classic-nav-right">${extraPhotos.length ? '<a href="index.html#photos">Photos</a>' : ""}<a href="index.html#contact">Contact</a><a class="classic-book" href="index.html#booking">Book Now</a></span></nav></header>`;
+  }
+  function classicHome() {
+    const shop = config.shop, words = shop.classicHero || {};
+    const hero = shop.heroImage || config.photos[0].src;
+    const names = [], used = new Set();
+    config.services.forEach(service => {
+      const parts = String(service.name).toLowerCase().match(/[a-z0-9']+/g) || [];
+      if (names.length < 3 && !parts.some(part => used.has(part))) { names.push(service.name); parts.forEach(part => used.add(part)); }
+    });
+    const tile = (icon, title, text, go, href) => `<a class="classic-tile" href="${href}"><span class="classic-tile-icon">${CLASSIC_ICONS[icon]}</span>
+      <strong>${escape(title)}</strong><span class="classic-tile-text">${escape(text)}</span><span class="classic-tile-go">${escape(go)} &rarr;</span></a>`;
+    const where = shop.addressLine2 ? `<h3>Haircuts in ${escape(shop.addressLine2)}</h3>` : "";
+    return `<section id="home" class="classic-hero" style="background-image:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.68)),url('${escape(hero)}')">
+      <div class="hero-content"><p class="classic-script">${escape(words.script || "Classic")}</p><h2 class="classic-big">${escape(words.big || "Grooming")}</h2>
+      <p class="classic-ribbon">${escape(words.ribbon || "Is Timeless")}</p><a class="book-button classic-hero-book" href="#booking">Book Appointment</a></div></section>
+      <section class="classic-tiles" aria-label="Quick links">
+      ${tile("cal", "Appointments", "Pick your barber, day and time online. Takes under a minute.", "Book Now", "#booking")}
+      ${tile("cut", "Our Services", `${names.join(", ")}${config.services.length > names.length ? " and more" : ""}.`, "See Prices", "#services")}
+      ${tile("team", "Our Barbers", "Meet the crew behind the chair and see their work.", "Meet the Team", "#barbers")}</section>
+      <section class="classic-about">${image(config.photos[0].src, config.photos[0].alt, "classic-about-photo")}
+      <div class="classic-about-words"><h2>We protect the heritage of <span>classic barbering</span></h2>${where}
+      <p>Hot towels, straight razors and a sharp fade, done the old-school way. Pull up a chair, relax, and leave looking your best.</p>
+      <p class="classic-hours">${shop.hours.map(row => `<span><b>${escape(row.days)}</b> ${escape(row.hours)}</span>`).join("")}</p>
+      <a class="book-button classic-about-book" href="#booking">Book Appointment</a></div></section>`;
+  }
   const status = message => { $("demo-status").textContent = message; };
   function error(failure) {
     $("demo-error").textContent = "Demo action failed: " + failure.message;
@@ -125,15 +165,17 @@
     setDemoIndexing(false);
     app.classList.toggle("has-customer-ads", ADS_ENABLED && pageName === "home");
     app.classList.toggle("barber-customer-demo", bookingEnabled);
+    app.classList.toggle("demo-classic", CLASSIC);
+    document.body.classList.toggle("demo-classic-site", CLASSIC);
     document.title = config.shop.pageTitle;
     app.innerHTML = `${bookingEnabled ? '<div class="customer-demo-banner">Customer Demo &mdash; this is what your customers see when they book an appointment with you.</div>' : ""}
       <div class="demo-ribbon">DEMO MODE &middot; ${storeEnabled ? "Business Pro" : "Business Pro " + escape(config.demo.label)}</div>
-      <header class="shop-header"><h1>${escape(config.shop.name)}</h1><nav aria-label="Main navigation">
+      ${CLASSIC ? '<p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>' + classicHeader() : `<header class="shop-header"><h1>${escape(config.shop.name)}</h1><nav aria-label="Main navigation">
       <a href="index.html#home">Home</a><a href="index.html#${storeEnabled ? "store" : "services"}">${storeEnabled ? "Shop" : bookingEnabled ? "Services" : "Menu"}</a>
       ${extraPhotos.length && !storeEnabled ? '<a href="index.html#photos">Photos</a>' : ""}<a href="index.html#contact">Contact</a>
       ${bookingEnabled ? '<a href="index.html#booking">Book an appointment</a>' : ""}
-      ${storeEnabled ? '<a id="cart-link" href="index.html#checkout">Cart</a>' : ""}</nav></header>
-      <p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>
+      ${storeEnabled ? '<a id="cart-link" href="index.html#checkout">Cart</a>' : ""}</nav></header>`}
+      ${CLASSIC ? "" : '<p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>'}
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
       <main id="demo-content"></main>
       <div class="demo-pricing"><a class="book-button" href="../../get-started/">Like what you see? Get Started &rarr;</a></div>
@@ -310,10 +352,10 @@
     const mobileAds = document.querySelector(".ad-mobile-row");
     if (mobileAds) mobileAds.remove();
     const shop = config.shop, state = api.read(localStorage, config);
-    $("demo-content").innerHTML = `<section id="home">${image(config.photos[0].src, config.photos[0].alt, "hero-photo")}
+    $("demo-content").innerHTML = `${CLASSIC ? classicHome() : `<section id="home">${image(config.photos[0].src, config.photos[0].alt, "hero-photo")}
       <div class="hero-content"><h2>${escape(shop.heroTitle)}</h2><p><span>${escape(shop.heroSubtitle)}</span></p>
       ${!bookingEnabled && !storeEnabled ? '<button id="call-order" type="button">Call to order</button><p id="call-message" role="status"></p>' :
-        `<a class="book-button" href="#${storeEnabled ? "store" : "booking"}">${storeEnabled ? "Shop coastal gifts" : "Customer Demo"}</a>`}</div></section>
+        `<a class="book-button" href="#${storeEnabled ? "store" : "booking"}">${storeEnabled ? "Shop coastal gifts" : "Customer Demo"}</a>`}</div></section>`}
       ${config.menu ? `<section id="services"><h2>Our Menu</h2><div class="menu">${config.menu.map(group =>
         `<article><h3><span>${escape(group.name)}</span></h3><ul class="menu-items">${group.items.map(item =>
           `<li>${image(item.photo, item.text.split("$")[0].trim(), "menu-thumbnail")}<span>${escape(item.text)}</span></li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
