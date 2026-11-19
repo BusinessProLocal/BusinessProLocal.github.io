@@ -19,12 +19,17 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261021x";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261119a";
   document.head.appendChild(ownerStyles);
+  // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
+  const ownerNewLook = document.createElement("script");
+  ownerNewLook.src = "../../CUSTOMER/demo-new-look.js?v=20261119a";
+  document.head.appendChild(ownerNewLook);
   const goldWords = document.createElement("script");
   goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021x";
   document.head.appendChild(goldWords);
-  const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#b8860b";
+  // each barber's own color (blue, green): meaning colors stay in the new look, gold doesn't
+  const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#16a34a";
   const previewPhotos = {};
   const photoMessages = {};
   const ownerTabs = config.ownerTabs || [];
@@ -1032,11 +1037,11 @@
       <div class="content">${dashboardView !== "dashboard" ? `<button type="button" class="back-to-dashboard" id="back-to-dashboard">&#8592; Go back to Dashboard</button>` : ""}${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
         dashboardView === "orders" ? `<section class="page active" id="dashboard">${orderLookupPanel(own)}${selectedOrderNumber === orderNumber(own) ? ordersPanel(records, seeded) + shippingPanel(records, seeded) : sampleOrderPanel(selectedOrderNumber)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
       ${bookingEnabled ? `<div class="shop-owner-banner" role="note"><strong>SHOP OWNER VIEW</strong><span>Here's what the shop sees the second a customer books.</span></div>` : ""}
-      <div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
-      <div class="cards"><div class="card"><span>${bookingEnabled ? "Today's Appointments" : "Today's Orders"}</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
-      <div class="card"><span>${bookingEnabled ? "Barbers Working" : "To Pack & Ship"}</span><strong>${bookingEnabled ? config.barbers.length : complete ? 0 : 1}</strong><small>${bookingEnabled ? config.barbers.length + " scheduled today" : "Orders awaiting fulfillment"}</small></div>
+      ${bookingEnabled ? morningBrief(records, seeded, complete, price) : `<div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
+      <div class="cards"><div class="card"><span>Today's Orders</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
+      <div class="card"><span>To Pack & Ship</span><strong>${complete ? 0 : 1}</strong><small>Orders awaiting fulfillment</small></div>
       ${storeEnabled ? `<div class="card"><span>Today's Sales</span><strong>${money(complete ? price : 0)} earned</strong><small>of ${money(price)} booked - orders only</small></div>` : ""}</div>
-      ${bookingEnabled ? schedulePanel(records, seeded) + timeOffPanel() : ordersPanel(records, seeded) + shippingPanel(records, seeded)}</section>`}
+      ${ordersPanel(records, seeded) + shippingPanel(records, seeded)}`}</section>`}
       </div></main></div>${bookingEnabled && !preview ? appointmentDialog() : ""}
       <div id="owner-preview-popup" class="owner-preview-popup" role="status" aria-live="polite" hidden><p>This works in your real portal.</p>
       <div><button type="button" data-preview-live="${bookingEnabled ? "appointments" : "orders"}">Try ${bookingEnabled ? "Appointments" : "Orders"} &#8594;</button>
@@ -1136,6 +1141,18 @@
   }
   function isNewBooking(item) {
     return !item.example && !["Finished", "Canceled"].includes(item.status);
+  }
+  // 11/19 (Tom): the booking demo's dashboard reads like the real owner portal's Morning Brief —
+  // 1 finish these first, 2 today's appointments, 3 done today & money
+  function morningBrief(records, state, complete, price) {
+    const step = (number, title, count = "") => `<h3 class="dash-step"><span class="dash-num">${number}</span>${title}${count ? `<span class="dash-count">${count}</span>` : ""}</h3>`;
+    return `<div class="section-heading"><h2>Good morning. Here's your day, in order.</h2></div>
+      ${step(1, "Finish these first", "1 to do")}${timeOffPanel()}
+      ${step(2, "Today's appointments")}${schedulePanel(records, state)}
+      ${step(3, "Done today &amp; money")}
+      <div class="cards"><div class="card"><span>Today's Appointments</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
+      <div class="card"><span>Barbers Working</span><strong>${config.barbers.length}</strong><small>${config.barbers.length} scheduled today</small></div>
+      <div class="card"><span>Earned Today</span><strong>${money(complete ? price : 0)}</strong><small>of ${money(price)} booked</small></div></div>`;
   }
   function schedulePanel(records, state) {
     return `<div class="panel"><div class="panel-header"><h3>Today's Appointments</h3></div><div class="panel-body">

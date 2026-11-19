@@ -4321,3 +4321,75 @@ body.style-luxury .lux-gold-text {
       radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0) 48%) !important;
   }
 }
+
+/* 11/19 (Tom): phones — the Contact info was too big. Call / Visit / Hours now sit in one
+   compact gold-edged card: smaller circles, smaller words, tighter rows. */
+@media (max-width: 760px) {
+  body.style-luxury #contact {
+    padding-bottom: 40px;
+  }
+
+  body.style-luxury #contact > .section-intro {
+    margin: -12px auto 4px;
+    font-size: 17px;
+  }
+
+  .contact-layout {
+    gap: 18px;
+    margin-top: 14px;
+  }
+
+  .contact-info {
+    padding: 2px 16px;
+    border: 1.5px solid rgba(233, 199, 104, 0.75);
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 12px rgba(240, 200, 90, 0.25);
+  }
+
+  .contact-row {
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 0;
+  }
+
+  .contact-row + .contact-row {
+    border-top: 1px solid rgba(212, 175, 55, 0.35);
+  }
+
+  .contact-row > span:last-child {
+    gap: 0;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .contact-row strong {
+    font-size: 18px;
+  }
+
+  .contact-icon {
+    width: 42px;
+    height: 42px;
+    border-width: 2px;
+    box-shadow: 0 0 8px rgba(240, 200, 90, 0.35);
+  }
+
+  .contact-icon .lux-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .contact-hours {
+    gap: 0 12px;
+    font-size: 14.5px;
+  }
+
+  .contact-info .contact-book,
+  .contact-info .call-text-buttons {
+    margin: 4px 0 14px;
+  }
+
+  .contact-info .contact-book {
+    font-size: 18px;
+  }
+}

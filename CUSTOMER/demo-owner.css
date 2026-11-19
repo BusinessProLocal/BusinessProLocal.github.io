@@ -1399,3 +1399,96 @@ color: #fff;
   letter-spacing: .08em;
   vertical-align: middle;
 }
+
+/* ============================================================
+   11/19 (Tom): DEMO OWNER VIEW NEW LOOK — same as the real owner portal (11/18):
+   white and black, square corners, one font, menu across the top (the page you're on is a black tab).
+   Colors are repainted by demo-new-look.js (gold → black, black boxes → white).
+============================================================ */
+body.demo-owner-open { background: #fff !important; }
+body.demo-owner-open #daily-dashboard { --bp-gold: #000; --bp-black: #000; background: #fff; color: #000; }
+body.demo-owner-open #daily-dashboard * { text-decoration-color: currentColor !important; }
+body.demo-owner-open #daily-dashboard .app { display: flex; flex-direction: column; min-height: 0; }
+body.demo-owner-open #daily-dashboard .sidebar {
+  width: auto !important; position: sticky; top: 0; z-index: 100; display: flex; flex-direction: row !important; flex-wrap: wrap; align-items: center;
+  gap: 4px 18px; padding: 12px 24px 0 !important; background: #fff !important; color: #000 !important; border: 0 !important; border-bottom: 1px solid #e4e4e7 !important;
+  min-height: 0 !important; height: auto !important; overflow: visible !important;
+}
+body.demo-owner-open #daily-dashboard .brand { display: flex; align-items: center; gap: 12px; margin: 0 !important; padding: 0 !important; text-align: left; border: 0 !important; }
+body.demo-owner-open #daily-dashboard .brand .business-name { border: 0 !important; padding: 0 !important; margin: 0 !important; }
+body.demo-owner-open #daily-dashboard .brand .business-name strong { color: #000 !important; font-size: 20px !important; text-align: left; }
+body.demo-owner-open #daily-dashboard .brand h1 { margin: 0 !important; font-size: 12px !important; letter-spacing: .1em; color: #52525b !important; -webkit-text-fill-color: #52525b !important; }
+body.demo-owner-open #daily-dashboard .brand p { margin: 0 !important; color: #52525b !important; font-size: 12px !important; }
+body.demo-owner-open #daily-dashboard .support-box { margin: 0 0 0 auto !important; padding: 0 !important; display: flex; align-items: center; gap: 10px; border: 0 !important; background: none !important; }
+body.demo-owner-open #daily-dashboard .support-box h3, body.demo-owner-open #daily-dashboard .support-box p { display: none; }
+body.demo-owner-open #daily-dashboard .support-buttons { display: flex; gap: 8px; }
+body.demo-owner-open #daily-dashboard .support-buttons button { height: 38px; padding: 0 14px; border: 1.5px solid #000 !important; background: #fff !important; color: #000 !important; -webkit-text-fill-color: #000 !important; font-weight: 700; }
+body.demo-owner-open #daily-dashboard .mobile-menu-toggle { display: none; }
+body.demo-owner-open #daily-dashboard .nav { order: 5; flex-basis: 100%; display: flex !important; flex-direction: row !important; flex-wrap: wrap; gap: 2px; padding: 10px 0 !important; margin: 0 !important; border: 0 !important; background: none !important; position: static !important; box-shadow: none !important; max-height: none !important; }
+body.demo-owner-open #daily-dashboard .nav button { width: auto !important; padding: 9px 14px !important; border: 0 !important; background: #fff !important; color: #000 !important;
+  -webkit-text-fill-color: #000 !important; font-weight: 700; font-size: 14px; transform: none !important; box-shadow: none !important; animation: none !important; }
+body.demo-owner-open #daily-dashboard .nav button:hover { background: #f4f4f5 !important; }
+body.demo-owner-open #daily-dashboard .nav button.active { background: #000 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; }
+body.demo-owner-open #daily-dashboard .nav button.active * { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+body.demo-owner-open #daily-dashboard .nav button::after { display: none !important; }
+body.demo-owner-open #daily-dashboard .owner-tab-tag { margin-left: 6px; padding: 1px 5px; border: 1px solid currentColor !important; background: none !important; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
+/* a ▾ menu opens as a second row of tabs under the first */
+body.demo-owner-open #daily-dashboard .owner-demo-submenu { order: 99; flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 2px; margin: 6px 0 0 !important; padding: 8px 0 0 !important; border: 0 !important; border-top: 1px solid #e4e4e7 !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu[hidden] { display: none !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu button { border: 1px solid #e4e4e7 !important; font-size: 13px !important; font-weight: 600; padding: 8px 12px !important; }
+body.demo-owner-open #daily-dashboard .main { background: #fff !important; }
+body.demo-owner-open #daily-dashboard .topbar { padding: 18px 30px; border-bottom: 0 !important; background: #fff !important; }
+body.demo-owner-open #daily-dashboard .topbar h2 { font-size: 22px; color: #000 !important; }
+body.demo-owner-open #daily-dashboard .content { max-width: 1240px; margin: 0 auto; }
+body.demo-owner-open #daily-dashboard .card, body.demo-owner-open #daily-dashboard .panel { background: #fff !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; color: #000 !important; }
+/* ---------- the dashboard: one list, in the order you work it ---------- */
+body.demo-owner-open #daily-dashboard .page#dashboard { max-width: 860px; margin: 0 auto; background: #fff !important; color: #000 !important; border: 0 !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .section-heading { text-align: left; }
+body.demo-owner-open #daily-dashboard .page#dashboard .section-heading h2 { font-size: 34px !important; line-height: 1.1; color: #000 !important; -webkit-text-fill-color: #000 !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .shop-owner-banner { background: #000 !important; color: #fff !important; border: 0 !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .shop-owner-banner * { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .new-booking-tag { background: #000 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; border: 0 !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .has-new-booking { outline: 2px solid #000 !important; }
+body.demo-owner-open #daily-dashboard .dash-step { display: flex; align-items: center; gap: 10px; margin: 30px 0 10px; padding: 0 0 8px; border-bottom: 2px solid #000; font-size: 13px !important; letter-spacing: .1em; text-transform: uppercase; color: #000 !important; }
+body.demo-owner-open #daily-dashboard .dash-step .dash-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #000 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; font-size: 14px; }
+body.demo-owner-open #daily-dashboard .dash-step .dash-count { margin-left: auto; font-size: 12px; border: 1.5px solid #000 !important; padding: 3px 10px; letter-spacing: .06em; }
+body.demo-owner-open #daily-dashboard .page#dashboard .cards { display: flex !important; flex-wrap: nowrap !important; gap: 0 !important; border: 1px solid #000; margin: 0 0 20px; }
+body.demo-owner-open #daily-dashboard .page#dashboard .cards .card { flex: 1 1 0 !important; min-width: 0 !important; width: auto !important; max-width: none !important; border: 0 !important; border-right: 1px solid #e4e4e7 !important; margin: 0 !important; text-align: left; }
+body.demo-owner-open #daily-dashboard .page#dashboard .cards .card:last-child { border-right: 0 !important; }
+body.demo-owner-open #daily-dashboard .dashboard-time-off-item { background: #fff !important; color: #000 !important; border: 1px solid #e4e4e7 !important; text-align: left; }
+body.demo-owner-open #daily-dashboard .back-to-dashboard { background: #fff !important; color: #000 !important; -webkit-text-fill-color: #000 !important; border: 1.5px solid #000 !important; }
+/* phones and tablets: ☰ Menu bar, the tabs open as a list */
+@media (max-width: 900px) {
+  body.demo-owner-open #daily-dashboard .sidebar { padding: 10px 14px !important; flex-direction: column !important; align-items: stretch; }
+  body.demo-owner-open #daily-dashboard .mobile-menu-toggle { display: block !important; width: 100%; min-height: 44px; border: 1.5px solid #000 !important; background: #fff !important; color: #000 !important; -webkit-text-fill-color: #000 !important; text-align: left; font-weight: 700; animation: none !important; }
+  body.demo-owner-open #daily-dashboard .mobile-menu-toggle * { color: #000 !important; -webkit-text-fill-color: #000 !important; }
+  body.demo-owner-open #daily-dashboard .sidebar .brand,
+  body.demo-owner-open #daily-dashboard .sidebar:not(.owner-menu-open) .nav,
+  body.demo-owner-open #daily-dashboard .sidebar:not(.owner-menu-open) .support-box { display: none !important; }
+  body.demo-owner-open #daily-dashboard .sidebar.owner-menu-open .nav { display: flex !important; flex-direction: column !important; padding: 8px 0 !important; }
+  body.demo-owner-open #daily-dashboard .sidebar.owner-menu-open .nav button { width: 100% !important; text-align: left; }
+  body.demo-owner-open #daily-dashboard .owner-demo-submenu { flex-direction: column; }
+  body.demo-owner-open #daily-dashboard .support-box { margin: 8px 0 0 !important; }
+  body.demo-owner-open #daily-dashboard .topbar { flex-wrap: wrap; gap: 8px; padding: 14px 16px; }
+  body.demo-owner-open #daily-dashboard .page#dashboard .cards { flex-direction: column !important; }
+  body.demo-owner-open #daily-dashboard .page#dashboard .cards .card { border-right: 0 !important; border-bottom: 1px solid #e4e4e7 !important; }
+  body.demo-owner-open #daily-dashboard .page#dashboard .section-heading h2 { font-size: 26px !important; }
+}
+
+/* the parts the repaint leaves alone, colored here (11/19) */
+body.demo-owner-open #daily-dashboard .page#dashboard .shop-owner-banner { padding: 14px 18px !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .panel-body > p { margin: 0 0 14px !important; }
+body.demo-owner-open #daily-dashboard .completed-barber-block { background: #fff !important; border-left: 1px solid #e4e4e7 !important; border-right: 1px solid #e4e4e7 !important; border-bottom: 1px solid #e4e4e7 !important; border-top-width: 5px !important; border-top-style: solid !important; box-shadow: none !important; }
+body.demo-owner-open #daily-dashboard .completed-barber-header,
+body.demo-owner-open #daily-dashboard .completed-time-list { background: #fff !important; }
+body.demo-owner-open #daily-dashboard .compact-barber-name-btn { background: none !important; border: 0 !important; color: #000 !important; -webkit-text-fill-color: #000 !important; font-weight: 800 !important; box-shadow: none !important; text-decoration: none !important; }
+body.demo-owner-open #daily-dashboard .completed-time-btn { background: #000 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; border: 1px solid #000 !important; box-shadow: none !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .has-new-booking { outline: 2px solid #000 !important; outline-offset: 2px; }
+body.demo-owner-open #daily-dashboard .page#dashboard .new-booking-tag { background: #000 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; padding: 3px 8px !important; font-weight: 800 !important; letter-spacing: .08em; }
+body.demo-owner-open #daily-dashboard .dashboard-photo-silhouette { background-color: #d4d4d8 !important; }
+/* the Get Started button and footer under the owner view match it: black and white */
+body.demo-owner-open .demo-pricing .book-button,
+body.demo-owner-open footer .demo-home .book-button { background: #000 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; border: 2px solid #000 !important; box-shadow: none !important; border-radius: 0 !important; text-shadow: none !important; }
+body.demo-owner-open footer { background: #fff !important; color: #52525b !important; border-color: #e4e4e7 !important; }
+body.demo-owner-open footer * { color: #52525b !important; -webkit-text-fill-color: #52525b !important; text-shadow: none !important; }
+body.demo-owner-open footer .demo-home .book-button { color: #fff !important; -webkit-text-fill-color: #fff !important; }
