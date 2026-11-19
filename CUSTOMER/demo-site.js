@@ -110,6 +110,94 @@
       <p class="classic-hours">${shop.hours.map(row => `<span><b>${escape(row.days)}</b> ${escape(row.hours)}</span>`).join("")}</p>
       <a class="book-button classic-about-book" href="#booking">Book Appointment</a></div></section>`;
   }
+  // 11/19 (Tom): the gift shop demo wears the Model Gift Shop look (layout B: full photo storefront, sea glass green)
+  const GIFT = storeEnabled && String(config.siteStyle || "").toLowerCase() === "gift";
+  let giftFilter = "";
+  const GIFT_ICONS = {
+    lighthouse: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21l1.2-12h3.6L15 21z"/><path d="M8.5 9h7M10 6h4v3h-4z"/><path d="M12 3v3M4 7l4 1M20 7l-4 1"/><path d="M5 21h14"/></svg>',
+    bag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1.5 13h-11z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>'
+  };
+  function giftCollections() {
+    const seen = [];
+    config.products.forEach(product => {
+      const name = String(product.category || "").trim();
+      if (name && !seen.some(item => item.name === name)) seen.push({ name, photo: product.photo });
+    });
+    return seen.slice(0, 4);
+  }
+  function giftCartCount() {
+    return api.read(localStorage, config).cart.reduce((sum, item) => sum + item.quantity, 0);
+  }
+  function giftHeader() {
+    const shop = config.shop;
+    const where = String(shop.addressLine2 || "").replace(/\s*,\s*/g, " · ").toUpperCase();
+    const logo = shop.logo ? `<img src="${escape(shop.logo)}" alt="${escape(shop.name)}">` :
+      `<span class="gift-logo-name">${GIFT_ICONS.lighthouse}${escape(shop.name)}</span>${where ? `<small>${escape(where)}</small>` : ""}`;
+    const perksLine = shop.noteBar || "Free local pickup · We ship anywhere in the U.S.";
+    return `<header class="shop-header gift-header"><p class="gift-note">${escape(perksLine)}</p>
+      <nav aria-label="Main navigation" class="gift-nav">
+      <span class="gift-nav-left"><button type="button" class="gift-menu-toggle" aria-expanded="false" aria-controls="gift-menu">&#9776; Menu</button>
+      <a href="index.html#store">Shop</a>${giftCollections().length ? '<a href="index.html#collections">Collections</a>' : ""}</span>
+      <h1 class="gift-logo"><a href="index.html#home">${logo}</a></h1>
+      <span class="gift-nav-right"><a href="index.html#contact">Visit Us</a><a id="cart-link" class="gift-cart" href="cart.html">${GIFT_ICONS.bag}<span>Cart</span> <b>0</b></a></span></nav>
+      <div class="gift-menu" id="gift-menu" hidden><a href="index.html#home">Home</a><a href="index.html#store">Shop</a>
+      ${giftCollections().length ? '<a href="index.html#collections">Collections</a>' : ""}<a href="index.html#contact">Visit Us</a><a href="cart.html">Cart</a></div></header>`;
+  }
+  function setupGiftMenu() {
+    const toggle = document.querySelector(".gift-menu-toggle"), menu = $("gift-menu");
+    if (!toggle || !menu) return;
+    toggle.addEventListener("click", () => {
+      const open = menu.hidden;
+      menu.hidden = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+    menu.addEventListener("click", event => {
+      if (event.target.closest("a")) { menu.hidden = true; toggle.setAttribute("aria-expanded", "false"); }
+    });
+  }
+  function giftHome() {
+    const shop = config.shop;
+    const hero = shop.heroImage || config.photos[0].src;
+    const where = String(shop.addressLine2 || "").replace(/\s*,\s*/g, " · ");
+    const collections = giftCollections();
+    const perks = shop.perks || [["Shop Online", "Order any time, day or night"], ["Ships Anywhere", "Packed with care, tracked to your door"], ["Free Pickup", "Order online, grab it at the shop"]];
+    return `<section id="home" class="gift-hero" style="background-image:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('${escape(hero)}')">
+      <div class="hero-content">${where ? `<p class="gift-kicker">${escape(where)}</p>` : ""}<h2>${escape(shop.heroTitle)}</h2>
+      ${shop.heroSubtitle ? `<p class="gift-hero-text">${escape(shop.heroSubtitle)}</p>` : ""}
+      <div class="gift-hero-buttons"><a class="book-button" href="#store">Shop Gifts</a><a class="book-button ghost" href="#contact">Visit Us</a></div></div></section>
+      ${collections.length ? `<section id="collections" class="gift-collections"><h2>Shop by Collection</h2><p>${escape(shop.collectionsLine || "Find the right gift fast.")}</p>
+      <div class="gift-collection-grid gift-count-${collections.length}">${collections.map(item => `<a class="gift-collection" href="#store" data-gift-collection="${escape(item.name)}">
+      ${image(item.photo, "")}<span>${escape(item.name)}</span></a>`).join("")}</div></section>` : ""}
+      <section class="gift-perks" aria-label="Why shop with us">${perks.map(([title, text]) => `<div><strong>${escape(title)}</strong><span>${escape(text)}</span></div>`).join("")}</section>`;
+  }
+  function giftStoreFilters() {
+    const collections = giftCollections();
+    if (collections.length < 2) return "";
+    return `<div class="gift-filters" role="group" aria-label="Show a collection"><button type="button" data-gift-filter="" aria-pressed="${!giftFilter}">All</button>
+      ${collections.map(item => `<button type="button" data-gift-filter="${escape(item.name)}" aria-pressed="${giftFilter === item.name}">${escape(item.name)}</button>`).join("")}</div>`;
+  }
+  function applyGiftFilter() {
+    document.querySelectorAll("#store .product-card").forEach(card => {
+      card.hidden = Boolean(giftFilter) && card.dataset.collection !== giftFilter;
+    });
+    document.querySelectorAll("[data-gift-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.giftFilter === giftFilter)));
+  }
+  function setupGiftHome() {
+    document.querySelectorAll("[data-gift-collection]").forEach(link => link.addEventListener("click", () => { giftFilter = link.dataset.giftCollection; applyGiftFilter(); }));
+    document.querySelectorAll("[data-gift-filter]").forEach(button => button.addEventListener("click", () => { giftFilter = button.dataset.giftFilter; applyGiftFilter(); }));
+    applyGiftFilter();
+  }
+  function giftVisit() {
+    const shop = config.shop;
+    const address = [shop.addressLine1, shop.addressLine2].filter(Boolean).join(", ");
+    const map = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.name + ", " + address)}` : "";
+    const photo = (config.photos[1] || config.photos[0]).src;
+    return `<section id="contact" class="gift-visit"><div class="gift-visit-photo" style="background-image:url('${escape(photo)}')"></div>
+      <div class="gift-visit-words"><h2>Visit the Shop</h2>${address ? `<p>${escape(shop.addressLine1 || "")}${shop.addressLine1 ? "<br>" : ""}${escape(shop.addressLine2 || "")}</p>` : ""}
+      <div class="gift-hours">${shop.hours.map(row => `<span>${escape(row.days)}</span><span>${escape(row.hours)}</span>`).join("")}</div>
+      <p class="gift-reach">${escape(shop.phoneDisplay || "")}${shop.phoneDisplay && shop.email ? " &middot; " : ""}${escape(shop.email || "")}</p>
+      ${map ? `<a class="book-button" href="${escape(map)}" target="_blank" rel="noopener">Get Directions</a>` : ""}</div></section>`;
+  }
   const status = message => { $("demo-status").textContent = message; };
   function error(failure) {
     $("demo-error").textContent = "Demo action failed: " + failure.message;
@@ -172,23 +260,27 @@
     app.classList.toggle("barber-customer-demo", bookingEnabled);
     app.classList.toggle("demo-classic", CLASSIC);
     document.body.classList.toggle("demo-classic-site", CLASSIC);
+    app.classList.toggle("demo-gift", GIFT);
+    document.body.classList.toggle("demo-gift-site", GIFT);
     document.title = config.shop.pageTitle;
     app.innerHTML = `${bookingEnabled ? '<div class="customer-demo-banner">Customer Demo &mdash; this is what your customers see when they book an appointment with you.</div>' : ""}
       <div class="demo-ribbon">DEMO MODE &middot; ${storeEnabled ? "Business Pro" : "Business Pro " + escape(config.demo.label)}</div>
-      ${CLASSIC ? '<p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>' + classicHeader() : `<header class="shop-header"><h1>${escape(config.shop.name)}</h1><nav aria-label="Main navigation">
+      ${CLASSIC || GIFT ? '<p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>' + (GIFT ? giftHeader() : classicHeader()) : `<header class="shop-header"><h1>${escape(config.shop.name)}</h1><nav aria-label="Main navigation">
       <a href="index.html#home">Home</a><a href="index.html#${storeEnabled ? "store" : "services"}">${storeEnabled ? "Shop" : bookingEnabled ? "Services" : "Menu"}</a>
       ${extraPhotos.length && !storeEnabled ? '<a href="index.html#photos">Photos</a>' : ""}<a href="index.html#contact">Contact</a>
       ${bookingEnabled ? '<a href="index.html#booking">Book an appointment</a>' : ""}
       ${storeEnabled ? '<a id="cart-link" href="index.html#checkout">Cart</a>' : ""}</nav></header>`}
-      ${CLASSIC ? "" : '<p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>'}
+      ${CLASSIC || GIFT ? "" : '<p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>'}
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
       <main id="demo-content"></main>
       <div class="demo-pricing"><a class="book-button" href="../../get-started/">Like what you see? Get Started &rarr;</a></div>
       <footer><span class="demo-footer-label">${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo${config.demo.label === "Business Pro" ? "" : " by Business Pro"}</span>
         <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div></footer>`;
+    if (GIFT) setupGiftMenu();
     if (pageName === "home") renderAds();
   }
   function updateCartLink() {
+    if (GIFT && $("cart-link")) { $("cart-link").querySelector("b").textContent = String(giftCartCount()); return; }
     if ($("cart-link")) $("cart-link").textContent = `Cart (${api.read(localStorage, config).cart.reduce((sum, item) => sum + item.quantity, 0)})`;
   }
   function renderAds() {
@@ -357,7 +449,7 @@
     const mobileAds = document.querySelector(".ad-mobile-row");
     if (mobileAds) mobileAds.remove();
     const shop = config.shop, state = api.read(localStorage, config);
-    $("demo-content").innerHTML = `${CLASSIC ? classicHome() : `<section id="home">${image(config.photos[0].src, config.photos[0].alt, "hero-photo")}
+    $("demo-content").innerHTML = `${CLASSIC ? classicHome() : GIFT ? giftHome() : `<section id="home">${image(config.photos[0].src, config.photos[0].alt, "hero-photo")}
       <div class="hero-content"><h2>${escape(shop.heroTitle)}</h2><p><span>${escape(shop.heroSubtitle)}</span></p>
       ${!bookingEnabled && !storeEnabled ? '<button id="call-order" type="button">Call to order</button><p id="call-message" role="status"></p>' :
         `<a class="book-button" href="#${storeEnabled ? "store" : "booking"}">${storeEnabled ? "Shop coastal gifts" : "Customer Demo"}</a>`}</div></section>`}
@@ -374,9 +466,17 @@
         <button type="button" class="book-with-barber" data-book-with="${escape(staff.id)}">Book with ${escape(staff.name.split(" ")[0])}</button></article>`).join("")}</div></section>
       <section id="booking"><h2>Try Booking Your Customer's Appointment</h2><p>This is exactly how your customers will book an appointment.</p>
       ${bookingForm()}</section>` : ""}
-      ${storeEnabled ? `<section id="store"><h2>Shop Coastal Favorites</h2><p>Ship to your address or choose free local pickup.</p>
-      <div class="card-grid">${config.products.map(product => {
+      ${storeEnabled ? `<section id="store"><h2>${escape(GIFT ? shop.storeTitle || "Shop Our Gifts" : "Shop Coastal Favorites")}</h2><p>Ship to your address or choose free local pickup.</p>
+      ${GIFT ? giftStoreFilters() : ""}<div class="card-grid">${config.products.map(product => {
         const count = api.stock(config, state, product.id);
+        if (GIFT) return `<article class="card product-card gift-card" data-collection="${escape(product.category || "")}"><div class="gift-photo">${image(product.photo, product.name)}
+          ${count === 0 ? '<span class="gift-tag gift-tag-out">Sold out</span>' : count <= 3 ? `<span class="gift-tag">Only ${count} left</span>` : ""}</div>
+          <h3>${escape(product.name)}</h3><p class="gift-price">${money(product.priceCents)}</p><p class="product-description">${escape(product.description)}</p>
+          <div class="add-row"><label>Quantity<select data-qty="${escape(product.id)}" autocomplete="off" aria-label="${escape(product.name)} quantity" ${count === 0 ? "disabled" : ""}>
+          ${Array.from({ length: count + 1 }, (_, quantity) =>
+            `<option value="${quantity}" ${quantity === (state.cart.find(item => item.id === product.id)?.quantity || 0) ? "selected" : ""}>${quantity}</option>`).join("")}
+          </select></label></div>
+          <p class="added-message" data-added="${escape(product.id)}" role="status"></p></article>`;
         return `<article class="card product-card">${image(product.photo, product.name)}<h3>${escape(product.name)}</h3>
           <p>${money(product.priceCents)}</p><p class="product-description">${escape(product.description)}</p>
           <p>${count === 0 ? "Out of stock" : count <= 3 ? `Only ${count} left` : "In stock"}</p>
@@ -387,9 +487,9 @@
           <p class="added-message" data-added="${escape(product.id)}" role="status"></p></article>`;
       }).join("")}</div></section>` : ""}
       ${storeEnabled ? `<section id="checkout"><h2>Your Order</h2>${checkoutContent(state)}</section>` : ""}
-      <section id="contact"><h2>Hours &amp; Contact</h2><div class="contact-details"><p><span>${escape(shop.phoneDisplay)} &middot; ${escape(shop.email)}</span></p>
+      ${GIFT ? giftVisit() : `<section id="contact"><h2>Hours &amp; Contact</h2><div class="contact-details"><p><span>${escape(shop.phoneDisplay)} &middot; ${escape(shop.email)}</span></p>
       <p class="address"><span>${escape([shop.addressLine1, shop.addressLine2].filter(Boolean).join(", "))}</span></p><h3><span>Hours</span></h3>
-      ${shop.hours.map(row => `<p><span><strong>${escape(row.days)}</strong>: ${escape(row.hours)}</span></p>`).join("")}</div></section>`;
+      ${shop.hours.map(row => `<p><span><strong>${escape(row.days)}</strong>: ${escape(row.hours)}</span></p>`).join("")}</div></section>`}`;
     if (mobileAds) $("demo-content").insertAdjacentElement("beforebegin", mobileAds);
     if ($("call-order")) $("call-order").addEventListener("click", () => { $("call-message").textContent = `Call ${shop.phoneDisplay} to order`; });
     if (bookingEnabled) {
@@ -397,6 +497,7 @@
       config.barbers.forEach((staff, index) => photoInput(`barber-photo-${staff.id}`, index === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`));
     }
     if (storeEnabled) setupCheckout();
+    if (GIFT) setupGiftHome();
     document.querySelectorAll("[data-qty]").forEach(select => select.addEventListener("change", () => {
       const id = select.dataset.qty;
       const message = document.querySelector(`[data-added="${id}"]`);
