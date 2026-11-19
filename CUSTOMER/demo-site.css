@@ -426,13 +426,13 @@ dialog.text-preview .text-preview-go:focus-visible { outline: 3px solid #111; ou
 @font-face { font-family: "BP Gift Inter"; font-weight: 400; font-display: swap; src: url("../fonts/inter.ttf") format("truetype"); }
 @font-face { font-family: "BP Gift Inter"; font-weight: 700; font-display: swap; src: url("../fonts/inter-bold.woff") format("woff"); }
 body.demo-gift-site:not(.demo-owner-open) { background: #fff; color: #111; color-scheme: light; }
-body:not(.demo-owner-open) #demo-app.demo-gift { --sea: #2f6f6a; --gold: #111; --gold-hi: #333; --black: #fff; --panel: #fff; --line: #e5e5e5; --ink: #111; --muted: #555; background: #fff; color: #111; font-family: "BP Gift Inter", "Inter", Arial, sans-serif; }
+body:not(.demo-owner-open) #demo-app.demo-gift { --sea: #111111; --gold: #111; --gold-hi: #333; --black: #fff; --panel: #fff; --line: #e5e5e5; --ink: #111; --muted: #555; background: #fff; color: #111; font-family: "BP Gift Inter", "Inter", Arial, sans-serif; }
 body:not(.demo-owner-open) #demo-app.demo-gift * { border-radius: 0 !important; }
 body:not(.demo-owner-open) #demo-app.demo-gift h1, body:not(.demo-owner-open) #demo-app.demo-gift h2 { font-family: "Playfair Display", Georgia, serif; font-weight: 800; color: #111; }
 body:not(.demo-owner-open) #demo-app.demo-gift h3 { font-family: "BP Gift Inter", Arial, sans-serif; font-weight: 700; color: #111; }
 body:not(.demo-owner-open) #demo-app.demo-gift a { color: #111; }
 body:not(.demo-owner-open) #demo-app.demo-gift button, body:not(.demo-owner-open) #demo-app.demo-gift .book-button { background: #111; border: 2px solid #111; color: #fff; font-family: "BP Gift Inter", Arial, sans-serif; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: 14px; padding: 13px 26px; }
-body:not(.demo-owner-open) #demo-app.demo-gift button:hover, body:not(.demo-owner-open) #demo-app.demo-gift .book-button:hover { background: var(--sea); border-color: var(--sea); color: #fff; }
+body:not(.demo-owner-open) #demo-app.demo-gift button:hover, body:not(.demo-owner-open) #demo-app.demo-gift .book-button:hover { background: #fff; border-color: #111; color: #111; }
 body:not(.demo-owner-open) #demo-app.demo-gift .book-button.ghost { background: #fff; color: #111; }
 body:not(.demo-owner-open) #demo-app.demo-gift input, body:not(.demo-owner-open) #demo-app.demo-gift select, body:not(.demo-owner-open) #demo-app.demo-gift textarea { background: #fff; color: #111; border: 1.5px solid #999; }
 body:not(.demo-owner-open) #demo-app.demo-gift .demo-ribbon { color: #111; background: #f4f4f5; border-bottom: 1px solid #e5e5e5; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; font-weight: 700; }
@@ -451,13 +451,13 @@ body:not(.demo-owner-open) #demo-app.demo-gift .gift-note { margin: 0; padding: 
 #demo-app.demo-gift .gift-nav-left { justify-content: flex-end; }
 #demo-app.demo-gift .gift-nav-right { justify-content: flex-start; }
 body:not(.demo-owner-open) #demo-app.demo-gift .gift-nav a { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
-body:not(.demo-owner-open) #demo-app.demo-gift .gift-nav a:hover { color: var(--sea); }
+body:not(.demo-owner-open) #demo-app.demo-gift .gift-nav a:hover { text-decoration: underline; text-underline-offset: 6px; }
 #demo-app.demo-gift .gift-logo { margin: 0; font-size: 0; line-height: 1; }
 #demo-app.demo-gift .gift-logo a { display: flex; flex-direction: column; align-items: center; text-decoration: none; }
 #demo-app.demo-gift .gift-logo img { max-height: 64px; width: auto; }
 body:not(.demo-owner-open) #demo-app.demo-gift .gift-logo-name { display: flex; align-items: center; gap: 8px; font-family: "Playfair Display", Georgia, serif; font-weight: 800; font-size: 28px; color: #111; white-space: nowrap; }
 #demo-app.demo-gift .gift-logo-name svg, #demo-app.demo-gift .gift-cart svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
-body:not(.demo-owner-open) #demo-app.demo-gift .gift-logo small { margin-top: 5px; font-size: 10px; font-weight: 700; letter-spacing: .3em; color: var(--sea); }
+body:not(.demo-owner-open) #demo-app.demo-gift .gift-logo small { margin-top: 5px; font-size: 10px; font-weight: 700; letter-spacing: .3em; color: #555; }
 #demo-app.demo-gift .gift-cart { display: inline-flex; align-items: center; gap: 6px; }
 body:not(.demo-owner-open) #demo-app.demo-gift .gift-cart b { background: #111; color: #fff; font-size: 11px; padding: 2px 7px; letter-spacing: 0; }
 body:not(.demo-owner-open) #demo-app.demo-gift .gift-menu-toggle { display: none; padding: 8px 12px; font-size: 13px; background: #fff; color: #111; border: 1.5px solid #111; }
@@ -474,7 +474,7 @@ body:not(.demo-owner-open) #demo-app.demo-gift .gift-hero-text { max-width: 520p
 #demo-app.demo-gift .gift-hero-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
 body:not(.demo-owner-open) #demo-app.demo-gift .gift-hero .book-button { background: #fff; border-color: #fff; color: #111; }
 body:not(.demo-owner-open) #demo-app.demo-gift .gift-hero .book-button.ghost { background: transparent; color: #fff; }
-body:not(.demo-owner-open) #demo-app.demo-gift .gift-hero .book-button:hover { background: var(--sea); border-color: var(--sea); color: #fff; }
+body:not(.demo-owner-open) #demo-app.demo-gift .gift-hero .book-button:hover { background: #111; border-color: #111; color: #fff; }
 
 /* collections: 4 square photos, name over the bottom */
 #demo-content > section.gift-collections { max-width: 1180px; padding: 70px 20px 60px; }
@@ -492,7 +492,7 @@ body:not(.demo-owner-open) #demo-app.demo-gift .gift-collection span { position:
 #demo-app.demo-gift .gift-perks > div { padding: 26px 16px; text-align: center; }
 #demo-app.demo-gift .gift-perks > div + div { border-left: 1px solid rgba(255,255,255,.3); }
 #demo-app.demo-gift .gift-perks strong { display: block; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; }
-#demo-app.demo-gift .gift-perks span { color: #e6f1ef; font-size: 14px; }
+#demo-app.demo-gift .gift-perks span { color: #cfcfcf; font-size: 14px; }
 
 /* the store: square photos, name, price, quantity */
 #demo-content > section#store { max-width: 1180px; padding: 70px 20px 40px; }
@@ -525,7 +525,7 @@ body:not(.demo-owner-open) #demo-app.demo-gift legend, body:not(.demo-owner-open
 body:not(.demo-owner-open) #demo-app.demo-gift .cart-row { border-color: #e5e5e5; background: #fff; }
 
 /* Visit the Shop: photo left, words right */
-#demo-content > section.gift-visit { max-width: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; min-height: 440px; background: #f6f8f8; }
+#demo-content > section.gift-visit { max-width: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; min-height: 440px; background: #f5f5f5; }
 #demo-app.demo-gift .gift-visit-photo { background-size: cover; background-position: center; }
 #demo-app.demo-gift .gift-visit-words { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 30px; text-align: center; }
 body:not(.demo-owner-open) #demo-app.demo-gift .gift-visit-words p { margin: 0; color: #444; line-height: 1.7; }

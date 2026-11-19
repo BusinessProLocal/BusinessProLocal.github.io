@@ -110,7 +110,7 @@
       <p class="classic-hours">${shop.hours.map(row => `<span><b>${escape(row.days)}</b> ${escape(row.hours)}</span>`).join("")}</p>
       <a class="book-button classic-about-book" href="#booking">Book Appointment</a></div></section>`;
   }
-  // 11/19 (Tom): the gift shop demo wears the Model Gift Shop look (layout B: full photo storefront, sea glass green)
+  // 11/19 (Tom): the gift shop demo wears the Model Gift Shop look (layout B: full photo storefront, white and black)
   const GIFT = storeEnabled && String(config.siteStyle || "").toLowerCase() === "gift";
   let giftFilter = "";
   const GIFT_ICONS = {
