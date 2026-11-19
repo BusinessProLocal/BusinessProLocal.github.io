@@ -1492,3 +1492,25 @@ body.demo-owner-open footer .demo-home .book-button { background: #000 !importan
 body.demo-owner-open footer { background: #fff !important; color: #52525b !important; border-color: #e4e4e7 !important; }
 body.demo-owner-open footer * { color: #52525b !important; -webkit-text-fill-color: #52525b !important; text-shadow: none !important; }
 body.demo-owner-open footer .demo-home .book-button { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+
+/* ============================================================
+   11/19 (Tom): the owner view's tabs run down the LEFT side on computers and sideways tablets
+   (Dashboard on top, a ▾ tab opens its pages right under it); phones and upright tablets keep the ☰ Menu.
+============================================================ */
+@media (min-width: 901px) {
+  body.demo-owner-open #daily-dashboard .app { flex-direction: row !important; align-items: stretch; }
+  body.demo-owner-open #daily-dashboard .sidebar {
+    position: sticky; top: 0; flex: 0 0 250px; width: 250px !important; height: 100vh !important; max-height: 100vh !important;
+    flex-direction: column !important; flex-wrap: nowrap !important; align-items: stretch; gap: 0;
+    padding: 22px 14px !important; border-bottom: 0 !important; border-right: 1px solid #e4e4e7 !important; overflow-y: auto !important;
+  }
+  body.demo-owner-open #daily-dashboard .brand { flex-direction: column; align-items: flex-start; gap: 4px; padding: 0 8px 16px !important; border-bottom: 1px solid #e4e4e7 !important; }
+  body.demo-owner-open #daily-dashboard .nav { order: 2; flex-basis: auto; flex-direction: column !important; flex-wrap: nowrap !important; gap: 2px; padding: 14px 0 !important; }
+  body.demo-owner-open #daily-dashboard .nav button { width: 100% !important; justify-content: flex-start; text-align: left; }
+  body.demo-owner-open #daily-dashboard .nav button .owner-tab-tag { margin-left: auto; }
+  body.demo-owner-open #daily-dashboard .owner-demo-submenu { order: 0; flex-basis: auto; flex-direction: column; flex-wrap: nowrap; gap: 2px; margin: 2px 0 6px 12px !important; padding: 0 0 0 8px !important; border-top: 0 !important; border-left: 2px solid #000 !important; }
+  body.demo-owner-open #daily-dashboard .owner-demo-submenu button { border: 0 !important; }
+  body.demo-owner-open #daily-dashboard .support-box { order: 3; margin: auto 0 0 !important; padding-top: 14px !important; flex-direction: column; align-items: stretch; border-top: 1px solid #e4e4e7 !important; }
+  body.demo-owner-open #daily-dashboard .support-buttons { flex-direction: column; }
+  body.demo-owner-open #daily-dashboard .main { flex: 1 1 auto; min-width: 0; }
+}

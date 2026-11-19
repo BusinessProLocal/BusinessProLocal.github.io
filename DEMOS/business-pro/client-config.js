@@ -2,26 +2,25 @@ window.SHOP_CONFIG = {
   demo: { id: "demo-coastal-gift-shop", tier: "business-pro", label: "Business Pro" },
   // 11/19 (Tom): Model Gift Shop look (layout B)
   siteStyle: "gift",
+  // 11/19 (Tom): gift shop stock owner tabs — the 8 that Shopify, Square and Lightspeed share; the rest folded inside
   ownerTabs: [
     { id: "dashboard", label: "Dashboard", live: true },
-    { id: "business-status", label: "Open / Close" },
-    { id: "products", label: "Products" },
-    { id: "inventory", label: "Inventory", children: [
+    { id: "orders", label: "Orders", live: true, children: [{ id: "shipping", label: "Shipping" }] },
+    { id: "products", label: "Products", children: [
+      { id: "inventory", label: "Inventory" },
       { id: "receiving", label: "Receiving" },
       { id: "outgoing", label: "Outgoing" },
       { id: "low-stock", label: "Low-stock alerts" }
     ] },
-    { id: "orders", label: "Orders", live: true },
-    { id: "shipping", label: "Shipping" },
-    { id: "schedule", label: "Schedule" },
-    { id: "employees", label: "Employees" },
-    { id: "financials", label: "Financials", children: [{ id: "financials", label: "Financial Overview" }] },
-    { id: "photos", label: "Photos" },
-    { id: "announcements", label: "Announcements" },
-    { id: "business", label: "Business Info" },
     { id: "customers", label: "Customers" },
-    { id: "sales-reports", label: "Sales Reports" },
-    { id: "settings", label: "Settings" }
+    { id: "sales-reports", label: "Reports", children: [{ id: "financials", label: "Money" }] },
+    { id: "employees", label: "Staff", children: [{ id: "schedule", label: "Schedule" }] },
+    { id: "announcements", label: "Marketing" },
+    { id: "settings", label: "Settings", children: [
+      { id: "business", label: "Business Info" },
+      { id: "business-status", label: "Open / Close" },
+      { id: "photos", label: "Photos" }
+    ] }
   ],
   shop: {
     name: "Coastal Gift Shop", pageTitle: "Coastal Gift Shop | Business Pro DEMO",
