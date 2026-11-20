@@ -190,9 +190,9 @@ form input:focus{outline:2px solid #000;outline-offset:1px}
     var title = report.listing.title || host;
     var desc = report.listing.description
       ? esc(cut(report.listing.description, 155))
-      : "<i>No description, so Google grabs whatever words it finds on your page.</i>";
+      : "<i>No description, so Google grabs whatever words it finds on your page, and customers can't tell who you are as easily.</i>";
     var note = !report.listing.title || report.listing.title.length < 10
-      ? "Your link just says \u201c" + esc(title) + "\u201d. Would you click it?"
+      ? "Your link just says \u201c" + esc(title) + "\u201d. Customers can't tell who you are, so they click the next one."
       : "";
     return '<div class="serp"><p class="serp-label">Preview: how your website shows up in search results</p>' +
       '<div class="serp-card"><div class="serp-site"><span class="serp-dot">' + esc(host.charAt(0).toUpperCase()) + '</span><div><b>' + esc(host) + '</b><small>' + esc(report.url) + '</small></div></div>' +
