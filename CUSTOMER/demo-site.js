@@ -19,14 +19,14 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261119b";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261119c";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
   ownerNewLook.src = "../../CUSTOMER/demo-new-look.js?v=20261119a";
   document.head.appendChild(ownerNewLook);
   const goldWords = document.createElement("script");
-  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261021x";
+  goldWords.src = "../../CUSTOMER/gold-word.js?v=20261119a";
   document.head.appendChild(goldWords);
   // each barber's own color (blue, green): meaning colors stay in the new look, gold doesn't
   const employeeColor = id => id === config.barbers?.[0]?.id ? "#2463eb" : "#16a34a";

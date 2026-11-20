@@ -1514,3 +1514,7 @@ body.demo-owner-open footer .demo-home .book-button { color: #fff !important; -w
   body.demo-owner-open #daily-dashboard .support-buttons { flex-direction: column; }
   body.demo-owner-open #daily-dashboard .main { flex: 1 1 auto; min-width: 0; }
 }
+/* 11/19 (Tom): Packed, Print Label and Shipped in the new look (they were the last gold bars): black, white letters */
+body.demo-owner-open #daily-dashboard .action-btn { background: #000 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; border: 1.5px solid #000 !important; padding: 11px 20px !important; font-weight: 700 !important; letter-spacing: .06em; text-transform: uppercase; }
+body.demo-owner-open #daily-dashboard .action-btn:hover:not(:disabled) { background: #fff !important; color: #000 !important; -webkit-text-fill-color: #000 !important; }
+body.demo-owner-open #daily-dashboard .action-btn:disabled { opacity: .45; }
