@@ -1528,3 +1528,16 @@ body.demo-owner-open #daily-dashboard .action-btn:disabled { opacity: .45; }
   body.demo-print-label #demo-print-area .shipping-label svg, body.demo-print-label #demo-print-area .shipping-label img { max-width: 100%; height: auto; }
   body.demo-print-label #demo-print-area .shipping-label select, body.demo-print-label #demo-print-area .shipping-label button { display: none !important; }
 }
+
+/* 11/20 (Tom): the shop-name block at the top-left of the owner view is BLACK with white letters,
+   so it stands apart from the tabs under it (barbershop + gift shop demos) */
+body.demo-owner-open #daily-dashboard .brand { background: #000 !important; padding: 14px 14px 12px !important; border: 0 !important; }
+body.demo-owner-open #daily-dashboard .brand .business-name strong,
+body.demo-owner-open #daily-dashboard .brand h1,
+body.demo-owner-open #daily-dashboard .brand p,
+body.demo-owner-open #daily-dashboard .brand * { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+body.demo-owner-open #daily-dashboard .brand h1,
+body.demo-owner-open #daily-dashboard .brand p { opacity: .8; }
+@media (min-width: 901px) {
+  body.demo-owner-open #daily-dashboard .brand { margin: 0 0 6px !important; padding: 16px 14px 14px !important; border-bottom: 0 !important; }
+}

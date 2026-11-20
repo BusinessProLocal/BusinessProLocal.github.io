@@ -29,7 +29,8 @@ ${SCOPE} ::placeholder{color:#71717a!important}
 
   // ---------- repaint what the old gold look left behind (owner view only) ----------
   // parts the new-look CSS (demo-owner.css) colors itself: the sweep leaves them alone
-  const KEEP = "[data-keep-color], img, svg, video, canvas, iframe, .dashboard-photo-silhouette, .shop-owner-banner, .dash-step, .completed-barber-block";
+  // 11/20 (Tom): + the black shop-name block at the top-left (.sidebar .brand)
+  const KEEP = "[data-keep-color], img, svg, video, canvas, iframe, .dashboard-photo-silhouette, .shop-owner-banner, .dash-step, .completed-barber-block, .sidebar .brand";
   function rgba(text) {
     const m = /rgba?\(([^)]+)\)/.exec(text || "");
     if (!m) return null;
