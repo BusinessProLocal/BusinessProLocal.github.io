@@ -250,6 +250,48 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
   .req .open{justify-self:center;width:100%}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.toast{transition:none}.req.new{animation:none}.btn-gold{transition:none}}
+
+/* ===== 11/20 (Tom): the SHOP OWNER VIEW gets the new Business Pro look like the other demos:
+   white and black, square corners, one font. The shop name block at the top-left is black with white letters.
+   (The lawn company's own customer website keeps its green look.) ===== */
+.owner,.owner *{border-radius:0!important;font-family:var(--ui)!important}
+.owner{background:#fff}
+.owner-banner{background:#000;color:#fff;box-shadow:none}
+.side{background:#fff;color:#000;border:1px solid #e4e4e7;padding:0 0 12px}
+.side .brand{background:#000;color:#fff;padding:16px 12px 14px;margin:0 0 10px;border-bottom:0}
+.side .brand img{border-radius:50%!important;background:#fff}
+.side .brand b{color:#fff;font-weight:800}
+.side .brand small{color:#d4d4d8}
+.side .tabs{padding:0 10px}
+.tab{background:#fff;color:#000;border:1px solid transparent;font-weight:700}
+.tab:hover{background:#f4f4f5;border-color:#e4e4e7}
+.tab.on{background:#000;color:#fff;border-color:#000}
+.tab .count{background:#000;color:#fff;border:1px solid #fff}
+.tab.on .count{background:#fff;color:#000}
+.hello{background:#fff;color:#000;border:1px solid #000;background-image:none}
+.hello h2{color:#000;font-weight:800}
+.hello div{background:#fff;border:1px solid #e4e4e7}
+.hello div b{color:#000}
+.hello div span{color:#52525b}
+.panel{box-shadow:none;border-color:#e4e4e7}
+.req.new{border:2px solid #000;box-shadow:none;animation:none}
+.tag.new{background:#000;color:#fff}
+.req .open{background:#000;color:#fff}
+.money:focus-within{outline:2px solid #000}
+.btn-dark{background:#000;color:#fff;box-shadow:none}
+.note-pop{border-color:#fff}
+.owner-ping strong{color:#fff}
+/* the Business Pro demo bar and step guide on top: black and white too */
+.bp-demo-bar{background:#000;color:#fff}
+.bp-demo-bar a{color:#fff}
+.steps span.on{border-color:#fff}
+.steps span.on b{background:#fff;color:#000}
+@media(max-width:900px){
+  .side{padding:0 0 10px}
+  .side .brand{margin-bottom:8px;padding:10px}
+  .side-menu{padding:0 10px}
+  .side-menu summary{color:#000;border:1.5px solid #000;font-weight:700}
+}
 </style>
 </head>
 <body>
