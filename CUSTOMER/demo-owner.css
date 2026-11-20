@@ -1518,3 +1518,13 @@ body.demo-owner-open footer .demo-home .book-button { color: #fff !important; -w
 body.demo-owner-open #daily-dashboard .action-btn { background: #000 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; border: 1.5px solid #000 !important; padding: 11px 20px !important; font-weight: 700 !important; letter-spacing: .06em; text-transform: uppercase; }
 body.demo-owner-open #daily-dashboard .action-btn:hover:not(:disabled) { background: #fff !important; color: #000 !important; -webkit-text-fill-color: #000 !important; }
 body.demo-owner-open #daily-dashboard .action-btn:disabled { opacity: .45; }
+/* 11/19 (Tom): printing 2 labels came out as 5 pages: the rest of the page still took up room. Now only the labels print, one 4 x 6 label per page. */
+@media print {
+  body.demo-print-label > *:not(#demo-print-area) { display: none !important; }
+  body.demo-print-label { margin: 0 !important; padding: 0 !important; background: #fff !important; min-height: 0 !important; }
+  body.demo-print-label #demo-print-area { position: static !important; inset: auto; margin: 0; padding: 0; }
+  body.demo-print-label #demo-print-area .shipping-label { box-sizing: border-box; width: 4in; height: 6in; max-height: 6in; overflow: hidden; margin: 0 !important; padding: .25in !important; border: 0 !important; font-size: 11pt; color: #000 !important; break-inside: avoid; page-break-inside: avoid; }
+  body.demo-print-label #demo-print-area .shipping-label * { color: #000 !important; -webkit-text-fill-color: #000 !important; }
+  body.demo-print-label #demo-print-area .shipping-label svg, body.demo-print-label #demo-print-area .shipping-label img { max-width: 100%; height: auto; }
+  body.demo-print-label #demo-print-area .shipping-label select, body.demo-print-label #demo-print-area .shipping-label button { display: none !important; }
+}
