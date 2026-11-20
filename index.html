@@ -183,6 +183,20 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
 .dont li:last-child:nth-child(odd){grid-column:1/-1;justify-self:center}
 @media(max-height:760px) and (min-width:1001px){.dont{margin-top:3px}.dont li{font-size:.76rem}.pitch{margin-top:6px}.lines{margin-top:0}.center{row-gap:8px}}
 @media(max-width:820px){.dont{grid-template-columns:1fr;max-width:340px}.dont li:last-child:nth-child(odd){justify-self:start}}
+
+/* 11/20 (Tom): round "Starting at $199" price badge on the top-right of the picture — only ProGo's price shows on the site */
+.price-badge{position:absolute;z-index:3;top:clamp(14px,2vw,28px);right:clamp(14px,2.4vw,40px);width:clamp(104px,9vw,136px);aspect-ratio:1;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-decoration:none;
+  background:#111;color:#fff;box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(212,175,55,.85),0 8px 22px rgba(0,0,0,.28);transform:rotate(-8deg);transition:transform .15s ease}
+.price-badge:hover,.price-badge:focus-visible{transform:rotate(-8deg) scale(1.05);outline:none}
+.price-badge small{display:block;font-size:clamp(.66rem,.8vw,.8rem);font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1.1}
+.price-badge strong{display:block;font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,2.4vw,2.3rem);line-height:1;margin:2px 0}
+.stage a.price-badge,.stage a.price-badge small,.stage a.price-badge strong{color:#fff;text-shadow:none}
+@media(max-width:1000px){.price-badge{top:10px;right:10px;width:88px}.price-badge strong{font-size:1.45rem}.price-badge small{font-size:.58rem}}
+/* ProGo's price on its card */
+.tier-head .tier-price{margin:4px 0 0;font-family:var(--display);font-weight:800;font-size:1.15rem;color:#000}
+.tier-head .tier-price span{font-family:var(--ui);font-size:.74rem;font-weight:800}
+.tier:hover .tier-price,.tier:focus-visible .tier-price,.tier:active .tier-price,.tier.picked .tier-price{color:#fff}
 .credit{display:inline;margin-left:6px;font-size:.68rem;font-weight:600;opacity:.8}
 </style>
 <script type="application/ld+json">
@@ -213,6 +227,7 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
 </nav>
 
 <main class="stage">
+  <a class="price-badge" href="get-started/" aria-label="Websites starting at $199. Get started"><small>Starting at</small><strong>$199</strong><small>one-time</small></a>
   <section class="center" aria-label="Plans">
     <div class="headline">
       <h1>Websites, booking and online stores for Maine businesses</h1>
@@ -227,7 +242,7 @@ nav.site-nav .nav-brand img{display:block;width:64px;height:64px;border-radius:5
       </ul>
     </div>
       <a class="tier c1" href="get-started/">
-        <div class="tier-head"><h2>ProGo</h2><p>Your website</p></div>
+        <div class="tier-head"><h2>ProGo</h2><p>Your website</p><p class="tier-price">$199 <span>one-time</span></p></div>
         <ul>
           <li>Google-ready SEO</li>
           <li>Google Business Profile setup</li>
