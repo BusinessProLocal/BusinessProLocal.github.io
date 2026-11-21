@@ -112,8 +112,9 @@
     setBrand: function (brand) { BRAND = brand && typeof brand === "object" ? brand : { name: "", logo: "", host: "" }; },
     buttons: function (id) {
       var ex = build()[id]; if (!ex) return "";
-      return '<span class="mx-links">' + Object.keys(ex.views).map(function (v) {
-        return '<button type="button" class="mx-link" data-ex="' + id + '" data-view="' + v + '">👁 ' + (v === "Example" ? "See example" : v) + '</button>';
+      var views = Object.keys(ex.views);
+      return '<span class="mx-links">' + views.map(function (v) {
+        return '<button type="button" class="mx-link" data-ex="' + id + '" data-view="' + v + '">👁 ' + (views.length === 1 ? "See example" : v) + '</button>';
       }).join("") + '</span>';
     },
     ids: function () { return Object.keys(build()); }
