@@ -171,6 +171,12 @@ form input:focus{outline:2px solid #000;outline-offset:1px}
 .mx-bar{background:#fff;padding:6px 8px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center}
 .mx-url{background:#f1f3f4;border-radius:999px;padding:4px 10px;flex:1}
 .mx-page{height:110px;background:#fafafa}.mx-pghead{padding:14px;font-weight:800;font-size:15px}
+/* 11/20 (Tom): share links */
+.for{text-align:center;margin:0 0 12px;font-size:1.05rem}
+.share{margin:22px 0 0;border:1.5px dashed #000;border-radius:14px;padding:14px;text-align:center}
+.share p{margin:0 0 10px}
+.share input{width:100%;font:inherit;font-size:13px;padding:9px 10px;border:1px solid #bbb;border-radius:8px;margin-bottom:10px;color:#333}
+.share-copy{font:inherit;font-weight:900;background:#111;color:#fff;border:0;border-radius:999px;padding:10px 26px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -266,7 +272,15 @@ form input:focus{outline:2px solid #000;outline-offset:1px}
       (note ? '<p class="serp-note">' + note + '</p>' : '') + '</div>';
   }
 
-  function render(report) {
+  function shareBox(report) {
+    if (!report.share) return "";
+    var link = "https://businessprolocal.com/website-check/?r=" + report.share;
+    return '<div class="share"><p><b>🔗 Share this report</b><br>One link that opens these exact results, examples and all.</p>' +
+      '<input type="text" readonly value="' + esc(link) + '" aria-label="Report link">' +
+      '<button type="button" class="share-copy" data-link="' + esc(link) + '">Copy link</button></div>';
+  }
+
+  function render(report, sharedFor) {
     var html;
     if (report.kind === "checked") {
       var fails = report.checks.filter(function (c) { return !c.pass; });
@@ -275,7 +289,7 @@ form input:focus{outline:2px solid #000;outline-offset:1px}
         : "Your site is missing things that cost you customers.";
       var ordered = fails.concat(report.checks.filter(function (c) { return c.pass; }));
       if (window.WebsiteCheckExamples) WebsiteCheckExamples.setBrand(report.brand);
-      html = '<div class="score"><div class="ring"><b>' + report.passed + '/' + report.total + '</b><small>GRADE ' + esc(report.grade) + '</small></div>' +
+      html = (sharedFor ? '<p class="for">Website report for <b>' + esc(sharedFor) + '</b></p>' : '') + '<div class="score"><div class="ring"><b>' + report.passed + '/' + report.total + '</b><small>GRADE ' + esc(report.grade) + '</small></div>' +
         '<h2>' + headline + '</h2><p class="site">' + esc(report.url) + '</p></div>' +
         listingPreview(report) +
         '<ul class="checks">' + ordered.map(function (c) {
@@ -285,13 +299,38 @@ form input:focus{outline:2px solid #000;outline-offset:1px}
     } else {
       html = '<p class="message">' + esc(report.message) + '</p>';
     }
-    result.innerHTML = html + NEXT;
+    result.innerHTML = html + shareBox(report) + NEXT;
+    var copyBtn = result.querySelector(".share-copy");
+    if (copyBtn) copyBtn.addEventListener("click", function () {
+      var link = copyBtn.getAttribute("data-link");
+      var done = function () { copyBtn.textContent = "Copied ✓"; setTimeout(function () { copyBtn.textContent = "Copy link"; }, 2000); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, function () { result.querySelector(".share input").select(); });
+      else { result.querySelector(".share input").select(); try { document.execCommand("copy"); done(); } catch (e) {} }
+    });
     ask.style.display = "none";
     result.style.display = "block";
     result.scrollIntoView({ behavior: "smooth", block: "start" });
     document.getElementById("again").addEventListener("click", function () {
       result.style.display = "none"; ask.style.display = ""; url.value = ""; url.focus();
     });
+  }
+
+  // 11/20 (Tom): a share link (?r=...) opens the finished report right away, no form.
+  var sharedToken = new URLSearchParams(location.search).get("r");
+  if (sharedToken) {
+    ask.style.display = "none";
+    result.innerHTML = '<p class="message">Loading your website report…</p>';
+    result.style.display = "block";
+    fetch(SERVER + "/shared", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: sharedToken }) })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (x) {
+        if (!x.ok || !x.d.ok) throw new Error(x.d && x.d.error ? x.d.error : "We couldn't open this report.");
+        render(x.d.report, x.d.business || (x.d.report.brand && x.d.report.brand.name) || "");
+      })
+      .catch(function (err) {
+        result.style.display = "none"; ask.style.display = "";
+        showError((err && err.message && err.message !== "Failed to fetch" ? err.message : "We couldn't open this report.") + " You can run a new check here.");
+      });
   }
 
   form.addEventListener("submit", function (e) {
