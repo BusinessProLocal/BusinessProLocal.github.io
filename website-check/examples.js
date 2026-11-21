@@ -20,6 +20,7 @@
   };
   var tab = function (icon, text, on) { return '<span class="mx-tab' + (on ? " on" : "") + '">' + icon + '<span>' + text + '</span></span>'; };
   var globe = '<span class="mx-ico mx-globe">🌐</span>';
+  var zoom = function (icon, good) { return '<div class="mx-zoom ' + (good ? "good" : "bad") + '"><span>🔍 Up close</span>' + icon + '</div>'; };
   var search = function (q) { return '<div class="mx-search">' + q + '</div>'; };
   var result = function (ico, name, url, title, desc, extra, hl) {
     return '<div class="mx-res' + (hl ? " " + hl : "") + '"><div class="mx-site">' + ico + '<div><b>' + name + '</b><small>' + url + '</small></div></div>' +
@@ -77,12 +78,12 @@
     } } },
     icon: { views: {
       "Phone example": {
-        without: phone(search("roofer near me") + result(globe, BIZ, HOST, BIZ + " | Roofing", "", "", "hl-bad") + COMP),
-        with: phone(search("roofer near me") + result(mark, BIZ, HOST, BIZ + " | Roofing", "", "", "hl-good") + COMP)
+        without: phone(search("roofer near me") + result(globe, BIZ, HOST, BIZ + " | Roofing", "", "", "hl-bad") + COMP) + zoom(globe, false),
+        with: phone(search("roofer near me") + result(mark, BIZ, HOST, BIZ + " | Roofing", "", "", "hl-good") + COMP) + zoom(mark, true)
       },
       "Computer example": {
-        without: pc(tab(globe, BIZ, true) + tab(comp("C", "#1565c0"), "Competitor", false) + tab(globe, "Home", false), HOST, '<div class="mx-pghead">' + BIZ + '</div>'),
-        with: pc(tab(mark, BIZ, true) + tab(comp("C", "#1565c0"), "Competitor", false) + tab(globe, "Home", false), HOST, '<div class="mx-pghead">' + BIZ + '</div>')
+        without: pc(tab(globe, BIZ, true) + tab(comp("C", "#1565c0"), "Competitor", false) + tab(globe, "Home", false), HOST, '<div class="mx-pghead">' + BIZ + '</div>') + zoom(globe, false),
+        with: pc(tab(mark, BIZ, true) + tab(comp("C", "#1565c0"), "Competitor", false) + tab(globe, "Home", false), HOST, '<div class="mx-pghead">' + BIZ + '</div>') + zoom(mark, true)
       }
     } }
   };
