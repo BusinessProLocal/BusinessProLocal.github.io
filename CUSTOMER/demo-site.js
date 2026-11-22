@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122f";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122g";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -65,7 +65,7 @@
     const button = (tab, child = false) => `<button type="button" data-owner-tab="${escape(tab.id)}"
       ${tab.children ? `aria-expanded="${expandedOwnerTabs.has(tab.id)}" aria-controls="demo-submenu-${tab.id}"` : ""}
       class="${dashboardView === tab.id ? "active " : ""}${tab.live ? "owner-live-tab" : "owner-preview-tab"} ${tab.live && !visitedLiveTabs.has(tab.id) ? "owner-live-pulse" : ""} ${tab.live && tab.id !== "dashboard" && !visitedLiveTabs.has(tab.id) ? "owner-live-blink" : ""} ${child ? "owner-subtab" : ""}">
-      <span>${escape(ownerTabLabel(tab))}</span><span class="owner-tab-tag">${tab.live ? "LIVE" : "Preview"}</span></button>`;
+      <span>${escape(ownerTabLabel(tab))}</span><span class="owner-tab-tag${tab.live ? " is-live" : ""}">${tab.live ? "LIVE" : "Preview"}</span></button>`;
     return ownerTabs.map(tab => button(tab) + (tab.children ?
       `<div class="owner-demo-submenu" id="demo-submenu-${tab.id}" ${expandedOwnerTabs.has(tab.id) ? "" : "hidden"}>${tab.children.map(child => button(child, true)).join("")}</div>` : "")).join("");
   }
@@ -1298,7 +1298,7 @@
   // 11/19 (Tom): the booking demo's dashboard reads like the real owner portal's Morning Brief —
   // 1 finish these first, 2 today's appointments, 3 done today & money
   function morningBrief(records, state, complete, price) {
-    const step = (number, title, count = "") => `<h3 class="dash-step"><span class="dash-num">${number}</span>${title}${count ? `<span class="dash-count">${count}</span>` : ""}</h3>`;
+    const step = (number, title, count = "") => `<h3 class="dash-step dash-step-${number}"><span class="dash-num">${number}</span>${title}${count ? `<span class="dash-count">${count}</span>` : ""}</h3>`;
     return `<div class="section-heading"><h2>Good morning. Here's your day, in order.</h2></div>
       ${step(1, "Finish these first", "1 to do")}${timeOffPanel()}
       ${step(2, "Today's appointments")}${schedulePanel(records, state)}

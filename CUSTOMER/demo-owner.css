@@ -1582,3 +1582,64 @@ body.demo-owner-open #daily-dashboard .nav button .owner-tab-tag { margin-left: 
 #daily-dashboard .access-controls { flex: 0 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 #daily-dashboard .lock-btn, #daily-dashboard .signed-in-badge { white-space: nowrap; flex: none; }
 #daily-dashboard button, #daily-dashboard .owner-tab-tag, #daily-dashboard .new-booking-tag { overflow-wrap: normal; word-break: normal; hyphens: none; }
+
+/* ============================================================
+   11/22 (Tom): COLOR in the owner portal — it was all black and white.
+   Navy for the brand and main buttons, blue for "where you are", green for LIVE and money,
+   amber for "finish these first", purple for the team. Text stays dark on light for easy reading.
+   ============================================================ */
+body.demo-owner-open #daily-dashboard {
+  --oc-navy: #12355b; --oc-blue: #1f6fd1; --oc-blue-soft: #e8f0fe; --oc-green: #15803d; --oc-green-soft: #e6f4ea;
+  --oc-amber: #b45309; --oc-amber-soft: #fff4e5; --oc-purple: #6d28d9; --oc-purple-soft: #f1ebff; --oc-orange: #ea580c;
+}
+/* brand box + menu */
+body.demo-owner-open #daily-dashboard .brand { background: linear-gradient(135deg, var(--oc-navy), #1f4e86) !important; border-color: var(--oc-navy) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .brand * { color: #fff !important; }
+body.demo-owner-open #daily-dashboard .nav > button { border-left: 4px solid transparent !important; }
+body.demo-owner-open #daily-dashboard .nav > button:hover { background: var(--oc-blue-soft) !important; color: var(--oc-navy) !important; }
+body.demo-owner-open #daily-dashboard .nav > button.active { background: var(--oc-blue) !important; border-color: var(--oc-blue) !important; border-left-color: var(--oc-navy) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .nav > button.active > span:first-child { color: #fff !important; }
+body.demo-owner-open #daily-dashboard .owner-tab-tag { border-color: #8a99ad !important; color: #4b5b70 !important; background: #f4f6f9 !important; }
+body.demo-owner-open #daily-dashboard .owner-tab-tag.is-live { background: var(--oc-green) !important; border-color: var(--oc-green) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .nav > button.active .owner-tab-tag { background: #fff !important; border-color: #fff !important; color: var(--oc-blue) !important; -webkit-text-fill-color: var(--oc-blue) !important; }
+body.demo-owner-open #daily-dashboard .mobile-menu-toggle, body.demo-owner-open #daily-dashboard .mobile-menu-toggle * { background: var(--oc-navy) !important; border-color: var(--oc-navy) !important; color: #fff !important; -webkit-text-fill-color: #fff !important; }
+body.demo-owner-open #daily-dashboard .support-buttons button { border-color: var(--oc-navy) !important; color: var(--oc-navy) !important; background: #fff !important; }
+/* top bar */
+body.demo-owner-open #daily-dashboard .topbar { border-bottom: 3px solid var(--oc-blue) !important; }
+body.demo-owner-open #daily-dashboard .lock-btn { background: var(--oc-navy) !important; border-color: var(--oc-navy) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .signed-in-badge { border-color: var(--oc-green) !important; color: var(--oc-green) !important; background: var(--oc-green-soft) !important; }
+/* banner + steps */
+body.demo-owner-open #daily-dashboard .page#dashboard .shop-owner-banner { background: linear-gradient(135deg, var(--oc-navy), #1f4e86) !important; }
+body.demo-owner-open #daily-dashboard .dash-step-1 { border-bottom-color: var(--oc-amber) !important; }
+body.demo-owner-open #daily-dashboard .dash-step-1 .dash-num { background: var(--oc-amber) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .dash-step-1 .dash-count { background: var(--oc-amber-soft) !important; border-color: var(--oc-amber) !important; color: var(--oc-amber) !important; }
+body.demo-owner-open #daily-dashboard .dash-step-2 { border-bottom-color: var(--oc-blue) !important; }
+body.demo-owner-open #daily-dashboard .dash-step-2 .dash-num { background: var(--oc-blue) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .dash-step-3 { border-bottom-color: var(--oc-green) !important; }
+body.demo-owner-open #daily-dashboard .dash-step-3 .dash-num { background: var(--oc-green) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .dash-step-4 { border-bottom-color: var(--oc-purple) !important; }
+body.demo-owner-open #daily-dashboard .dash-step-4 .dash-num { background: var(--oc-purple) !important; color: #fff !important; }
+/* time off (to do) */
+body.demo-owner-open #daily-dashboard .dashboard-time-off-panel { border-left: 5px solid var(--oc-amber) !important; }
+body.demo-owner-open #daily-dashboard .dashboard-time-off-item { background: var(--oc-amber-soft) !important; border-color: #f3c98b !important; }
+/* appointments */
+body.demo-owner-open #daily-dashboard .completed-time-btn { background: var(--oc-blue) !important; border-color: var(--oc-blue) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .completed-time-btn:hover { background: var(--oc-navy) !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .new-booking-tag, body.demo-owner-open #daily-dashboard .new-booking-tag { background: var(--oc-orange) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .calendar-btn { background: var(--oc-navy) !important; border-color: var(--oc-navy) !important; color: #fff !important; }
+body.demo-owner-open #daily-dashboard .calendar-btn:hover { background: var(--oc-blue) !important; border-color: var(--oc-blue) !important; }
+body.demo-owner-open #daily-dashboard .back-to-dashboard { border-color: var(--oc-blue) !important; color: var(--oc-blue) !important; }
+/* the three money/team cards */
+body.demo-owner-open #daily-dashboard .cards .card { border-top: 5px solid var(--oc-blue) !important; }
+body.demo-owner-open #daily-dashboard .cards .card:nth-child(1) strong { color: var(--oc-blue) !important; }
+body.demo-owner-open #daily-dashboard .cards .card:nth-child(2) { border-top-color: var(--oc-purple) !important; }
+body.demo-owner-open #daily-dashboard .cards .card:nth-child(2) strong { color: var(--oc-purple) !important; }
+body.demo-owner-open #daily-dashboard .cards .card:nth-child(3) { border-top-color: var(--oc-green) !important; }
+body.demo-owner-open #daily-dashboard .cards .card:nth-child(3) strong { color: var(--oc-green) !important; }
+/* panels: a light blue header strip */
+body.demo-owner-open #daily-dashboard .panel-header { background: #f5f8fc !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .cards { border-color: #d5dde8 !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .completed-barber-block { border-color: var(--oc-blue) !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .cards .card:nth-child(1) { box-shadow: inset 0 5px 0 var(--oc-blue) !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .cards .card:nth-child(2) { box-shadow: inset 0 5px 0 var(--oc-purple) !important; }
+body.demo-owner-open #daily-dashboard .page#dashboard .cards .card:nth-child(3) { box-shadow: inset 0 5px 0 var(--oc-green) !important; }
