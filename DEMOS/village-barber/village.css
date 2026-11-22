@@ -8,3 +8,7 @@ body:not(.demo-owner-open) #demo-app.demo-classic .classic-nav a.classic-book { 
 body:not(.demo-owner-open) #demo-app.demo-classic .classic-ribbon { background: var(--vb-cream); }
 /* storefront photo: keep his Park Place sign in view on phones */
 #demo-app.demo-classic .classic-hero { background-position: 80% center !important; }
+/* no hero words: let his storefront show brighter, Book Appointment button lower on the photo */
+#demo-app.demo-classic .classic-hero { background-image: linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.35)), url('images/park-place.jpg') !important; }
+#demo-app.demo-classic .classic-hero .hero-content { align-self: flex-end; padding-bottom: 40px; }
+body:not(.demo-owner-open) #demo-app.demo-classic .classic-hero-book { background: var(--vb-blue); border-color: var(--vb-blue); color: #fff; }

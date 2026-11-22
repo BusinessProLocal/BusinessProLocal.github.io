@@ -28,6 +28,8 @@ window.SHOP_CONFIG = {
   ],
   shop: {
     logo: "images/logo.png", heroImage: "images/park-place.jpg",
+    // 11/22 (Tom): no "Classic Grooming Is Timeless" — his own words go here once he tells us
+    classicHero: false,
     name: "The Village Barber", pageTitle: "The Village Barber | Your new website (preview)",
     heroTitle: "Good cuts. Fair prices. Right here on Main Street.",
     heroSubtitle: "This is a preview of your new website. Book an appointment like your customer would, then see what you'd see as the owner.",

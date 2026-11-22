@@ -127,8 +127,8 @@
       <strong>${escape(title)}</strong><span class="classic-tile-text">${escape(text)}</span><span class="classic-tile-go">${escape(go)} &rarr;</span></a>`;
     const where = shop.addressLine2 ? `<h3>Haircuts in ${escape(shop.addressLine2)}</h3>` : "";
     return `<section id="home" class="classic-hero" style="background-image:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.68)),url('${escape(hero)}')">
-      <div class="hero-content"><p class="classic-script">${escape(words.script || "Classic")}</p><h2 class="classic-big">${escape(words.big || "Grooming")}</h2>
-      <p class="classic-ribbon">${escape(words.ribbon || "Is Timeless")}</p><a class="book-button classic-hero-book" href="#booking">Book Appointment</a></div></section>
+      <div class="hero-content">${shop.classicHero === false ? "" : `<p class="classic-script">${escape(words.script || "Classic")}</p><h2 class="classic-big">${escape(words.big || "Grooming")}</h2>
+      <p class="classic-ribbon">${escape(words.ribbon || "Is Timeless")}</p>`}<a class="book-button classic-hero-book" href="#booking">Book Appointment</a></div></section>
       <section class="classic-tiles" aria-label="Quick links">
       ${tile("cal", "Appointments", "Pick your barber, day and time online. Takes under a minute.", "Book Now", "#booking")}
       ${tile("cut", "Our Services", `${names.join(", ")}${config.services.length > names.length ? " and more" : ""}.`, "See Prices", "#services")}
