@@ -557,6 +557,8 @@
     forms.enhance(form);
     forms.addDemoButton($("booking-info"), fields, values);
   }
+  // 11/22 (Tom): each service in the booking picker gets its own color so they stand out
+  const SERVICE_COLORS = ["#12355b", "#1f6fd1", "#15803d", "#6d28d9", "#b45309", "#0f766e", "#be123c", "#334155"];
   function bookingForm() {
     return `<form id="booking-form" class="demo-form">
       <div class="booking-hidden-fields" hidden><select id="demo-service" required><option value="">Select a service</option>
@@ -569,8 +571,8 @@
       <div class="booking-barber-list">${config.barbers.map(staff => `<div class="booking-barber" data-barber-row="${escape(staff.id)}">
         <button type="button" class="booking-barber-button" data-pick-barber="${escape(staff.id)}" aria-expanded="false" aria-controls="barber-services-${escape(staff.id)}">
         <span class="booking-barber-name">${escape(staff.name)}</span><span class="booking-barber-specialty">${escape(staff.cardSpecialty || "")}</span><span class="booking-caret" aria-hidden="true">&#9662;</span></button>
-        <div class="booking-service-list" id="barber-services-${escape(staff.id)}" hidden>${config.services.filter(service => staff.serviceIds.includes(service.id)).map(service =>
-          `<button type="button" class="booking-service-option" data-pick-service="${escape(service.id)}" data-service-barber="${escape(staff.id)}">
+        <div class="booking-service-list" id="barber-services-${escape(staff.id)}" hidden>${config.services.filter(service => staff.serviceIds.includes(service.id)).map((service, index) =>
+          `<button type="button" class="booking-service-option" style="--svc-color:${SERVICE_COLORS[index % SERVICE_COLORS.length]}" data-pick-service="${escape(service.id)}" data-service-barber="${escape(staff.id)}">
           <span>${escape(service.name)}</span><span>${money(service.price * 100)}</span></button>`).join("")}</div></div>`).join("")}</div>
       <p id="booking-with" class="booking-choice" hidden></p></fieldset>
       <fieldset><legend>2. Pick a day &amp; time</legend><input id="demo-date" type="hidden">

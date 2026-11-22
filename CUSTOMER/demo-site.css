@@ -606,3 +606,10 @@ body:not(.demo-owner-open) #demo-app.demo-classic .booking-service-option { padd
 #demo-app.demo-classic .booking-service-option span:last-child { font-weight: 700; }
 /* 11/22 (Tom): tapped a day before picking the barber + service → a clear red heads-up */
 .booking-date-note.booking-need-service { color: #b00000; font-weight: 700; border: 2px solid #b00000; padding: 8px 10px; background: #fff5f5; }
+/* 11/22 (Tom): each service its own color (navy, blue, green, purple, amber, teal, rose, slate) */
+body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"] { background: var(--svc-color) !important; border: 2px solid var(--svc-color) !important; color: #fff !important; }
+body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"] span { color: #fff !important; }
+body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"]:hover,
+body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"]:focus-visible { background: #fff !important; color: var(--svc-color) !important; }
+body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"]:hover span,
+body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"]:focus-visible span { color: var(--svc-color) !important; }
