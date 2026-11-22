@@ -77,6 +77,21 @@
     cut: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg>',
     team: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>'
   };
+  // 11/22 (Tom): barbershop service cards = name, a solid-black 2D picture, then the price (no description)
+  const SERVICE_ICON_DIR = (() => {
+    const tag = document.querySelector('script[src*="demo-site.js"]');
+    try { return new URL("images/service-icons/", tag.src).href; } catch (error) { return "../../CUSTOMER/images/service-icons/"; }
+  })();
+  function serviceIcon(service) {
+    if (service.icon) return String(service.icon).replace(/[^a-z0-9-]/gi, "");
+    const name = String(service.name || "").toLowerCase();
+    const beard = /beard|shape/.test(name);
+    if (/kid|child|boy/.test(name)) return "kids-cut";
+    if (/buzz/.test(name)) return beard ? "buzz-beard" : "buzz";
+    if (/(cut|hair)/.test(name) && beard) return "hair-beard";
+    if (beard || /shave/.test(name)) return "beard";
+    return "haircut";
+  }
   function classicHeader() {
     const shop = config.shop;
     // the shop's name is the page's main heading: their logo (its alt words = the name for Google), or the name itself
@@ -471,7 +486,8 @@
         `<article><h3><span>${escape(group.name)}</span></h3><ul class="menu-items">${group.items.map(item =>
           `<li>${image(item.photo, item.text.split("$")[0].trim(), "menu-thumbnail")}<span>${escape(item.text)}</span></li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="services"><h2>Our Services</h2><div class="card-grid">${config.services.map(service =>
-        `<article class="card"><h3>${escape(service.name)}</h3><p>${escape(service.description)}</p><p>${money(service.price * 100)}</p></article>`).join("")}</div></section>` : ""}
+        CLASSIC ? `<article class="card classic-service"><h3>${escape(service.name)}</h3><img class="classic-service-icon" src="${SERVICE_ICON_DIR}${serviceIcon(service)}.png" alt="" loading="lazy" onerror="this.onerror=null;this.src='${SERVICE_ICON_DIR}haircut.png'"><p class="classic-service-price">${money(service.price * 100)}</p></article>`
+          : `<article class="card"><h3>${escape(service.name)}</h3><p>${escape(service.description)}</p><p>${money(service.price * 100)}</p></article>`).join("")}</div></section>` : ""}
       ${extraPhotos.length && !storeEnabled ? `<section id="photos"><h2>A Look Around</h2><div class="demo-gallery">
       ${extraPhotos.map(photo => image(photo.src, photo.alt)).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="barbers"><h2>${config.barbers.length === 1 ? "Meet the Barber" : "Meet the Barbers"}</h2><div class="card-grid">${config.barbers.map((staff, index) =>
