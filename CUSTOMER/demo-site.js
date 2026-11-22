@@ -304,7 +304,8 @@
       <main id="demo-content"></main>
       <div class="demo-pricing"><a class="book-button" href="../../get-started/">Like what you see? Get Started &rarr;</a></div>
       <footer><span class="demo-footer-label">${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo${config.demo.label === "Business Pro" ? "" : " by Business Pro"}</span>
-        <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div></footer>`;
+        <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div>
+        <p class="bp-credit"><a href="https://businessprolocal.com/" target="_blank" rel="noopener">Website by Business Pro Local</a></p></footer>`;
     if (GIFT) setupGiftMenu(); setupClassicMenu();
     if (pageName === "home") renderAds();
   }
@@ -486,8 +487,8 @@
         `<article><h3><span>${escape(group.name)}</span></h3><ul class="menu-items">${group.items.map(item =>
           `<li>${image(item.photo, item.text.split("$")[0].trim(), "menu-thumbnail")}<span>${escape(item.text)}</span></li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="services"><h2>Our Services</h2><div class="card-grid">${config.services.map(service =>
-        CLASSIC ? `<article class="card classic-service"><h3>${escape(service.name)}</h3><img class="classic-service-icon" src="${SERVICE_ICON_DIR}${serviceIcon(service)}.png" alt="" loading="lazy" onerror="this.onerror=null;this.src='${SERVICE_ICON_DIR}haircut.png'"><p class="classic-service-price">${money(service.price * 100)}</p></article>`
-          : `<article class="card"><h3>${escape(service.name)}</h3><p>${escape(service.description)}</p><p>${money(service.price * 100)}</p></article>`).join("")}</div></section>` : ""}
+        CLASSIC ? `<article class="card classic-service" ${bookService(service)}><h3>${escape(service.name)}</h3><img class="classic-service-icon" src="${SERVICE_ICON_DIR}${serviceIcon(service)}.png" alt="" loading="lazy" onerror="this.onerror=null;this.src='${SERVICE_ICON_DIR}haircut.png'"><p class="classic-service-price">${money(service.price * 100)}</p></article>`
+          : `<article class="card" ${bookService(service)}><h3>${escape(service.name)}</h3><p>${escape(service.description)}</p><p>${money(service.price * 100)}</p></article>`).join("")}</div></section>` : ""}
       ${extraPhotos.length && !storeEnabled ? `<section id="photos"><h2>A Look Around</h2><div class="demo-gallery">
       ${extraPhotos.map(photo => image(photo.src, photo.alt)).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="barbers"><h2>${config.barbers.length === 1 ? "Meet the Barber" : "Meet the Barbers"}</h2><div class="card-grid">${config.barbers.map((staff, index) =>
@@ -557,6 +558,8 @@
     forms.enhance(form);
     forms.addDemoButton($("booking-info"), fields, values);
   }
+  // 11/22 (Tom): tap a service card → straight to booking with that service picked
+  const bookService = service => `data-book-service="${escape(service.id)}" role="button" tabindex="0" aria-label="Book ${escape(service.name)}" title="Tap to book ${escape(service.name)}"`;
   // 11/22 (Tom): each service in the booking picker gets its own color so they stand out
   const SERVICE_COLORS = ["#12355b", "#1f6fd1", "#15803d", "#6d28d9", "#b45309", "#0f766e", "#be123c", "#334155"];
   function bookingForm() {
@@ -746,6 +749,25 @@
     document.querySelectorAll("[data-pick-service]").forEach(button => button.addEventListener("click", () => action(() =>
       pickBarberService(button.dataset.serviceBarber, button.dataset.pickService))));
     document.querySelectorAll("[data-book-with]").forEach(button => button.addEventListener("click", () => openBarberInBooking(button.dataset.bookWith)));
+    const bookThisService = serviceId => action(() => {
+      const offering = config.barbers.filter(staff => staff.serviceIds.includes(serviceId));
+      if (!offering.length) return;
+      if (offering.length === 1) {
+        // one barber does it: pick both, the customer goes right to the calendar
+        pickBarberService(offering[0].id, serviceId);
+        (document.querySelector(".booking-date-calendar") || $("booking")).scrollIntoView({ block: "center", behavior: "smooth" });
+        return;
+      }
+      // several barbers do it: open the barber list with that service marked under each one
+      document.querySelectorAll(".booking-service-option").forEach(option => option.classList.toggle("is-suggested", option.dataset.pickService === serviceId));
+      openBarberInBooking(offering[0].id);
+      $("booking-pick-first").textContent = `Pick your barber for ${config.services.find(item => item.id === serviceId)?.name || "this service"} ↓`;
+      $("booking-pick-first").hidden = false;
+    });
+    document.querySelectorAll("[data-book-service]").forEach(card => {
+      card.addEventListener("click", () => bookThisService(card.dataset.bookService));
+      card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); bookThisService(card.dataset.bookService); } });
+    });
     document.querySelectorAll("[data-barber-card] .barber-photo-frame").forEach(frame => frame.addEventListener("click", event => {
       if (event.target.closest(".photo-remove, .photo-button, input")) return;
       const photo = frame.querySelector(".photo-preview");

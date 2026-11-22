@@ -615,3 +615,10 @@ body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color
 body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"]:focus-visible span { color: var(--svc-color) !important; }
 /* 11/22 (Tom): on phones the top banner just says "Customer Demo" */
 @media (max-width: 760px) { .customer-demo-more { display: none; } }
+/* 11/22 (Tom): service cards are tappable — straight to booking */
+#demo-app [data-book-service] { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+#demo-app [data-book-service]:hover, #demo-app [data-book-service]:focus-visible { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,.14); outline: none; }
+#demo-app .booking-service-option.is-suggested { outline: 3px solid #f59e0b; outline-offset: 2px; }
+/* 11/22 (Tom): "Website by Business Pro Local" credit at the bottom */
+#demo-app footer .bp-credit { margin: 14px 0 0; text-align: center; font-size: 13px; }
+#demo-app footer .bp-credit a { color: inherit; text-decoration: underline; font-weight: 600; }
