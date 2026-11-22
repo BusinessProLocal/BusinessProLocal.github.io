@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122l";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122m";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -997,7 +997,7 @@
     const field = (label, value = "", type = "text") => `<label>${escape(label)}<input type="${type}" value="${escape(value)}" readonly></label>`;
     const select = (label, values) => `<label>${escape(label)}<select tabindex="0" aria-readonly="true">${values.map(value => `<option>${escape(value)}</option>`).join("")}</select></label>`;
     const button = label => `<button type="button">${escape(label)}</button>`;
-    const table = (headers, rows) => `<div class="preview-table-scroll"><table><thead><tr>${headers.map(value => `<th>${escape(value)}</th>`).join("")}</tr></thead>
+    const table = (headers, rows) => `<div class="preview-table-scroll"><table class="color-head"><thead><tr>${headers.map(value => `<th style="--head:${headColor(value)}">${escape(value)}</th>`).join("")}</tr></thead>
       <tbody>${rows.map(row => `<tr>${row.map(value => `<td>${escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
     const cards = values => `<div class="preview-cards">${values.map(([label, value]) => `<article><span>${escape(label)}</span><strong>${escape(value)}</strong><small>Sample preview data</small></article>`).join("")}</div>`;
     const periods = labels => `<div class="preview-actions">${labels.map(button).join("")}</div>`;
@@ -1110,7 +1110,7 @@
         const done = tickets.filter(item => item.status === "Finished");
         const services = done.reduce((sum, item) => sum + ticketListPrice(item), 0), tips = done.reduce((sum, item) => sum + (item.tipCents || 0), 0);
         const fees = tickets.reduce((sum, item) => sum + (item.lateFeeCents || 0), 0), outgoing = 4500;
-        const sheet = (headers, rows) => `<div class="preview-table-scroll"><table class="preview-sheet"><thead><tr>${headers.map(value => `<th>${escape(value)}</th>`).join("")}</tr></thead>
+        const sheet = (headers, rows) => `<div class="preview-table-scroll"><table class="preview-sheet color-head"><thead><tr>${headers.map(value => `<th style="--head:${headColor(value)}">${escape(value)}</th>`).join("")}</tr></thead>
           <tbody>${rows.map(row => `<tr${row.total ? ' class="sheet-total"' : ""}>${row.cells.map(value => `<td>${escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
         content = periods(["Day", "Week", "Month", "Year", "💾 Save Today", "📊 Spreadsheet"]) +
           panel("Summary — the sample day", sheet(["", "Amount"], [
@@ -1351,6 +1351,19 @@
         catch (failure) { clearPrintTarget(); throw failure; }
       })));
     }
+  }
+  // 11/22 (Tom): spreadsheet header colors, by what the column holds (money green, tips amber, people purple…)
+  function headColor(label) {
+    const text = String(label || "").toLowerCase();
+    if (/ticket|order|#/.test(text)) return "#12355b";
+    if (/date|day|time|due|period|repeat|recurring/.test(text)) return "#1f6fd1";
+    if (/customer|guest|name/.test(text)) return "#0f766e";
+    if (/barber|employee|staff|role|canceled by|acknowledged/.test(text)) return "#6d28d9";
+    if (/service|product|expense|item|what/.test(text)) return "#334155";
+    if (/tip/.test(text)) return "#b45309";
+    if (/fee|status|paid/.test(text)) return "#be123c";
+    if (/price|amount|total|revenue|income|net|gross|sales|spent|money/.test(text)) return "#15803d";
+    return "#475569";
   }
   // ---- 11/22 (Tom): the full sample day + ticket numbers ----
   const TICKET_COLORS = { Finished: "#15803d", Started: "#b45309", "No-show": "#b91c1c", Canceled: "#6b7280" };

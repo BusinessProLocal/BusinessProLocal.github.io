@@ -1701,3 +1701,6 @@ html body.demo-owner-open #daily-dashboard .dashboard-closeout-item * { color: #
 #daily-dashboard .owner-grid-slot .sample-ticket { gap: 2px; }
 #daily-dashboard .owner-grid-slot .sample-ticket .calendar-card-summary span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #daily-dashboard .owner-grid-slot .sample-ticket .ticket-stage { margin-top: auto; align-self: flex-start; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+/* 11/22 (Tom): spreadsheet header row in color — each column by what it holds */
+html body #daily-dashboard table.color-head thead th { background: var(--head, #475569) !important; color: #fff !important; -webkit-text-fill-color: #fff !important; border-color: rgba(255,255,255,.35) !important; font-weight: 700; }
+html body #daily-dashboard table.color-head thead th:empty { background: #e8eaed !important; }
