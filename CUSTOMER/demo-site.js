@@ -12,14 +12,14 @@
   let visitor, dashboardOpen = false, dashboardView = "dashboard", ownerMenuOpen = false, ownerMenuShown = false;
   let selectedOrderNumber = null, orderListOpen = false, timeListOpen = false, openBarberInBooking = () => {};
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all";
+  let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all", ownerWeekFromDay = true;
   let ownerCalendarObserver = null;
   let adLayoutRunning = false;
   let adLayoutReady = false;
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122k";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122l";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -48,8 +48,11 @@
     dashboardView = id;
     if (id === "appointments" && bookingEnabled) {
       const own = api.read(localStorage, config).bookings.filter(item => !item.example).at(-1);
-      ownerCalendarView = "day";
+      // 11/22 (Tom): a computer has room for the week — start on the day being worked, through the end of that week.
+      // Phones keep one day at a time.
+      ownerCalendarView = window.matchMedia("(min-width: 900px)").matches ? "week" : "day";
       ownerCalendarDate = new Date(own.date + "T12:00:00");
+      ownerWeekFromDay = true;
     }
     renderDashboard();
     document.querySelector("#daily-dashboard .content")?.scrollIntoView({ block: "start", behavior: "instant" });
@@ -1439,11 +1442,15 @@
     }
     const monday = new Date(ownerCalendarDate);
     monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
+    // week view: from the worked day (or a Monday after Next / Previous Week) to Saturday
+    const weekIndex = (ownerCalendarDate.getDay() + 6) % 7; // Mon 0 … Sun 6
+    const weekStart = ownerWeekFromDay && weekIndex < 6 ? new Date(ownerCalendarDate) : monday;
+    const weekDays = ownerWeekFromDay && weekIndex < 6 ? 6 - weekIndex : 6;
     const dateKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
     const selectedStaff = config.barbers;
     const columns = ownerCalendarView === "day" ? selectedStaff.map(staff => ({ date: dateKey(ownerCalendarDate), staff,
-      label: staff.name })) : Array.from({ length: 6 }, (_, index) => {
-      const day = new Date(monday);
+      label: staff.name })) : Array.from({ length: weekDays }, (_, index) => {
+      const day = new Date(weekStart);
       day.setDate(day.getDate() + index);
       return { date: dateKey(day), label: day.toLocaleDateString("en-US", { weekday: "long" }),
         shortDate: day.toLocaleDateString("en-US", { month: "short", day: "numeric" }) };
@@ -1461,7 +1468,7 @@
           aria-label="${escape(item.name)} - ${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)} - ${escape(item.status || "Scheduled")}. Open appointment details."
           data-calendar-booking="${escape(item.id)}">
           <div class="calendar-card-summary"><strong>${item.number ? `<span class="ticket-no">${ticketNo(item)}</span> ` : ""}${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
-          ${ownerCalendarView === "week" ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
+          ${ownerCalendarView === "week" && config.barbers.length > 1 ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
           ${item.sample ? `<span class="ticket-stage">${escape(ticketStatus(item))}${item.status === "Finished" && item.tipCents ? ` · ${money(item.priceCents + item.tipCents)}` : item.lateFeeCents ? ` · ${money(item.lateFeeCents)} fee` : ""}</span>` : item.status !== "Canceled" ? `<div class="calendar-card-actions">
           <button type="button" class="cal-start${item.status === "Started" || item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Started" data-id="${escape(item.id)}"${item.status === "Started" || item.status === "Finished" ? ' disabled title="Started"' : ""}>Start</button>
           <button type="button" class="cal-finish${item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Finished" data-id="${escape(item.id)}"${item.status === "Started" ? "" : " disabled"}>${item.status === "Finished" ? "Done" : "Finish"}</button>
@@ -1469,10 +1476,10 @@
             aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="0.00" value="${item.tipCents ? Math.round(item.tipCents / 100) + ".00" : ""}"><button type="button" aria-label="Save tip">&#10003;</button></span></div>` : ""}</div>`).join("")}</div>`;
       }).join("");
     }
-    const end = new Date(monday);
-    end.setDate(end.getDate() + 5);
+    const end = new Date(weekStart);
+    end.setDate(end.getDate() + weekDays - 1);
     const label = ownerCalendarView === "day" ? ownerCalendarDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric" }) :
-      `${monday.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+      `${weekStart.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
     const minimum = ownerCalendarView === "day" ? 190 : 150;
     return `<section id="appointments" class="page active appointments-workspace"><div id="owner-calendar"><div class="appointments-topbar">
       <button type="button" id="close-appointments" class="close-appointments" aria-label="Back to Dashboard">&times;</button>
@@ -1488,7 +1495,7 @@
       <div class="calendar-legend">${config.barbers.map(staff => `<span class="legend-item"><span class="legend-box" style="background:${employeeColor(staff.id)}"></span>${escape(staff.name)}</span>`).join("")}</div>
       <div class="month-calendar"><div class="calendar-top-scroll" id="demo-calendar-top"><div class="calendar-top-scroll-inner"></div></div>
       <div class="month-grid-scroll" tabindex="0" role="region" aria-label="Appointment calendar, scroll to browse">
-      <div class="month-grid" style="grid-template-columns:90px repeat(${columns.length},minmax(${minimum}px,1fr));grid-template-rows:48px repeat(16,90px);min-width:${90 + columns.length * minimum}px;width:100%">${grid}</div></div></div></div></section>`;
+      <div class="month-grid" style="grid-template-columns:90px repeat(${columns.length},minmax(${minimum}px,1fr));grid-template-rows:58px repeat(16,90px);min-width:${90 + columns.length * minimum}px;width:100%">${grid}</div></div></div></div></section>`;
   }
   function renderKeepingPlace() {
     const pageX = window.scrollX, pageY = window.scrollY;
@@ -1502,12 +1509,17 @@
   function setupOwnerCalendar() {
     $("close-appointments").addEventListener("click", () => action(() => { dashboardView = "dashboard"; renderDashboard(); }));
     [["owner-previous", -1], ["owner-next", 1]].forEach(([id, delta]) => $(id).addEventListener("click", () => action(() => {
-      ownerCalendarDate.setDate(ownerCalendarDate.getDate() + delta * (ownerCalendarView === "day" ? 1 : 7));
+      if (ownerCalendarView === "day") ownerCalendarDate.setDate(ownerCalendarDate.getDate() + delta);
+      else {
+        // Next / Previous Week: a whole week, Monday to Saturday
+        ownerCalendarDate.setDate(ownerCalendarDate.getDate() - (ownerCalendarDate.getDay() + 6) % 7 + delta * 7);
+        ownerWeekFromDay = false;
+      }
       renderDashboard();
     })));
-    $("owner-today").addEventListener("click", () => action(() => { ownerCalendarDate = new Date(); renderDashboard(); }));
+    $("owner-today").addEventListener("click", () => action(() => { ownerCalendarDate = new Date(); ownerWeekFromDay = true; renderDashboard(); }));
     $("owner-view-toggle").addEventListener("click", () => action(() => {
-      ownerCalendarView = ownerCalendarView === "week" ? "day" : "week"; renderDashboard();
+      ownerCalendarView = ownerCalendarView === "week" ? "day" : "week"; ownerWeekFromDay = true; renderDashboard();
     }));
     $("owner-employee").addEventListener("change", event => action(() => { employeeFilter = event.target.value; renderDashboard(); }));
     const scroller = document.querySelector("#owner-calendar .month-grid-scroll");

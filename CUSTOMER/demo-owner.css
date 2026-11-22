@@ -1697,3 +1697,7 @@ html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar
 #daily-dashboard .preview-sheet tr.sheet-total td { font-weight: 800; border-top: 2px solid #111; border-bottom: 3px double #111; }
 html body.demo-owner-open #daily-dashboard .dashboard-closeout-item { background: #fdecec !important; border: 1px solid #f3b4b4 !important; color: #111 !important; -webkit-text-fill-color: #111 !important; border-radius: 8px !important; }
 html body.demo-owner-open #daily-dashboard .dashboard-closeout-item * { color: #111 !important; -webkit-text-fill-color: #111 !important; }
+/* week view: the stage label stays inside the card */
+#daily-dashboard .owner-grid-slot .sample-ticket { gap: 2px; }
+#daily-dashboard .owner-grid-slot .sample-ticket .calendar-card-summary span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#daily-dashboard .owner-grid-slot .sample-ticket .ticket-stage { margin-top: auto; align-self: flex-start; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
