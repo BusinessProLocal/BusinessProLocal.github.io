@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122h";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122i";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -1364,7 +1364,8 @@
           <div class="calendar-card-summary"><strong>${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
           ${ownerCalendarView === "week" ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
           ${item.status !== "Canceled" ? `<div class="calendar-card-actions">
-          ${item.status !== "Finished" ? `<button type="button" data-calendar-status="${item.status === "Started" ? "Finished" : "Started"}" data-id="${escape(item.id)}">${item.status === "Started" ? "Finish" : "Start"}</button>` : ""}
+          <button type="button" class="cal-start${item.status === "Started" || item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Started" data-id="${escape(item.id)}"${item.status === "Started" || item.status === "Finished" ? ' disabled title="Started"' : ""}>Start</button>
+          <button type="button" class="cal-finish${item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Finished" data-id="${escape(item.id)}"${item.status === "Started" ? "" : " disabled"}>${item.status === "Finished" ? "Done" : "Finish"}</button>
           <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><span aria-hidden="true">$</span><input type="text" inputmode="numeric" maxlength="6" autocomplete="off"
             aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="0.00" value="${item.tipCents ? Math.round(item.tipCents / 100) + ".00" : ""}"><button type="button" aria-label="Save tip">&#10003;</button></span></div>` : ""}</div>`).join("")}</div>`;
       }).join("");
