@@ -565,6 +565,7 @@
       ${config.barbers.map(staff => `<option value="${escape(staff.id)}">${escape(staff.name)}</option>`).join("")}</select>
       <select id="demo-time" required disabled><option value="">Choose a day first</option></select></div>
       <fieldset id="booking-step-barber"><legend>1. Pick your barber</legend>
+      <p id="booking-pick-first" class="booking-date-note booking-need-service" role="alert" hidden></p>
       <div class="booking-barber-list">${config.barbers.map(staff => `<div class="booking-barber" data-barber-row="${escape(staff.id)}">
         <button type="button" class="booking-barber-button" data-pick-barber="${escape(staff.id)}" aria-expanded="false" aria-controls="barber-services-${escape(staff.id)}">
         <span class="booking-barber-name">${escape(staff.name)}</span><span class="booking-barber-specialty">${escape(staff.cardSpecialty || "")}</span><span class="booking-caret" aria-hidden="true">&#9662;</span></button>
@@ -594,12 +595,17 @@
     const offset = (calendarMonth.getDay() + 6) % 7;
     let html = "<span></span>".repeat(offset);
     const count = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 0).getDate();
+    // 11/22 (Tom): before a service is picked the open days still show (not all gray);
+    // tapping one then asks for the service first.
+    const picking = !$("demo-service").value || !$("demo-staff").value;
+    const previewSlots = key => config.barbers.some(staff => staff.serviceIds.length &&
+      api.slots(config, state, staff.id, staff.serviceIds[0], key).length) ? ["open"] : [];
     for (let day = 1; day <= count; day++) {
       const key = `${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-      const available = api.slots(config, state, $("demo-staff").value, $("demo-service").value, key);
+      const available = picking ? previewSlots(key) : api.slots(config, state, $("demo-staff").value, $("demo-service").value, key);
       html += `<button type="button" class="booking-date-day ${$("demo-date").value === key ? "is-selected" : ""}" data-day="${key}"
         aria-pressed="${$("demo-date").value === key}" aria-label="${key}${available.length ? " available" : " unavailable"}" ${available.length ? "" : "disabled"}>
-        ${day}${!available.length && days.includes(key) && $("demo-staff").value ? "<small>OFF/FULL</small>" : ""}</button>`;
+        ${day}${!available.length && days.includes(key) ? "<small>OFF/FULL</small>" : ""}</button>`;
     }
     $("calendar-days").innerHTML = html;
     const picked = $("demo-date").value && document.querySelector(`[data-day="${$("demo-date").value}"]`);
@@ -614,6 +620,14 @@
           "<p>No open times this day.</p>"}</div>`);
     }
     document.querySelectorAll("[data-day]").forEach(button => button.addEventListener("click", () => action(() => {
+      if (!$("demo-service").value || !$("demo-staff").value) {
+        $("booking-date-note").textContent = `First tap a service above (${config.services.slice(0, 2).map(item => item.name).join(", ")}…), then pick your day.`;
+        $("booking-date-note").classList.add("booking-need-service");
+        $("booking-pick-first").textContent = "Pick your barber and a service first ↓ then choose your day.";
+        $("booking-pick-first").hidden = false;
+        openBarberInBooking($("demo-staff").value || config.barbers[0].id);
+        return;
+      }
       const same = $("demo-date").value === button.dataset.day;
       $("demo-date").value = button.dataset.day;
       timeListOpen = same ? !timeListOpen : true;
@@ -708,6 +722,8 @@
         document.querySelector(".booking-barber-list").hidden = false; $("booking-with").hidden = true;
       });
       $("booking-date-note").textContent = "Tap a day to see open times. Grayed-out days are off or full.";
+      $("booking-date-note").classList.remove("booking-need-service");
+      $("booking-pick-first").hidden = true;
       renderCalendar(); refreshTimes();
     };
     openBarberInBooking = staffId => {
