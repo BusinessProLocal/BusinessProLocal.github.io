@@ -144,18 +144,23 @@
     }
     return out;
   }
-  function sampleDay(config, now = new Date()) {
+  // anchor = the visitor's own booking: once they've booked, the full sample day is built around THEIR day
+  // and their spot (so a booking on any day still shows a whole day of work around it).
+  function sampleDay(config, now = new Date(), anchor = null) {
     if (!config.demo || config.demo.tier !== "professional" || config.demo.sampleDay === false || !config.barbers || !config.barbers.length) return null;
     const first = config.barbers[0];
-    for (const day of dates(now)) {
-      const firstTimes = workingTimes(config, first, day);
+    const anchorStaff = anchor && config.barbers.find(staff => staff.id === anchor.staffId);
+    const anchored = anchorStaff && workingTimes(config, anchorStaff, anchor.date).includes(anchor.time);
+    for (const day of anchored ? [anchor.date] : dates(now)) {
+      const openStaff = anchored ? anchorStaff : first;
+      const firstTimes = workingTimes(config, openStaff, day);
       if (!firstTimes.length) continue;
-      const open = firstTimes[firstTimes.length - 1];
-      if (new Date(day + "T" + open) <= now) continue; // the open spot must still be ahead
+      const open = anchored ? anchor.time : firstTimes[firstTimes.length - 1];
+      if (!anchored && new Date(day + "T" + open) <= now) continue; // the open spot must still be ahead
       const rows = [];
       config.barbers.forEach((staff, staffIndex) => {
         workingTimes(config, staff, day).forEach((time, slot) => {
-          if (staff.id === first.id && time === open) return;
+          if (staff.id === openStaff.id && time === open) { rows.push({ staffId: staff.id, time, staffIndex, slot, open: true }); return; }
           const look = SAMPLE_PATTERN[slot % SAMPLE_PATTERN.length];
           const services = config.services.filter(service => (staff.serviceIds || []).includes(service.id));
           const service = services[(slot + staffIndex) % Math.max(1, services.length)] || config.services[0];
@@ -164,20 +169,22 @@
         });
       });
       rows.sort((a, b) => a.time.localeCompare(b.time) || a.staffIndex - b.staffIndex);
-      const tickets = rows.map((row, index) => ({
+      // ticket numbers run in time order; the open spot keeps its number for the visitor
+      const ownNumber = 1001 + rows.findIndex(row => row.open);
+      const tickets = rows.map((row, index) => row.open ? null : ({
         id: `SAMPLE-${day}-${row.staffId}-${row.time}`, number: 1001 + index, sample: true, example: true,
         name: SAMPLE_NAMES[(index + row.staffIndex * 7) % SAMPLE_NAMES.length], staffId: row.staffId, serviceId: row.serviceId,
         date: day, time: row.time, status: row.look.status, tipCents: row.look.tip ? row.look.tip * 100 : 0,
         paidOnline: Boolean(row.look.paidOnline), canceledBy: row.look.canceledBy || "",
         lateFeeCents: row.look.lateFee ? Math.round(row.price * 0.2) : 0, priceCents: row.price
-      }));
+      })).filter(Boolean);
       // one appointment from the day before that nobody closed out (it shows under Uncompleted)
       const before = new Date(day + "T12:00:00"); before.setDate(before.getDate() - 1);
-      const service = config.services.find(item => (first.serviceIds || []).includes(item.id)) || config.services[0];
+      const service = config.services.find(item => (openStaff.serviceIds || []).includes(item.id)) || config.services[0];
       const leftover = { id: `SAMPLE-${dateKey(before)}-leftover`, number: 1000, sample: true, example: true, leftover: true,
-        name: "Brandon Hebert", staffId: first.id, serviceId: service.id, date: dateKey(before), time: "15:00", status: "Scheduled",
+        name: "Brandon Hebert", staffId: openStaff.id, serviceId: service.id, date: dateKey(before), time: "15:00", status: "Scheduled",
         tipCents: 0, paidOnline: false, canceledBy: "", lateFeeCents: 0, priceCents: Math.round(Number(service.price || 0) * 100) };
-      return { date: day, open: { staffId: first.id, time: open }, tickets, leftover, nextNumber: 1001 + tickets.length };
+      return { date: day, open: { staffId: openStaff.id, time: open }, tickets, leftover, nextNumber: ownNumber, ownNumber, anchored: Boolean(anchored) };
     }
     return null;
   }
@@ -208,9 +215,9 @@
     if (!slots(config, state, input.staffId, input.serviceId, input.date, now).includes(input.time)) {
       throw new Error("That time is unavailable. Select another available time.");
     }
-    const sample = sampleDay(config, now);
+    const sample = sampleDay(config, now, input); // the whole day is built around this booking: it gets its spot's number
     const booking = { ...input, name, id: "DEMO-" + root.crypto.randomUUID(), createdAt: now.toISOString(), demo: true,
-      number: sample && sample.date === input.date ? sample.nextNumber : 1001 };
+      number: sample ? sample.ownNumber : 1001 };
     state.bookings.push(booking);
     write(storage, config, state);
     return booking;

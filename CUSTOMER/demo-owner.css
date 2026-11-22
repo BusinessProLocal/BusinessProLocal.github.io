@@ -1704,3 +1704,5 @@ html body.demo-owner-open #daily-dashboard .dashboard-closeout-item * { color: #
 /* 11/22 (Tom): spreadsheet header row in color — each column by what it holds */
 html body #daily-dashboard table.color-head thead th { background: var(--head, #475569) !important; color: #fff !important; -webkit-text-fill-color: #fff !important; border-color: rgba(255,255,255,.35) !important; font-weight: 700; }
 html body #daily-dashboard table.color-head thead th:empty { background: #e8eaed !important; }
+/* ticket number sits on the same line as the name (it was its own line and pushed START / FINISH out of the card) */
+#daily-dashboard .calendar-card-summary strong .ticket-no { display: inline !important; }

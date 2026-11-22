@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122m";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122n";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -1367,14 +1367,22 @@
   }
   // ---- 11/22 (Tom): the full sample day + ticket numbers ----
   const TICKET_COLORS = { Finished: "#15803d", Started: "#b45309", "No-show": "#b91c1c", Canceled: "#6b7280" };
-  function sampleInfo() { return bookingEnabled ? api.sampleDay(config) : null; }
+  // built around the visitor's own booking once they have one (a whole day of work around their spot, on their day)
+  function sampleInfo() {
+    if (!bookingEnabled) return null;
+    const own = api.read(localStorage, config).bookings.filter(item => !item.example).at(-1);
+    return api.sampleDay(config, new Date(), own && own.status !== "Canceled" ? own : null);
+  }
   function ownBooking(state) { return state.bookings.filter(item => !item.example).at(-1); }
   // every ticket the owner pages show: the sample day (+ yesterday's leftover) and the visitor's own booking
   function allTickets(state) {
     const sample = sampleInfo(), own = ownBooking(state);
     return [...(sample ? [sample.leftover, ...sample.tickets] : []), ...(own ? [own] : [])];
   }
-  const ticketNo = item => item.number ? `#${item.number}` : "";
+  const ticketNo = item => {
+    if (!item.sample) { const sample = sampleInfo(); if (sample && sample.anchored && sample.date === item.date) return `#${sample.ownNumber}`; }
+    return item.number ? `#${item.number}` : "";
+  };
   const ticketPrice = item => item.status === "Canceled" ? 0 : (item.priceCents ?? Math.round((config.services.find(service => service.id === item.serviceId)?.price || 0) * 100));
   const ticketListPrice = item => item.priceCents ?? Math.round((config.services.find(service => service.id === item.serviceId)?.price || 0) * 100);
   const serviceName = item => config.services.find(service => service.id === item.serviceId)?.name || item.serviceId;
@@ -1480,7 +1488,7 @@
           style="background:${item.sample ? ticketColor(item) : item.status === "Canceled" ? "#6b7280" : employeeColor(item.staffId)}"
           aria-label="${escape(item.name)} - ${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)} - ${escape(item.status || "Scheduled")}. Open appointment details."
           data-calendar-booking="${escape(item.id)}">
-          <div class="calendar-card-summary"><strong>${item.number ? `<span class="ticket-no">${ticketNo(item)}</span> ` : ""}${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
+          <div class="calendar-card-summary"><strong>${ticketNo(item) ? `<span class="ticket-no">${ticketNo(item)}</span> ` : ""}${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
           ${ownerCalendarView === "week" && config.barbers.length > 1 ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
           ${item.sample ? `<span class="ticket-stage">${escape(ticketStatus(item))}${item.status === "Finished" && item.tipCents ? ` · ${money(item.priceCents + item.tipCents)}` : item.lateFeeCents ? ` · ${money(item.lateFeeCents)} fee` : ""}</span>` : item.status !== "Canceled" ? `<div class="calendar-card-actions">
           <button type="button" class="cal-start${item.status === "Started" || item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Started" data-id="${escape(item.id)}"${item.status === "Started" || item.status === "Finished" ? ' disabled title="Started"' : ""}>Start</button>
