@@ -12,3 +12,12 @@ body:not(.demo-owner-open) #demo-app.demo-classic .classic-ribbon { background: 
 #demo-app.demo-classic .classic-hero { background-image: linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.35)), url('images/park-place.jpg') !important; }
 #demo-app.demo-classic .classic-hero .hero-content { align-self: flex-end; padding-bottom: 40px; }
 body:not(.demo-owner-open) #demo-app.demo-classic .classic-hero-book { background: var(--vb-blue); border-color: var(--vb-blue); color: #fff; }
+/* 11/22 (Tom): show the whole building — the Venom Ink Tattoo sign up top AND the Park Place sign.
+   Phones: the photo is shown whole (its own shape, nothing cut off); Book Now is right above it in the header. */
+#demo-app.demo-classic .classic-hero { background-position: center 40% !important; }
+@media (max-width: 900px) {
+  #demo-content > section.classic-hero { min-height: 0 !important; aspect-ratio: 16 / 9; padding: 0 !important; background-size: cover !important; background-position: center !important;
+    background-image: url('images/park-place.jpg') !important; }
+  #demo-content > section.classic-hero .hero-content { display: none; }
+  #demo-content > section.classic-tiles { margin-top: 18px !important; }
+}
