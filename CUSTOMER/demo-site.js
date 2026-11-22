@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122n";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122o";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -47,7 +47,7 @@
     if (tab.live) visitedLiveTabs.add(id);
     dashboardView = id;
     if (id === "appointments" && bookingEnabled) {
-      const own = api.read(localStorage, config).bookings.filter(item => !item.example).at(-1);
+      const own = api.read(localStorage, config).bookings.filter(item => !item.example && !item.manual).at(-1);
       // 11/22 (Tom): a computer has room for the week — start on the day being worked, through the end of that week.
       // Phones keep one day at a time.
       ownerCalendarView = window.matchMedia("(min-width: 900px)").matches ? "week" : "day";
@@ -1208,7 +1208,7 @@
     clearTimeout(previewPopupTimer);
     ownerCalendarObserver?.disconnect();
     const state = api.read(localStorage, config);
-    const own = (bookingEnabled ? state.bookings : state.orders).filter(item => !item.example).at(-1);
+    const own = (bookingEnabled ? state.bookings : state.orders).filter(item => !item.example && !item.manual).at(-1);
     if (!own) {
       dashboardOpen = false;
       document.body.classList.remove("demo-owner-open");
@@ -1370,17 +1370,17 @@
   // built around the visitor's own booking once they have one (a whole day of work around their spot, on their day)
   function sampleInfo() {
     if (!bookingEnabled) return null;
-    const own = api.read(localStorage, config).bookings.filter(item => !item.example).at(-1);
+    const own = api.read(localStorage, config).bookings.filter(item => !item.example && !item.manual).at(-1);
     return api.sampleDay(config, new Date(), own && own.status !== "Canceled" ? own : null);
   }
-  function ownBooking(state) { return state.bookings.filter(item => !item.example).at(-1); }
+  function ownBooking(state) { return state.bookings.filter(item => !item.example && !item.manual).at(-1); }
   // every ticket the owner pages show: the sample day (+ yesterday's leftover) and the visitor's own booking
   function allTickets(state) {
     const sample = sampleInfo(), own = ownBooking(state);
-    return [...(sample ? [sample.leftover, ...sample.tickets] : []), ...(own ? [own] : [])];
+    return [...(sample ? [sample.leftover, ...sample.tickets] : []), ...(own ? [own] : []), ...state.bookings.filter(item => item.manual)];
   }
   const ticketNo = item => {
-    if (!item.sample) { const sample = sampleInfo(); if (sample && sample.anchored && sample.date === item.date) return `#${sample.ownNumber}`; }
+    if (!item.sample && !item.manual) { const sample = sampleInfo(); if (sample && sample.anchored && sample.date === item.date) return `#${sample.ownNumber}`; }
     return item.number ? `#${item.number}` : "";
   };
   const ticketPrice = item => item.status === "Canceled" ? 0 : (item.priceCents ?? Math.round((config.services.find(service => service.id === item.serviceId)?.price || 0) * 100));
@@ -1458,7 +1458,7 @@
   }
   function ownerCalendarPanel(state) {
     if (!ownerCalendarDate) {
-      const own = state.bookings.filter(item => !item.example).at(-1);
+      const own = state.bookings.filter(item => !item.example && !item.manual).at(-1);
       ownerCalendarDate = new Date(own.date + "T12:00:00");
     }
     const monday = new Date(ownerCalendarDate);
@@ -1476,15 +1476,23 @@
       return { date: dateKey(day), label: day.toLocaleDateString("en-US", { weekday: "long" }),
         shortDate: day.toLocaleDateString("en-US", { month: "short", day: "numeric" }) };
     });
-    const latest = state.bookings.filter(item => !item.example).at(-1);
+    const latest = state.bookings.filter(item => !item.example && !item.manual).at(-1);
+    const handEntered = state.bookings.filter(item => item.manual);
+    const todayKey = dateKey(new Date()), openCache = {};
+    const openFor = (staffId, date) => (openCache[staffId + date] ??= date < todayKey ? [] : api.openTimes(config, state, staffId, date));
     let grid = '<div class="owner-grid-heading">Time</div>' + columns.map(column =>
       `<div class="owner-grid-heading"><div>${escape(column.label)}</div>${column.shortDate ? `<small>${escape(column.shortDate)}</small>` : ""}</div>`).join("");
     for (let minute = 9 * 60; minute < 17 * 60; minute += 30) {
       const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${minute % 60 ? "30" : "00"}`;
       grid += `<div class="owner-grid-time">${api.timeLabel(time)}</div>` + columns.map(column => {
-        const bookings = [...(sampleInfo()?.tickets || []), sampleInfo()?.leftover, latest].filter(Boolean).filter(item => item.date === column.date && item.time === time &&
+        const bookings = [...(sampleInfo()?.tickets || []), sampleInfo()?.leftover, latest, ...handEntered].filter(Boolean).filter(item => item.date === column.date && item.time === time &&
           (employeeFilter === "all" || item.staffId === employeeFilter) && (!column.staff || item.staffId === column.staff.id));
-        return `<div class="owner-grid-slot">${bookings.map(item => `<div role="button" tabindex="0" class="month-appointment confirmed ${item.status === "Finished" ? "completed" : ""}${item.sample ? " sample-ticket" : " own-ticket"}"
+        // an open time: tap it to put in an appointment by hand (walk-in or phone call)
+        const openStaff = bookings.length ? [] : (column.staff ? [column.staff] : config.barbers.filter(staff => employeeFilter === "all" || staff.id === employeeFilter))
+          .filter(staff => openFor(staff.id, column.date).includes(time));
+        if (openStaff.length) return `<div class="owner-grid-slot"><button type="button" class="slot-add" data-add-date="${column.date}" data-add-time="${time}"
+          data-add-staff="${escape(openStaff[0].id)}" aria-label="Open time ${api.timeLabel(time)}. Add an appointment">+ Add</button></div>`;
+        return `<div class="owner-grid-slot">${bookings.map(item => `<div role="button" tabindex="0" class="month-appointment confirmed ${item.status === "Finished" ? "completed" : ""}${item.sample ? " sample-ticket" : " own-ticket"}${item.manual ? " hand-ticket" : ""}"
           style="background:${item.sample ? ticketColor(item) : item.status === "Canceled" ? "#6b7280" : employeeColor(item.staffId)}"
           aria-label="${escape(item.name)} - ${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)} - ${escape(item.status || "Scheduled")}. Open appointment details."
           data-calendar-booking="${escape(item.id)}">
@@ -1556,6 +1564,8 @@
     observer.observe(scroller);
     sync();
     setupAppointmentDetails();
+    document.querySelectorAll("[data-add-date]").forEach(button => button.addEventListener("click", () =>
+      openAddAppointment(button.dataset.addDate, button.dataset.addTime, button.dataset.addStaff)));
     document.querySelectorAll("[data-calendar-status]").forEach(button => button.addEventListener("click", event => {
       event.stopPropagation();
       action(() => {
@@ -1563,6 +1573,56 @@
         renderKeepingPlace();
       });
     }));
+  }
+  // 11/22 (Tom): tap an open time and the appointment box opens with the ticket number and date already in;
+  // the barber types the time, customer, phone and the rest.
+  function openAddAppointment(date, time, staffId) {
+    const state = api.read(localStorage, config);
+    const number = api.nextTicketNumber(config, state);
+    const day = new Date(date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric" });
+    const staffChoices = config.barbers.filter(staff => api.openTimes(config, state, staff.id, date).length);
+    const services = id => config.services.filter(service => (config.barbers.find(staff => staff.id === id)?.serviceIds || []).includes(service.id));
+    const timeOptions = (id, pick) => api.openTimes(config, state, id, date).map(value =>
+      `<option value="${value}" ${value === pick ? "selected" : ""}>${api.timeLabel(value)}</option>`).join("");
+    const serviceOptions = id => `<option value="">Pick a service</option>` + services(id).map(service =>
+      `<option value="${escape(service.id)}">${escape(service.name)} - ${money(Math.round(Number(service.price || 0) * 100))}</option>`).join("");
+    $("appointment-popup-title").textContent = "New Appointment";
+    $("appointment-popup-content").innerHTML = `<form id="add-appointment-form" class="add-appointment-form" novalidate>
+      <div class="appointment-detail-grid">
+        <div class="appointment-detail"><label>Ticket</label><strong>#${number}</strong></div>
+        <div class="appointment-detail"><label>Date</label><strong>${escape(day)}</strong></div></div>
+      <div class="add-appointment-fields">
+        <div class="appointment-form-group"><label for="add-time">Time</label><select id="add-time" required>${timeOptions(staffId, time)}</select></div>
+        ${config.barbers.length > 1 ? `<div class="appointment-form-group"><label for="add-staff">Barber</label><select id="add-staff" required>${staffChoices.map(staff =>
+          `<option value="${escape(staff.id)}" ${staff.id === staffId ? "selected" : ""}>${escape(staff.name)}</option>`).join("")}</select></div>` : ""}
+        <div class="appointment-form-group"><label for="add-service">Service</label><select id="add-service" required>${serviceOptions(staffId)}</select></div>
+        <div class="appointment-form-group"><label for="add-name">Customer name</label><input id="add-name" type="text" maxlength="80" autocomplete="off" required></div>
+        <div class="appointment-form-group"><label for="add-phone">Customer phone</label><input id="add-phone" type="tel" inputmode="tel" maxlength="14" autocomplete="off" placeholder="207-555-0100" required></div>
+        <div class="appointment-form-group"><label for="add-email">Email (optional)</label><input id="add-email" type="email" maxlength="120" autocomplete="off"></div>
+        <div class="appointment-form-group add-wide"><label for="add-notes">Notes (optional)</label><input id="add-notes" type="text" maxlength="300" autocomplete="off" placeholder="Walk-in, called in, wants a fade..."></div>
+        <label class="add-text-ok add-wide"><input id="add-text-ok" type="checkbox"> Customer said OK to text reminders</label></div>
+      <p class="appointment-tip-error" id="add-appointment-error" role="alert"></p>
+      <div class="modal-actions"><button type="submit" class="modal-action-btn">Save Appointment</button>
+      <button type="button" class="modal-action-btn cancel-btn" id="add-appointment-cancel">Cancel</button></div></form>`;
+    const popup = $("appointment-popup");
+    popup.hidden = false; popup.classList.add("open");
+    const staffSelect = $("add-staff"), pickedStaff = () => staffSelect ? staffSelect.value : staffId;
+    staffSelect?.addEventListener("change", () => {
+      const keep = $("add-time").value;
+      $("add-time").innerHTML = timeOptions(pickedStaff(), keep);
+      $("add-service").innerHTML = serviceOptions(pickedStaff());
+    });
+    $("add-name").focus();
+    $("add-appointment-cancel").addEventListener("click", () => $("close-appointment").click());
+    $("add-appointment-form").addEventListener("submit", event => {
+      event.preventDefault();
+      try {
+        api.addAppointment(localStorage, config, { date, time: $("add-time").value, staffId: pickedStaff(), serviceId: $("add-service").value,
+          name: $("add-name").value, phone: $("add-phone").value, email: $("add-email").value, notes: $("add-notes").value, textOk: $("add-text-ok").checked });
+        popup.hidden = true; popup.classList.remove("open");
+        renderKeepingPlace();
+      } catch (failure) { $("add-appointment-error").textContent = failure.message; }
+    });
   }
   function appointmentDialog() {
     return `<div class="appointment-modal" id="appointment-popup" role="dialog" aria-modal="true" aria-labelledby="appointment-popup-title" hidden>
@@ -1600,6 +1660,7 @@
       const booking = allTickets(api.read(localStorage, config)).find(item => item.id === button.dataset.calendarBooking) ||
         api.read(localStorage, config).bookings.find(item => item.id === button.dataset.calendarBooking);
       if (!booking) throw new Error("This demo appointment was not found.");
+      $("appointment-popup-title").textContent = "Appointment Details";
       if (booking.sample) {
         // sample tickets: look, don't touch
         const rows = [["Ticket", ticketNo(booking)], ["Date", booking.date], ["Time", api.timeLabel(booking.time)], ["Customer", booking.name],
@@ -1618,7 +1679,8 @@
       const details = [...(booking.number ? [["Ticket", ticketNo(booking)]] : []), ["Date", booking.date], ["Time", api.timeLabel(booking.time)], ["Customer", booking.name],
         ["Customer Phone", booking.phone || ""], ["Customer Email", booking.email || ""],
         ["Employee", config.barbers.find(staff => staff.id === booking.staffId)?.name || booking.staffId],
-        ["Service", config.services.find(service => service.id === booking.serviceId)?.name || booking.serviceId], ["Status", booking.status || "Scheduled"]];
+        ["Service", config.services.find(service => service.id === booking.serviceId)?.name || booking.serviceId], ["Status", booking.status || "Scheduled"],
+        ...(booking.manual ? [["Booked", "By hand at the shop"], ...(booking.notes ? [["Notes", booking.notes]] : []), ["Text reminders", booking.textOk ? "Yes" : "No"]] : [])];
       $("appointment-popup-content").innerHTML = `<div class="appointment-detail-grid">${details.map(([label, value]) =>
         `<div class="appointment-detail"><label>${label}</label><strong>${escape(value)}</strong></div>`).join("")}</div>
         <div class="appointment-form-group"><label>Service Price</label><input type="text" value="${money(price * 100)}" readonly></div>
@@ -1663,7 +1725,7 @@
     $("appointment-popup").addEventListener("keydown", event => {
       if (event.key === "Escape") $("close-appointment").click();
       if (event.key === "Tab") {
-        const controls = Array.from($("appointment-popup").querySelectorAll("button:not(:disabled),input")).filter(el => !el.hidden);
+        const controls = Array.from($("appointment-popup").querySelectorAll("button:not(:disabled),input,select")).filter(el => !el.hidden);
         const first = controls[0], last = controls.at(-1);
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }

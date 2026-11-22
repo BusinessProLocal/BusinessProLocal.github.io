@@ -222,6 +222,43 @@
     write(storage, config, state);
     return booking;
   }
+  // 11/22 (Tom): the barber can put in an appointment by hand (walk-in or phone call) by tapping an open time.
+  function visitorBooking(state) {
+    const own = state.bookings.filter(item => !item.example && !item.manual).at(-1);
+    return own && own.status !== "Canceled" ? own : null;
+  }
+  function openTimes(config, state, staffId, day, now = new Date()) {
+    const staff = (config.barbers || []).find(item => item.id === staffId);
+    if (!staff) return [];
+    const sample = sampleDay(config, now, visitorBooking(state));
+    return workingTimes(config, staff, day).filter(time =>
+      !(sample && sample.date === day && sample.tickets.some(item => item.staffId === staffId && item.time === time)) &&
+      !state.bookings.some(item => !item.example && item.status !== "Canceled" && item.staffId === staffId && item.date === day && item.time === time));
+  }
+  function nextTicketNumber(config, state, now = new Date()) {
+    const sample = sampleDay(config, now, visitorBooking(state));
+    const numbers = [1000, ...(sample ? sample.tickets.map(item => item.number) : []), sample && sample.anchored ? sample.ownNumber : 0,
+      ...state.bookings.filter(item => !item.example).map(item => Number(item.number) || 0)];
+    return Math.max(...numbers) + 1;
+  }
+  function addAppointment(storage, config, input, now = new Date()) {
+    if (config.demo.tier !== "professional") throw new Error("Booking is only included in Professional.");
+    const state = read(storage, config);
+    const name = String(input.name || "").trim(), phone = String(input.phone || "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+    if (!name || name.length > 80) throw new Error("Type the customer's name.");
+    if (phone.length !== 10) throw new Error("Type the customer's 10-digit phone number.");
+    const staff = (config.barbers || []).find(item => item.id === input.staffId);
+    if (!staff) throw new Error("Pick the barber.");
+    if (!(staff.serviceIds || []).includes(input.serviceId)) throw new Error("Pick a service this barber does.");
+    if (!openTimes(config, state, staff.id, input.date, now).includes(input.time)) throw new Error("That time is already taken or the shop is closed then. Pick another time.");
+    const booking = { id: "WALKIN-" + root.crypto.randomUUID(), manual: true, demo: true, number: nextTicketNumber(config, state, now),
+      name, phone: `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6)}`, email: String(input.email || "").trim().slice(0, 120),
+      notes: String(input.notes || "").trim().slice(0, 300), textOk: Boolean(input.textOk), staffId: staff.id, serviceId: input.serviceId,
+      date: input.date, time: input.time, status: "Scheduled", createdAt: now.toISOString() };
+    state.bookings.push(booking);
+    write(storage, config, state);
+    return booking;
+  }
   function setQuantity(storage, config, id, quantity) {
     if (config.demo.tier !== "business-pro") throw new Error("Storefront is only included in Business Pro.");
     if (!config.products.some(product => product.id === id)) throw new Error("Product not found.");
@@ -528,7 +565,7 @@
   }
   const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, sampleDay, book, setQuantity, clearCart, total, taxCents, grandTotal, checkout,
     parseAddress, addressText, shippingTo, shippingFrom, isPickup, savePacking, printLabel, setCarrier, markShipped,
-    dashboard, bookingStatus, setTip, shipBox, shipBoxes, savePhoto, removePhoto };
+    dashboard, bookingStatus, setTip, visitorBooking, openTimes, nextTicketNumber, addAppointment, workingTimes, shipBox, shipBoxes, savePhoto, removePhoto };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.BusinessProDemo = api;
 })(globalThis);

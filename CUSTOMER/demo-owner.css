@@ -1706,3 +1706,14 @@ html body #daily-dashboard table.color-head thead th { background: var(--head, #
 html body #daily-dashboard table.color-head thead th:empty { background: #e8eaed !important; }
 /* ticket number sits on the same line as the name (it was its own line and pushed START / FINISH out of the card) */
 #daily-dashboard .calendar-card-summary strong .ticket-no { display: inline !important; }
+/* 11/22 (Tom): tap an open time to put in an appointment by hand */
+#daily-dashboard .owner-grid-slot .slot-add { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; margin: 0; padding: 0;
+  background: transparent !important; border: 2px dashed transparent !important; border-radius: 8px !important; color: #1f6fd1 !important; -webkit-text-fill-color: #1f6fd1 !important;
+  font-size: 13px; font-weight: 700; letter-spacing: .02em; cursor: pointer; opacity: .35; box-shadow: none !important; white-space: nowrap; }
+#daily-dashboard .owner-grid-slot .slot-add:hover, #daily-dashboard .owner-grid-slot .slot-add:focus-visible { opacity: 1; border-color: #1f6fd1 !important; background: #eef5ff !important; }
+@media (hover: none) { #daily-dashboard .owner-grid-slot .slot-add { opacity: .7; border-color: #c9dcf5 !important; } }
+#daily-dashboard .add-appointment-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 14px; }
+#daily-dashboard .add-appointment-fields .add-wide { grid-column: 1 / -1; }
+#daily-dashboard .add-text-ok { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; font-weight: 600; font-size: 14px; }
+#daily-dashboard .add-text-ok input { width: 18px; height: 18px; margin: 0; }
+#daily-dashboard .owner-grid-slot .hand-ticket { outline: 2px dashed rgba(255,255,255,.75); outline-offset: -5px; }
