@@ -118,6 +118,69 @@
       return dateKey(date);
     });
   }
+  // ------------------------------------------------------------
+  // 11/22 (Tom): A FULL SAMPLE DAY. The demo's day is already booked solid with sample tickets
+  // in every stage (paid, in the chair, no-show, canceled, late cancel, booked); the visitor books
+  // the one open spot (the last of the day). Each ticket has a number (#1001…), like a real shop.
+  // Sample tickets are made fresh from the date (never saved), so they can't be changed.
+  // ------------------------------------------------------------
+  const SAMPLE_NAMES = ["Devin Roberts", "Sam Lee", "Chris O'Neil", "Pat Dubois", "Ryan Cote", "Mike Gagnon", "Tyler Pelletier",
+    "Ben Roy", "Logan Michaud", "Nate Ouellette", "Evan Thibodeau", "Cody Bouchard", "Luke Morin", "Owen Lavoie",
+    "Jason Fortin", "Matt Leblanc", "Kevin Poirier", "Adam Caron", "Dylan Martin", "Shawn Theriault", "Eric Lambert", "Noah Dion"];
+  const SAMPLE_PATTERN = [
+    { status: "Finished", tip: 5 }, { status: "Finished", tip: 3, paidOnline: true }, { status: "No-show" },
+    { status: "Finished", tip: 4 }, { status: "Canceled", canceledBy: "Customer" }, { status: "Finished", tip: 6 },
+    { status: "Finished", tip: 2, paidOnline: true }, { status: "Finished", tip: 5 }, { status: "Started" },
+    { status: "Scheduled", paidOnline: true }, { status: "Canceled", canceledBy: "Customer", lateFee: true },
+    { status: "Scheduled" }, { status: "Scheduled" }, { status: "Scheduled", paidOnline: true }, { status: "Scheduled" }
+  ];
+  function workingTimes(config, staff, day) {
+    const schedule = staff.schedule || {};
+    if (!(schedule.workingDays || []).includes(new Date(day + "T00:00:00").getDay())) return [];
+    const minutes = value => Number(String(value || "00:00").slice(0, 2)) * 60 + Number(String(value || "00:00").slice(3));
+    const step = (config.booking && config.booking.appointmentLengthMinutes) || 30, out = [];
+    for (let minute = minutes(schedule.startTime); minute + step <= minutes(schedule.endTime); minute += step) {
+      out.push(`${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`);
+    }
+    return out;
+  }
+  function sampleDay(config, now = new Date()) {
+    if (!config.demo || config.demo.tier !== "professional" || config.demo.sampleDay === false || !config.barbers || !config.barbers.length) return null;
+    const first = config.barbers[0];
+    for (const day of dates(now)) {
+      const firstTimes = workingTimes(config, first, day);
+      if (!firstTimes.length) continue;
+      const open = firstTimes[firstTimes.length - 1];
+      if (new Date(day + "T" + open) <= now) continue; // the open spot must still be ahead
+      const rows = [];
+      config.barbers.forEach((staff, staffIndex) => {
+        workingTimes(config, staff, day).forEach((time, slot) => {
+          if (staff.id === first.id && time === open) return;
+          const look = SAMPLE_PATTERN[slot % SAMPLE_PATTERN.length];
+          const services = config.services.filter(service => (staff.serviceIds || []).includes(service.id));
+          const service = services[(slot + staffIndex) % Math.max(1, services.length)] || config.services[0];
+          const price = Math.round(Number(service.price || 0) * 100);
+          rows.push({ staffId: staff.id, time, staffIndex, slot, look, serviceId: service.id, price });
+        });
+      });
+      rows.sort((a, b) => a.time.localeCompare(b.time) || a.staffIndex - b.staffIndex);
+      const tickets = rows.map((row, index) => ({
+        id: `SAMPLE-${day}-${row.staffId}-${row.time}`, number: 1001 + index, sample: true, example: true,
+        name: SAMPLE_NAMES[(index + row.staffIndex * 7) % SAMPLE_NAMES.length], staffId: row.staffId, serviceId: row.serviceId,
+        date: day, time: row.time, status: row.look.status, tipCents: row.look.tip ? row.look.tip * 100 : 0,
+        paidOnline: Boolean(row.look.paidOnline), canceledBy: row.look.canceledBy || "",
+        lateFeeCents: row.look.lateFee ? Math.round(row.price * 0.2) : 0, priceCents: row.price
+      }));
+      // one appointment from the day before that nobody closed out (it shows under Uncompleted)
+      const before = new Date(day + "T12:00:00"); before.setDate(before.getDate() - 1);
+      const service = config.services.find(item => (first.serviceIds || []).includes(item.id)) || config.services[0];
+      const leftover = { id: `SAMPLE-${dateKey(before)}-leftover`, number: 1000, sample: true, example: true, leftover: true,
+        name: "Brandon Hebert", staffId: first.id, serviceId: service.id, date: dateKey(before), time: "15:00", status: "Scheduled",
+        tipCents: 0, paidOnline: false, canceledBy: "", lateFeeCents: 0, priceCents: Math.round(Number(service.price || 0) * 100) };
+      return { date: day, open: { staffId: first.id, time: open }, tickets, leftover, nextNumber: 1001 + tickets.length };
+    }
+    return null;
+  }
   function slots(config, state, staffId, serviceId, day, now = new Date()) {
     if (config.demo.tier !== "professional" || !dates(now).includes(day)) return [];
     const staff = config.barbers.find(item => item.id === staffId && item.serviceIds.includes(serviceId));
@@ -127,10 +190,12 @@
     if (!schedule.workingDays.includes(date.getDay())) return [];
     const minutes = value => Number(value.slice(0, 2)) * 60 + Number(value.slice(3));
     const duration = config.booking.appointmentLengthMinutes;
+    const sample = sampleDay(config, now);
     const result = [];
     for (let minute = minutes(schedule.startTime); minute + duration <= minutes(schedule.endTime); minute += duration) {
       const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
       if (new Date(day + "T" + time) <= now) continue;
+      if (sample && sample.date === day && sample.tickets.some(item => item.staffId === staffId && item.time === time)) continue;
       if (!state.bookings.some(item => item.status !== "Canceled" && item.staffId === staffId && item.date === day && item.time === time)) result.push(time);
     }
     return result;
@@ -143,7 +208,9 @@
     if (!slots(config, state, input.staffId, input.serviceId, input.date, now).includes(input.time)) {
       throw new Error("That time is unavailable. Select another available time.");
     }
-    const booking = { ...input, name, id: "DEMO-" + root.crypto.randomUUID(), createdAt: now.toISOString(), demo: true };
+    const sample = sampleDay(config, now);
+    const booking = { ...input, name, id: "DEMO-" + root.crypto.randomUUID(), createdAt: now.toISOString(), demo: true,
+      number: sample && sample.date === input.date ? sample.nextNumber : 1001 };
     state.bookings.push(booking);
     write(storage, config, state);
     return booking;
@@ -452,7 +519,7 @@
     delete state[field];
     write(storage, config, state);
   }
-  const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, book, setQuantity, clearCart, total, taxCents, grandTotal, checkout,
+  const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, sampleDay, book, setQuantity, clearCart, total, taxCents, grandTotal, checkout,
     parseAddress, addressText, shippingTo, shippingFrom, isPickup, savePacking, printLabel, setCarrier, markShipped,
     dashboard, bookingStatus, setTip, shipBox, shipBoxes, savePhoto, removePhoto };
   if (typeof module !== "undefined" && module.exports) module.exports = api;

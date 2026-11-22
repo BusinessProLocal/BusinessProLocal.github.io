@@ -1677,3 +1677,23 @@ html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar
   html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor input { font-size: 10px !important; padding: 0 1px !important; text-align: center !important; }
   html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor button { width: 15px !important; min-width: 15px !important; padding: 0 !important; font-size: 10px !important; }
 }
+/* 11/22 (Tom): the full sample day — ticket numbers, stage labels, colors */
+#daily-dashboard .ticket-no { font-weight: 800; opacity: .9; }
+#daily-dashboard .ticket-stage { display: inline-block; margin-top: 3px; padding: 2px 6px; border-radius: 999px; background: rgba(255,255,255,.92); color: #111; font-size: 12px; font-weight: 800; letter-spacing: .02em; white-space: nowrap; }
+#daily-dashboard .sample-ticket { cursor: pointer; }
+#daily-dashboard .completed-time-list { display: flex; flex-wrap: wrap; gap: 6px; }
+#daily-dashboard .ticket-chip { display: inline-flex; align-items: center; gap: 4px; }
+#daily-dashboard .completed-time-btn small { display: block; font-size: 12px; opacity: .9; font-weight: 600; }
+#daily-dashboard .sample-day-note { margin: 4px 0 0; color: #1f4e86; font-weight: 600; }
+#daily-dashboard .sample-ticket-note { margin: 0 0 10px; padding: 8px 10px; background: #eef4fc; border-left: 4px solid #1f6fd1; color: #12355b; font-weight: 600; }
+#daily-dashboard .dashboard-closeout-panel { border-left: 5px solid #b91c1c; margin-top: 12px; }
+#daily-dashboard .dashboard-closeout-item { display: grid; gap: 2px; width: 100%; text-align: left; padding: 10px 12px; background: #fdecec; border: 1px solid #f3b4b4; color: #111; cursor: pointer; }
+#daily-dashboard .ticket-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; margin: 14px 0 0; font-size: 13px; }
+#daily-dashboard .ticket-legend span { display: inline-flex; align-items: center; gap: 6px; }
+#daily-dashboard .ticket-legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; }
+#daily-dashboard .preview-sheet { width: 100%; border-collapse: collapse; background: #fff; }
+#daily-dashboard .preview-sheet th, #daily-dashboard .preview-sheet td { border: 1px solid #e1e1e1; padding: 6px 8px; color: #111; }
+#daily-dashboard .preview-sheet th { background: #e8eaed; }
+#daily-dashboard .preview-sheet tr.sheet-total td { font-weight: 800; border-top: 2px solid #111; border-bottom: 3px double #111; }
+html body.demo-owner-open #daily-dashboard .dashboard-closeout-item { background: #fdecec !important; border: 1px solid #f3b4b4 !important; color: #111 !important; -webkit-text-fill-color: #111 !important; border-radius: 8px !important; }
+html body.demo-owner-open #daily-dashboard .dashboard-closeout-item * { color: #111 !important; -webkit-text-fill-color: #111 !important; }

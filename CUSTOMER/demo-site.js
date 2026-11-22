@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122i";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122k";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -689,7 +689,7 @@
       <div class="text-preview-phone" aria-label="Sample text message">
         <p class="text-preview-from">${escape(shop)}</p>
         <div class="text-preview-bubble">
-          <p>Hi ${escape(first)}! You're booked at ${escape(shop)}.</p>
+          <p>Hi ${escape(first)}! You're booked at ${escape(shop)}.${booking.number ? ` Ticket #${escape(booking.number)}.` : ""}</p>
           <p><strong>${escape(service?.name || "Appointment")}</strong> with ${escape(staff?.name || "your barber")}<br>${escape(when)} at ${escape(api.timeLabel(booking.time))}</p>
           <p>Need to cancel or reschedule? Tap here:<br><span class="text-preview-link">businessprolocal.com/manage/…</span></p>
           <p>Reply STOP to opt out.</p>
@@ -1096,13 +1096,30 @@
             ${field("Pickup instructions", "Collect your order during shop hours.")}${field("Sample tax rate (%)", "5.5", "number")}</div>
             <p>Sample settings only. Demo checkout adds 5.5% Maine sales tax.</p>`) : "") + periods(["Save settings"]);
         break;
-      case "financials":
-        content = periods(["Day", "Week", "Month", "Year"]) + cards(bookingEnabled ? [["Total Income", "$480.00"], ["Service Revenue", "$450.00"], ["Tips", "$30.00"], ["Outgoing", "$120.00"], ["Net", "$360.00"]] :
-          [["Total Income", "$450.00"], ["Order Revenue", "$450.00"], ["Outgoing", "$120.00"], ["Net", "$330.00"]]) +
-          panel("Add Outgoing", `<div class="preview-fields">${field("Expense", "Sample supplies")}${field("Amount", "45.00", "number")}${field("Due Date", api.dates()[0], "date")}${select("Repeat", ["Monthly", "Weekly", "Yearly"])}</div>${button("Add outgoing")}`) +
-          panel("Outgoing Bills / Expenses", table(["Expense", "Amount", "Due", "Recurring", "Status"], [["Sample rent", "$120.00", "This month", "Monthly", "Unpaid"]]) + periods(["Mark paid", "Delete"])) +
-          panel("Saved Expense Dropdown", "<p>Sample rent · Sample supplies</p>" + button("Remove saved expense"));
+      case "financials": {
+        if (!bookingEnabled) {
+          content = periods(["Day", "Week", "Month", "Year"]) + cards([["Total Income", "$450.00"], ["Order Revenue", "$450.00"], ["Outgoing", "$120.00"], ["Net", "$330.00"]]) +
+            panel("Outgoing Bills / Expenses", table(["Expense", "Amount", "Due", "Recurring", "Status"], [["Sample rent", "$120.00", "This month", "Monthly", "Unpaid"]]) + periods(["Mark paid", "Delete"]));
+          break;
+        }
+        // 11/22 (Tom): follow the money — the same tickets as the calendar and Completed Appointments
+        const tickets = allTickets(api.read(localStorage, config)).filter(item => !item.leftover);
+        const done = tickets.filter(item => item.status === "Finished");
+        const services = done.reduce((sum, item) => sum + ticketListPrice(item), 0), tips = done.reduce((sum, item) => sum + (item.tipCents || 0), 0);
+        const fees = tickets.reduce((sum, item) => sum + (item.lateFeeCents || 0), 0), outgoing = 4500;
+        const sheet = (headers, rows) => `<div class="preview-table-scroll"><table class="preview-sheet"><thead><tr>${headers.map(value => `<th>${escape(value)}</th>`).join("")}</tr></thead>
+          <tbody>${rows.map(row => `<tr${row.total ? ' class="sheet-total"' : ""}>${row.cells.map(value => `<td>${escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+        content = periods(["Day", "Week", "Month", "Year", "💾 Save Today", "📊 Spreadsheet"]) +
+          panel("Summary — the sample day", sheet(["", "Amount"], [
+            { cells: [`Services (${done.length} paid tickets)`, money(services)] }, { cells: ["Tips", money(tips)] }, { cells: ["Late-cancel fees", money(fees)] },
+            { cells: ["Money in", money(services + tips + fees)], total: true }, { cells: ["Money out (paid today: supplies)", money(outgoing)] },
+            { cells: ["Net for the day", money(services + tips + fees - outgoing)], total: true }])) +
+          panel("Income — every paid ticket", sheet(["Ticket", "Time", "Customer", "Barber", "Service", "Price", "Tip", "Total"], [
+            ...done.map(item => ({ cells: [ticketNo(item), api.timeLabel(item.time), item.name, staffName(item), serviceName(item), money(ticketListPrice(item)), money(item.tipCents || 0), money(ticketListPrice(item) + (item.tipCents || 0))] })),
+            { cells: ["", "", "", "", "", money(services), money(tips), money(services + tips)], total: true }])) +
+          panel("Expenses", sheet(["Expense", "Amount", "Status"], [{ cells: ["Supplies (clipper oil, towels)", money(outgoing), "Paid"] }, { cells: ["Rent", "$800.00", "Due the 1st"] }]));
         break;
+      }
       case "photos":
         content = panel("Photos Waiting for Your Approval", "<p>No sample photos awaiting review.</p>" + periods(["Approve photo", "Decline photo"])) +
           panel(bookingEnabled ? "Barber Photo Manager" : "Shop Photo Manager", select("Profile", employees) +
@@ -1118,17 +1135,33 @@
         content = panel("Customer-facing business details", `<div class="preview-fields">${field("Business name", config.shop.name)}${field("Phone", config.shop.phoneDisplay)}
           ${field("Address line 1", config.shop.addressLine1)}${field("Address line 2", config.shop.addressLine2)}${field("Customer contact email", config.shop.email)}</div>${button("Save business info")}`);
         break;
-      case "cancellations":
-        content = panel("Cancellation History", table(["Date", "Time", "Customer", "Service", "Employee", "Canceled By", "Acknowledged By"],
-          [["Sample day", "10:00 AM", "Demo Guest", "Sample service", employees[0], "Customer", "Owner"]]) + button("View cancellation"));
+      case "cancellations": {
+        // 11/22 (Tom): the sample day's real tickets — look only
+        const canceled = allTickets(api.read(localStorage, config)).filter(item => item.status === "Canceled");
+        content = panel("Cancellation History", canceled.length ? table(["Ticket", "Date", "Time", "Customer", "Service", "Employee", "Canceled By", "Late fee"],
+          canceled.map(item => [ticketNo(item), item.date, api.timeLabel(item.time), item.name, serviceName(item), staffName(item), item.canceledBy || "Shop", item.lateFeeCents ? money(item.lateFeeCents) : "—"])) : "<p>No cancellations.</p>") +
+          panel("Late Cancel – 20% Fee", "<p>Customers who cancel inside 24 hours owe 20% of the service. The fee shows up in Financials.</p>");
         break;
-      case "completed":
-        content = employees.map(name => panel(name, "<p>Sample completed appointments</p>" + periods(["9:00 AM", "10:30 AM", "2:00 PM"]))).join("");
+      }
+      case "completed": {
+        const done = allTickets(api.read(localStorage, config)).filter(item => item.status === "Finished");
+        const total = done.reduce((sum, item) => sum + ticketListPrice(item) + (item.tipCents || 0), 0);
+        content = panel("Completed Appointments", done.length ? table(["Ticket", "Time", "Customer", "Barber", "Service", "Paid", "Price", "Tip", "Total"],
+          [...done.map(item => [ticketNo(item), api.timeLabel(item.time), item.name, staffName(item), serviceName(item), item.paidOnline ? "Online" : "At the shop",
+            money(ticketListPrice(item)), money(item.tipCents || 0), money(ticketListPrice(item) + (item.tipCents || 0))]),
+           ["", "", "", "", "", "", "", "Total", money(total)]]) : "<p>Nothing finished yet.</p>");
         break;
-      case "uncompleted":
-        content = panel("Uncompleted Appointments", "<p>Demo Guest · Sample service · Previous day, 3:00 PM</p>" + periods(["Complete", "No-show", "Owner override"])) +
-          panel("Late Cancel - 20% Fee", "<p>No sample late cancellations.</p>") + panel("Override log", "<p>No sample overrides.</p>");
+      }
+      case "uncompleted": {
+        const tickets = allTickets(api.read(localStorage, config));
+        const leftover = tickets.filter(item => item.leftover), late = tickets.filter(item => item.lateFeeCents);
+        content = panel("Uncompleted Appointments", `<p>Appointments from past days that were never marked done or no-show. Close each one out.</p>` +
+          (leftover.length ? table(["Ticket", "Date", "Time", "Customer", "Service", "Barber"], leftover.map(item => [ticketNo(item), item.date, api.timeLabel(item.time), item.name, serviceName(item), staffName(item)])) : "<p>Everything is closed out.</p>") +
+          periods(["Complete", "No-show", "Owner override"])) +
+          panel("Late Cancel - 20% Fee", late.length ? table(["Ticket", "Time", "Customer", "Service", "Fee"], late.map(item => [ticketNo(item), api.timeLabel(item.time), item.name, serviceName(item), money(item.lateFeeCents)])) : "<p>No late cancellations.</p>") +
+          panel("Override log", "<p>No overrides.</p>");
         break;
+      }
       default:
         content = panel(ownerTabLabel(tab), `<div class="preview-fields">${select("Employee", employees)}${field("Day", api.dates()[0], "date")}</div>${periods(["Previous Day", "Today", "Next Day", "Week View"])}
           ${table(["Time", ...employees], ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"].map((time, index) =>
@@ -1316,6 +1349,29 @@
       })));
     }
   }
+  // ---- 11/22 (Tom): the full sample day + ticket numbers ----
+  const TICKET_COLORS = { Finished: "#15803d", Started: "#b45309", "No-show": "#b91c1c", Canceled: "#6b7280" };
+  function sampleInfo() { return bookingEnabled ? api.sampleDay(config) : null; }
+  function ownBooking(state) { return state.bookings.filter(item => !item.example).at(-1); }
+  // every ticket the owner pages show: the sample day (+ yesterday's leftover) and the visitor's own booking
+  function allTickets(state) {
+    const sample = sampleInfo(), own = ownBooking(state);
+    return [...(sample ? [sample.leftover, ...sample.tickets] : []), ...(own ? [own] : [])];
+  }
+  const ticketNo = item => item.number ? `#${item.number}` : "";
+  const ticketPrice = item => item.status === "Canceled" ? 0 : (item.priceCents ?? Math.round((config.services.find(service => service.id === item.serviceId)?.price || 0) * 100));
+  const ticketListPrice = item => item.priceCents ?? Math.round((config.services.find(service => service.id === item.serviceId)?.price || 0) * 100);
+  const serviceName = item => config.services.find(service => service.id === item.serviceId)?.name || item.serviceId;
+  const staffName = item => config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId;
+  function ticketStatus(item) {
+    if (item.status === "Finished") return item.paidOnline ? "Paid online" : "Paid";
+    if (item.status === "Started") return "In the chair";
+    if (item.status === "No-show") return "No-show";
+    if (item.status === "Canceled") return item.lateFeeCents ? "Late cancel" : "Canceled";
+    if (item.leftover) return "Needs close-out";
+    return item.paidOnline ? "Booked · paid online" : "Booked";
+  }
+  const ticketColor = item => item.leftover ? "#b91c1c" : TICKET_COLORS[item.status] || employeeColor(item.staffId);
   function isNewBooking(item) {
     return !item.example && !["Finished", "Canceled"].includes(item.status);
   }
@@ -1323,22 +1379,43 @@
   // 1 finish these first, 2 today's appointments, 3 done today & money
   function morningBrief(records, state, complete, price) {
     const step = (number, title, count = "") => `<h3 class="dash-step dash-step-${number}"><span class="dash-num">${number}</span>${title}${count ? `<span class="dash-count">${count}</span>` : ""}</h3>`;
-    return `<div class="section-heading"><h2>Good morning. Here's your day, in order.</h2></div>
-      ${step(1, "Finish these first", "1 to do")}${timeOffPanel()}
-      ${step(2, "Today's appointments")}${schedulePanel(records, state)}
+    const sample = sampleInfo(), own = records[0];
+    const day = sample ? sample.date : own.date;
+    // 11/22 (Tom): the whole sample day, every stage, plus the visitor's own booking — follow the money to the end
+    const dayTickets = allTickets(state).filter(item => !item.leftover && (item.date === day || item === own));
+    const live = dayTickets.filter(item => item.status !== "Canceled");
+    const earned = dayTickets.reduce((sum, item) => sum + (item.status === "Finished" ? ticketListPrice(item) + (item.tipCents || 0) : 0) + (item.lateFeeCents || 0), 0);
+    const booked = live.filter(item => item.status !== "No-show").reduce((sum, item) => sum + ticketListPrice(item), 0);
+    const remaining = dayTickets.filter(item => !item.status || item.status === "Scheduled" || item.status === "Started").length;
+    const todo = 1 + (sample ? 1 : 0);
+    const dayWords = new Date(day + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+    return `<div class="section-heading"><h2>Good morning. Here's your day, in order.</h2>${sample ? `<p class="sample-day-note">Sample day: ${escape(dayWords)}. Every ticket below is a sample except yours (NEW).</p>` : ""}</div>
+      ${step(1, "Finish these first", `${todo} to do`)}${timeOffPanel()}${sample ? closeoutPanel(sample.leftover) : ""}
+      ${step(2, "Today's appointments")}${schedulePanel(dayTickets, state)}
       ${step(3, "Done today &amp; money")}
-      <div class="cards"><div class="card"><span>Today's Appointments</span><strong>1</strong><small>${complete ? 0 : 1} remaining today</small></div>
+      <div class="cards"><div class="card"><span>Today's Appointments</span><strong>${live.length}</strong><small>${remaining} still to go</small></div>
       <div class="card"><span>Barbers Working</span><strong>${config.barbers.length}</strong><small>${config.barbers.length} scheduled today</small></div>
-      <div class="card"><span>Earned Today</span><strong>${money(complete ? price : 0)}</strong><small>of ${money(price)} booked</small></div></div>`;
+      <div class="card"><span>Earned Today</span><strong>${money(earned)}</strong><small>of ${money(booked)} booked</small></div></div>
+      ${sample ? stagesLegend() : ""}`;
+  }
+  function closeoutPanel(item) {
+    return `<div class="panel dashboard-closeout-panel"><div class="panel-header"><h3>Needs Close-Out</h3></div><div class="panel-body">
+      <button type="button" class="dashboard-closeout-item" data-calendar-booking="${escape(item.id)}"><strong>${ticketNo(item)} ${escape(item.name)}</strong>
+      <span>${escape(serviceName(item))} &middot; yesterday, ${escape(api.timeLabel(item.time))} &middot; never marked done</span><span>Tap to see the ticket</span></button></div></div>`;
+  }
+  function stagesLegend() {
+    return `<div class="ticket-legend" aria-label="What the colors mean">${[["#15803d", "Paid"], ["#b45309", "In the chair"], ["#2463eb", "Booked"],
+      ["#b91c1c", "No-show / needs close-out"], ["#6b7280", "Canceled"]].map(([color, label]) => `<span><i style="background:${color}"></i>${label}</span>`).join("")}</div>`;
   }
   function schedulePanel(records, state) {
     return `<div class="panel"><div class="panel-header"><h3>Today's Appointments</h3></div><div class="panel-body">
-      ${records[0].date !== api.dates()[0] ? "<p>Your selected booking is included in this preview even if it is on another day.</p>" : ""}
       <div class="completed-owner-grid">${config.barbers.map(staff => `<section class="completed-barber-block${records.some(item => item.staffId === staff.id && isNewBooking(item)) ? " has-new-booking" : ""}" style="border-top-color:${employeeColor(staff.id)}">
       <div class="completed-barber-header"><div class="dashboard-barber-identity">${roundBarberPhoto(staff, state)}
       <button type="button" class="completed-barber-name compact-barber-name-btn">${escape(staff.name)}</button></div></div>
-      <div class="completed-time-list">${records.filter(item => item.staffId === staff.id).map(item =>
-        `<button type="button" class="completed-time-btn ${item.status !== "Finished" ? "next-barber-appointment" : ""}" data-calendar-booking="${escape(item.id)}" title="${escape(item.name)} - ${escape(item.status || "Scheduled")}">${api.timeLabel(item.time)}</button>${isNewBooking(item) ? '<span class="new-booking-tag">NEW</span>' : ""}`).join("")}</div></section>`).join("")}</div>
+      <div class="completed-time-list">${records.filter(item => item.staffId === staff.id).sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)).map(item =>
+        `<span class="ticket-chip"><button type="button" class="completed-time-btn ${item.status !== "Finished" ? "next-barber-appointment" : ""}${item.sample ? " sample-ticket-btn" : ""}" data-calendar-booking="${escape(item.id)}"
+          ${item.sample ? `style="background:${ticketColor(item)} !important;border-color:${ticketColor(item)} !important"` : ""}
+          title="${escape(ticketNo(item))} ${escape(item.name)} - ${escape(item.sample ? ticketStatus(item) : item.status || "Scheduled")}">${api.timeLabel(item.time)}<small>${escape(ticketNo(item))}</small></button>${isNewBooking(item) ? '<span class="new-booking-tag">NEW</span>' : ""}</span>`).join("")}</div></section>`).join("")}</div>
       </div></div>`;
   }
   function roundBarberPhoto(staff, state) {
@@ -1377,15 +1454,15 @@
     for (let minute = 9 * 60; minute < 17 * 60; minute += 30) {
       const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${minute % 60 ? "30" : "00"}`;
       grid += `<div class="owner-grid-time">${api.timeLabel(time)}</div>` + columns.map(column => {
-        const bookings = [latest].filter(item => item.date === column.date && item.time === time &&
+        const bookings = [...(sampleInfo()?.tickets || []), sampleInfo()?.leftover, latest].filter(Boolean).filter(item => item.date === column.date && item.time === time &&
           (employeeFilter === "all" || item.staffId === employeeFilter) && (!column.staff || item.staffId === column.staff.id));
-        return `<div class="owner-grid-slot">${bookings.map(item => `<div role="button" tabindex="0" class="month-appointment confirmed ${item.status === "Finished" ? "completed" : ""}"
-          style="background:${item.status === "Canceled" ? "#6b7280" : employeeColor(item.staffId)}"
+        return `<div class="owner-grid-slot">${bookings.map(item => `<div role="button" tabindex="0" class="month-appointment confirmed ${item.status === "Finished" ? "completed" : ""}${item.sample ? " sample-ticket" : " own-ticket"}"
+          style="background:${item.sample ? ticketColor(item) : item.status === "Canceled" ? "#6b7280" : employeeColor(item.staffId)}"
           aria-label="${escape(item.name)} - ${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)} - ${escape(item.status || "Scheduled")}. Open appointment details."
           data-calendar-booking="${escape(item.id)}">
-          <div class="calendar-card-summary"><strong>${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
+          <div class="calendar-card-summary"><strong>${item.number ? `<span class="ticket-no">${ticketNo(item)}</span> ` : ""}${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
           ${ownerCalendarView === "week" ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
-          ${item.status !== "Canceled" ? `<div class="calendar-card-actions">
+          ${item.sample ? `<span class="ticket-stage">${escape(ticketStatus(item))}${item.status === "Finished" && item.tipCents ? ` · ${money(item.priceCents + item.tipCents)}` : item.lateFeeCents ? ` · ${money(item.lateFeeCents)} fee` : ""}</span>` : item.status !== "Canceled" ? `<div class="calendar-card-actions">
           <button type="button" class="cal-start${item.status === "Started" || item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Started" data-id="${escape(item.id)}"${item.status === "Started" || item.status === "Finished" ? ' disabled title="Started"' : ""}>Start</button>
           <button type="button" class="cal-finish${item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Finished" data-id="${escape(item.id)}"${item.status === "Started" ? "" : " disabled"}>${item.status === "Finished" ? "Done" : "Finish"}</button>
           <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><span aria-hidden="true">$</span><input type="text" inputmode="numeric" maxlength="6" autocomplete="off"
@@ -1487,10 +1564,25 @@
       input.addEventListener("change", save);
     });
     document.querySelectorAll("[data-calendar-booking]").forEach(button => button.addEventListener("click", () => action(() => {
-      const booking = api.read(localStorage, config).bookings.find(item => item.id === button.dataset.calendarBooking);
+      const booking = allTickets(api.read(localStorage, config)).find(item => item.id === button.dataset.calendarBooking) ||
+        api.read(localStorage, config).bookings.find(item => item.id === button.dataset.calendarBooking);
       if (!booking) throw new Error("This demo appointment was not found.");
+      if (booking.sample) {
+        // sample tickets: look, don't touch
+        const rows = [["Ticket", ticketNo(booking)], ["Date", booking.date], ["Time", api.timeLabel(booking.time)], ["Customer", booking.name],
+          ["Employee", staffName(booking)], ["Service", serviceName(booking)], ["Status", ticketStatus(booking)],
+          ["Price", money(ticketListPrice(booking))], ["Tip", money(booking.tipCents || 0)],
+          ...(booking.lateFeeCents ? [["Late-cancel fee (20%)", money(booking.lateFeeCents)]] : []),
+          ["Total", money(booking.status === "Finished" ? booking.priceCents + (booking.tipCents || 0) : booking.lateFeeCents || 0)]];
+        $("appointment-popup-content").innerHTML = `<p class="sample-ticket-note">Sample ticket: look only. Your own booking is the one you can work.</p>
+          <div class="appointment-detail-grid">${rows.map(([label, value]) => `<div class="appointment-detail"><label>${label}</label><strong>${escape(value)}</strong></div>`).join("")}</div>`;
+        const popup = $("appointment-popup");
+        popup.hidden = false; popup.classList.add("open");
+        $("close-appointment").focus();
+        return;
+      }
       const price = config.services.find(service => service.id === booking.serviceId)?.price || 0;
-      const details = [["Date", booking.date], ["Time", api.timeLabel(booking.time)], ["Customer", booking.name],
+      const details = [...(booking.number ? [["Ticket", ticketNo(booking)]] : []), ["Date", booking.date], ["Time", api.timeLabel(booking.time)], ["Customer", booking.name],
         ["Customer Phone", booking.phone || ""], ["Customer Email", booking.email || ""],
         ["Employee", config.barbers.find(staff => staff.id === booking.staffId)?.name || booking.staffId],
         ["Service", config.services.find(service => service.id === booking.serviceId)?.name || booking.serviceId], ["Status", booking.status || "Scheduled"]];
