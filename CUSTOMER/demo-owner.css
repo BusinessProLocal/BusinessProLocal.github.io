@@ -1541,3 +1541,23 @@ body.demo-owner-open #daily-dashboard .brand p { opacity: .8; }
 @media (min-width: 901px) {
   body.demo-owner-open #daily-dashboard .brand { margin: 0 0 6px !important; padding: 16px 14px 14px !important; border-bottom: 0 !important; }
 }
+
+/* ============================================================
+   11/22 (Tom): no ▾ arrows (so every LIVE / Preview tag lines up); tapping Appointments, Employees or
+   Financials opens a small, boxed drop-down right under it, square corners, like a normal drop-down.
+============================================================ */
+body.demo-owner-open #daily-dashboard .owner-demo-submenu {
+  order: 0 !important; flex-basis: auto !important; display: flex; flex-direction: column !important; flex-wrap: nowrap !important; gap: 0 !important;
+  margin: 4px 0 8px !important; padding: 4px !important; border: 1px solid #111 !important; border-radius: 0 !important;
+  background: #fff !important; box-shadow: 0 6px 16px rgba(0,0,0,.12);
+}
+body.demo-owner-open #daily-dashboard .owner-demo-submenu[hidden] { display: none !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu button {
+  width: 100% !important; margin: 0 !important; padding: 7px 10px !important; border: 0 !important; border-bottom: 1px solid #eee !important;
+  border-radius: 0 !important; font-size: 13px !important; font-weight: 600; background: #fff !important; color: #111 !important;
+}
+body.demo-owner-open #daily-dashboard .owner-demo-submenu button:last-child { border-bottom: 0 !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu button:hover, body.demo-owner-open #daily-dashboard .owner-demo-submenu button.active { background: #f2f2f2 !important; }
+/* phones and upright tablets too: every LIVE / Preview tag lines up on the right */
+body.demo-owner-open #daily-dashboard .nav > button[data-owner-tab], body.demo-owner-open #daily-dashboard .owner-demo-submenu button { display: flex !important; width: 100% !important; justify-content: flex-start !important; text-align: left; }
+body.demo-owner-open #daily-dashboard .nav button .owner-tab-tag { margin-left: auto !important; }
