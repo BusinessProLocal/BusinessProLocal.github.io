@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122e";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122f";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -605,7 +605,7 @@
       const available = picking ? previewSlots(key) : api.slots(config, state, $("demo-staff").value, $("demo-service").value, key);
       html += `<button type="button" class="booking-date-day ${$("demo-date").value === key ? "is-selected" : ""}" data-day="${key}"
         aria-pressed="${$("demo-date").value === key}" aria-label="${key}${available.length ? " available" : " unavailable"}" ${available.length ? "" : "disabled"}>
-        ${day}${!available.length && days.includes(key) ? "<small>OFF/FULL</small>" : ""}</button>`;
+        ${day}${!available.length && days.includes(key) ? "<small>OFF/<wbr>FULL</small>" : ""}</button>`;
     }
     $("calendar-days").innerHTML = html;
     const picked = $("demo-date").value && document.querySelector(`[data-day="${$("demo-date").value}"]`);

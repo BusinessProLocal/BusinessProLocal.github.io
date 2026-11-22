@@ -1575,3 +1575,10 @@ body.demo-owner-open #daily-dashboard .nav button .owner-tab-tag { margin-left: 
 #daily-dashboard .month-appointment .calendar-card-actions .calendar-tip-editor button { flex: 0 0 auto; height: 24px !important; padding: 0 6px !important; background: #fff !important; color: #000 !important; border-radius: 0 !important; }
 #daily-dashboard .month-appointment .calendar-card-actions .calendar-tip-editor input { padding: 0 3px !important; font-size: 12px !important; text-align: right; }
 #daily-dashboard .month-appointment .calendar-card-actions > button[data-calendar-status] { padding: 0 7px !important; letter-spacing: .04em; }
+/* 11/22 (Tom): words fit the screen — they never break in the middle ("Loc / k").
+   The top bar wraps onto a second row instead, and buttons can't shrink smaller than their longest word. */
+#daily-dashboard .topbar { flex-wrap: wrap; gap: 10px 16px; }
+#daily-dashboard .topbar > div:first-child { flex: 1 1 220px; min-width: 0; }
+#daily-dashboard .access-controls { flex: 0 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+#daily-dashboard .lock-btn, #daily-dashboard .signed-in-badge { white-space: nowrap; flex: none; }
+#daily-dashboard button, #daily-dashboard .owner-tab-tag, #daily-dashboard .new-booking-tag { overflow-wrap: normal; word-break: normal; hyphens: none; }
