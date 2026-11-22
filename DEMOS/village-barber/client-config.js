@@ -35,7 +35,7 @@ window.SHOP_CONFIG = {
     heroSubtitle: "This is a preview of your new website. Book an appointment like your customer would, then see what you'd see as the owner.",
     addressLine1: "751 Main St (Park Place)", addressLine2: "Sanford, Maine",
     phoneDisplay: "(207) 849-0126", phoneLink: "2078490126", email: "",
-    hours: [{ days: "Monday - Friday", hours: "9:00 AM - 5:00 PM" }, { days: "Saturday - Sunday", hours: "Closed" }]
+    hours: [{ days: "Tuesday - Saturday", hours: "9:00 AM - 5:00 PM" }, { days: "Sunday - Monday", hours: "Closed" }]
   },
   services: [
     { id: "mens-haircut", name: "Men's Haircut", price: 20, description: "A classic cut, finished clean." },
@@ -47,7 +47,7 @@ window.SHOP_CONFIG = {
   booking: { appointmentLengthMinutes: 30 },
   barbers: [
     { id: "owner", name: "Barber", photo: "images/barber.jpg", cardSpecialty: "Owner & barber", bio: "Your own words about you and your shop go here.",
-      serviceIds: ["mens-haircut", "hair-beard", "buzz-cut", "buzz-beard", "beard"], schedule: { workingDays: [1, 2, 3, 4, 5], startTime: "09:00", endTime: "17:00" } }
+      serviceIds: ["mens-haircut", "hair-beard", "buzz-cut", "buzz-beard", "beard"], schedule: { workingDays: [2, 3, 4, 5, 6], startTime: "09:00", endTime: "17:00" } }
   ],
   photos: [
     { src: "images/shop-inside.jpg", alt: "Inside The Village Barber" },
