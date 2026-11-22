@@ -82,9 +82,23 @@
     // the shop's name is the page's main heading: their logo (its alt words = the name for Google), or the name itself
     const badge = shop.logo ? `<img src="${escape(shop.logo)}" alt="${escape(shop.name)}">` : `<span>${escape(shop.name)}</span>`;
     return `<header class="shop-header classic-header">
-      <nav aria-label="Main navigation" class="classic-nav"><span class="classic-nav-left"><a href="index.html#home">Home</a><a href="index.html#barbers">Barbers</a><a href="index.html#services">Services</a></span>
+      <nav aria-label="Main navigation" class="classic-nav"><span class="classic-nav-left"><button type="button" class="classic-menu-toggle" aria-expanded="false" aria-controls="classic-menu">&#9776; Menu</button><a href="index.html#home">Home</a><a href="index.html#barbers">Barbers</a><a href="index.html#services">Services</a></span>
       <h1 class="classic-name"><a class="classic-badge" href="index.html#home">${badge}</a></h1>
-      <span class="classic-nav-right">${extraPhotos.length ? '<a href="index.html#photos">Photos</a>' : ""}<a href="index.html#contact">Contact</a><a class="classic-book" href="index.html#booking">Book Now</a></span></nav></header>`;
+      <span class="classic-nav-right">${extraPhotos.length ? '<a href="index.html#photos">Photos</a>' : ""}<a href="index.html#contact">Contact</a><a class="classic-book" href="index.html#booking">Book Now</a></span></nav>
+      <div class="classic-menu" id="classic-menu" hidden><a href="index.html#home">Home</a><a href="index.html#barbers">Barbers</a><a href="index.html#services">Services</a>${extraPhotos.length ? '<a href="index.html#photos">Photos</a>' : ""}<a href="index.html#contact">Contact</a></div></header>`;
+  }
+  // 11/22 (Tom): phones get Menu | logo | Book Now on one line; the other links drop down from Menu
+  function setupClassicMenu() {
+    const toggle = document.querySelector(".classic-menu-toggle"), menu = $("classic-menu");
+    if (!toggle || !menu) return;
+    toggle.addEventListener("click", () => {
+      const open = menu.hidden;
+      menu.hidden = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+    menu.addEventListener("click", event => {
+      if (event.target.closest("a")) { menu.hidden = true; toggle.setAttribute("aria-expanded", "false"); }
+    });
   }
   function classicHome() {
     const shop = config.shop, words = shop.classicHero || {};
@@ -276,7 +290,7 @@
       <div class="demo-pricing"><a class="book-button" href="../../get-started/">Like what you see? Get Started &rarr;</a></div>
       <footer><span class="demo-footer-label">${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo${config.demo.label === "Business Pro" ? "" : " by Business Pro"}</span>
         <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div></footer>`;
-    if (GIFT) setupGiftMenu();
+    if (GIFT) setupGiftMenu(); setupClassicMenu();
     if (pageName === "home") renderAds();
   }
   function updateCartLink() {

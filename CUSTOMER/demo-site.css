@@ -570,3 +570,17 @@ body:not(.demo-owner-open) #demo-app.demo-gift .cart-row button:hover { backgrou
 
 /* 11/22 (Tom): odd number of service or barber cards: the last one sits centered under the others (pyramid), never lopsided */
 @media(min-width:601px) { #services .card-grid > :last-child:nth-child(odd), #barbers .card-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 9px); } }
+
+/* 11/22 (Tom): barbershop look on phones = Menu | logo | Book Now on one line (no stacked rows of links) */
+#demo-app.demo-classic .classic-menu-toggle { display: none; }
+#demo-app.demo-classic .classic-menu[hidden] { display: none; }
+@media (max-width: 760px) {
+  #demo-app.demo-classic .classic-header { position: relative; }
+  #demo-app.demo-classic .classic-nav { display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center; min-height: 116px; padding: 0 12px; }
+  #demo-app.demo-classic .classic-nav-left, #demo-app.demo-classic .classic-nav-right { width: auto; flex: 0 0 auto; }
+  body:not(.demo-owner-open) #demo-app.demo-classic .classic-nav-left a, body:not(.demo-owner-open) #demo-app.demo-classic .classic-nav-right a:not(.classic-book) { display: none; }
+  body:not(.demo-owner-open) #demo-app.demo-classic .classic-menu-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 10px; border: 1px solid #fff; background: transparent; color: #fff; font: 700 12px/1 Inter, Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+  body:not(.demo-owner-open) #demo-app.demo-classic .classic-nav a.classic-book { margin-left: 0; padding: 6px 10px; }
+  #demo-app.demo-classic .classic-menu { display: grid; background: #000; border-top: 1px solid #333; }
+  body:not(.demo-owner-open) #demo-app.demo-classic .classic-menu a { padding: 14px 20px; border-bottom: 1px solid #222; color: #fff; text-align: center; text-decoration: none; font-weight: 700; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+}
