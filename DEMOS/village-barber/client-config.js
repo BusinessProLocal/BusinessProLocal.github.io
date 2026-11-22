@@ -46,7 +46,7 @@ window.SHOP_CONFIG = {
   ],
   booking: { appointmentLengthMinutes: 30 },
   barbers: [
-    { id: "owner", name: "Barber", cardSpecialty: "Owner & barber", bio: "Your own words about you and your shop go here.",
+    { id: "owner", name: "Barber", photo: "images/barber.jpg", cardSpecialty: "Owner & barber", bio: "Your own words about you and your shop go here.",
       serviceIds: ["mens-haircut", "hair-beard", "buzz-cut", "buzz-beard", "beard"], schedule: { workingDays: [1, 2, 3, 4, 5], startTime: "09:00", endTime: "17:00" } }
   ],
   photos: [

@@ -845,8 +845,14 @@
       });
     });
   }
+  function staffPhotoSrc(field, state) {
+    // 11/22: a demo can set a starting barber photo (barbers[].photo); removing it hides it for this visit
+    if (field in previewPhotos) return previewPhotos[field];
+    const staff = field === "barberPhoto" ? config.barbers?.[0] : config.barbers?.find(item => field === `barberPhoto:${item.id}`);
+    return state[field] || staff?.photo || "";
+  }
   function photoControl(id, field, label, alt, state) {
-    const src = previewPhotos[field] || state[field];
+    const src = staffPhotoSrc(field, state);
     const barber = field.startsWith("barberPhoto");
     return `<div class="photo-control"><button type="button" class="photo-button" data-photo-input="${id}">${label}</button>
       <input type="file" id="${id}" class="sr-only" accept="image/*" aria-label="${label}">
@@ -890,7 +896,7 @@
     remove?.addEventListener("click", () => action(() => {
       api.removePhoto(localStorage, config, field);
       selection++;
-      delete previewPhotos[field];
+      previewPhotos[field] = "";
       preview.removeAttribute("src");
       preview.hidden = true;
       if ($(id + "-placeholder")) $(id + "-placeholder").hidden = false;
@@ -1297,7 +1303,7 @@
   }
   function roundBarberPhoto(staff, state) {
     const field = config.barbers.indexOf(staff) === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`;
-    const src = previewPhotos[field] || state[field];
+    const src = staffPhotoSrc(field, state);
     return `<span class="dashboard-barber-photo">${src ? image(src, `${staff.name} barber photo`) :
       '<span class="dashboard-photo-silhouette" role="img" aria-label="Barber photo placeholder"></span>'}</span>`;
   }
