@@ -517,7 +517,7 @@
           <p class="added-message" data-added="${escape(product.id)}" role="status"></p></article>`;
       }).join("")}</div></section>` : ""}
       ${storeEnabled ? `<section id="checkout"><h2>Your Order</h2>${checkoutContent(state)}</section>` : ""}
-      ${GIFT ? giftVisit() : `<section id="contact"><h2>Hours &amp; Contact</h2><div class="contact-details"><p><span>${escape(shop.phoneDisplay)} &middot; ${escape(shop.email)}</span></p>
+      ${GIFT ? giftVisit() : `<section id="contact"><h2>Hours &amp; Contact</h2><div class="contact-details"><p><span>${[shop.phoneLink ? `<a href="tel:${escape(shop.phoneLink)}">${escape(shop.phoneDisplay)}</a>` : escape(shop.phoneDisplay || ""), escape(shop.email || "")].filter(Boolean).join(" &middot; ")}</span></p>
       <p class="address"><span>${escape([shop.addressLine1, shop.addressLine2].filter(Boolean).join(", "))}</span></p><h3><span>Hours</span></h3>
       ${shop.hours.map(row => `<p><span><strong>${escape(row.days)}</strong>: ${escape(row.hours)}</span></p>`).join("")}</div></section>`}`;
     if (mobileAds) $("demo-content").insertAdjacentElement("beforebegin", mobileAds);
