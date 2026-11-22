@@ -613,3 +613,5 @@ body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color
 body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"]:focus-visible { background: #fff !important; color: var(--svc-color) !important; }
 body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"]:hover span,
 body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color"]:focus-visible span { color: var(--svc-color) !important; }
+/* 11/22 (Tom): on phones the top banner just says "Customer Demo" */
+@media (max-width: 760px) { .customer-demo-more { display: none; } }

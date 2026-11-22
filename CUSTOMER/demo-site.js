@@ -292,7 +292,7 @@
     app.classList.toggle("demo-gift", GIFT);
     document.body.classList.toggle("demo-gift-site", GIFT);
     document.title = config.shop.pageTitle;
-    app.innerHTML = `${bookingEnabled ? '<div class="customer-demo-banner">Customer Demo &mdash; this is what your customers see when they book an appointment with you.</div>' : ""}
+    app.innerHTML = `${bookingEnabled ? '<div class="customer-demo-banner">Customer Demo<span class="customer-demo-more"> &mdash; this is what your customers see when they book an appointment with you.</span></div>' : ""}
       <div class="demo-ribbon">DEMO MODE &middot; ${storeEnabled ? "Business Pro" : "Business Pro " + escape(config.demo.label)}</div>
       ${CLASSIC || GIFT ? '<p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>' + (GIFT ? giftHeader() : classicHeader()) : `<header class="shop-header"><h1>${escape(config.shop.name)}</h1><nav aria-label="Main navigation">
       <a href="index.html#home">Home</a><a href="index.html#${storeEnabled ? "store" : "services"}">${storeEnabled ? "Shop" : bookingEnabled ? "Services" : "Menu"}</a>
