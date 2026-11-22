@@ -600,3 +600,7 @@ body:not(.demo-owner-open) #demo-app.demo-classic h2.classic-big { font-family: 
 @media (max-width: 760px) { body:not(.demo-owner-open) #demo-app.demo-classic h2.classic-big { font-size: clamp(34px, 11.5vw, 64px); } }
 /* the storefront sign's letters are heavier than Cinzel's regular weight */
 body:not(.demo-owner-open) #demo-app.demo-classic h2, body:not(.demo-owner-open) #demo-app.demo-classic h3, #demo-app.demo-classic .classic-tile strong, body:not(.demo-owner-open) #demo-app.demo-classic .classic-ribbon { font-weight: 700; }
+/* 11/22 (Tom): Classic look — each service in the booking picker is its own block, not one black slab */
+#demo-app.demo-classic .booking-service-list { display: grid; gap: 8px; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: visible; }
+body:not(.demo-owner-open) #demo-app.demo-classic .booking-service-option { padding: 12px 14px; border: 1px solid #000; border-radius: 0; }
+#demo-app.demo-classic .booking-service-option span:last-child { font-weight: 700; }
