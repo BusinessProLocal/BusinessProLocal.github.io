@@ -6,3 +6,5 @@ body:not(.demo-owner-open) #demo-app.demo-classic .classic-nav a.classic-book { 
 #demo-app.demo-classic .classic-tile-go { border-bottom-color: var(--vb-blue); }
 #demo-app.demo-classic .classic-about h2 span { text-decoration-color: var(--vb-blue); }
 body:not(.demo-owner-open) #demo-app.demo-classic .classic-ribbon { background: var(--vb-cream); }
+/* storefront photo: keep his Park Place sign in view on phones */
+#demo-app.demo-classic .classic-hero { background-position: 80% center !important; }

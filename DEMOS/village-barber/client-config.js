@@ -27,7 +27,7 @@ window.SHOP_CONFIG = {
     { id: "settings", label: "Settings" }
   ],
   shop: {
-    logo: "images/logo.png", heroImage: "images/shop-inside.jpg",
+    logo: "images/logo.png", heroImage: "images/park-place.jpg",
     name: "The Village Barber", pageTitle: "The Village Barber | Your new website (preview)",
     heroTitle: "Good cuts. Fair prices. Right here on Main Street.",
     heroSubtitle: "This is a preview of your new website. Book an appointment like your customer would, then see what you'd see as the owner.",
@@ -48,7 +48,7 @@ window.SHOP_CONFIG = {
       serviceIds: ["mens-haircut", "hair-beard", "buzz-cut", "buzz-beard", "beard"], schedule: { workingDays: [2, 3, 4, 5, 6], startTime: "09:00", endTime: "17:00" } }
   ],
   photos: [
-    { src: "images/park-place.jpg", alt: "The Village Barber at Park Place, 751 Main St" },
+    { src: "images/shop-inside.jpg", alt: "Inside The Village Barber" },
     { src: "images/sign.jpg", alt: "The Village Barber sign" },
     { src: "images/tools.jpg", alt: "Scissors and clippers at The Village Barber" }
   ]
