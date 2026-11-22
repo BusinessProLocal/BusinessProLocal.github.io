@@ -1643,3 +1643,20 @@ body.demo-owner-open #daily-dashboard .page#dashboard .completed-barber-block { 
 body.demo-owner-open #daily-dashboard .page#dashboard .cards .card:nth-child(1) { box-shadow: inset 0 5px 0 var(--oc-blue) !important; }
 body.demo-owner-open #daily-dashboard .page#dashboard .cards .card:nth-child(2) { box-shadow: inset 0 5px 0 var(--oc-purple) !important; }
 body.demo-owner-open #daily-dashboard .page#dashboard .cards .card:nth-child(3) { box-shadow: inset 0 5px 0 var(--oc-green) !important; }
+/* 11/22 (Tom): buttons are rounded again (boxes and cards stay square) */
+html body.demo-owner-open #daily-dashboard button,
+html body.demo-owner-open #daily-dashboard .book-button,
+html body.demo-owner-open #daily-dashboard .lock-btn,
+html body.demo-owner-open #daily-dashboard .calendar-btn,
+html body.demo-owner-open #daily-dashboard .completed-time-btn,
+html body.demo-owner-open #daily-dashboard .mobile-menu-toggle { border-radius: 8px !important; }
+html body.demo-owner-open #daily-dashboard .owner-tab-tag,
+html body.demo-owner-open #daily-dashboard .new-booking-tag,
+html body.demo-owner-open #daily-dashboard .signed-in-badge,
+html body.demo-owner-open #daily-dashboard .dash-count { border-radius: 999px !important; }
+html body.demo-owner-open #daily-dashboard .dash-num { border-radius: 6px !important; }
+/* the little drop-down list under a menu item stays one square box (rows inside it stay square) */
+html body.demo-owner-open #daily-dashboard .owner-demo-submenu button { border-radius: 0 !important; }
+html body.demo-owner-open #daily-dashboard .owner-demo-submenu { border-radius: 8px !important; overflow: hidden; }
+html body.demo-owner-open #daily-dashboard .nav > button { border-left-width: 0 !important; }
+html body.demo-owner-open #daily-dashboard .month-appointment .calendar-card-actions > button[data-calendar-status] { border-radius: 5px !important; }
