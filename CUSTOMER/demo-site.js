@@ -1102,7 +1102,7 @@
       document.body.classList.remove("demo-owner-open");
       app.classList.toggle("has-customer-ads", ADS_ENABLED && pageName === "home");
       document.querySelector(".shop-header").hidden = false; document.querySelectorAll(".ad-mobile-row").forEach(el => { el.hidden = false; });
-      $("demo-content").innerHTML = `<section><h2>Customer first</h2><p>Complete a demo ${bookingEnabled ? "booking" : "checkout"} before building your daily dashboard.</p><a class="book-button" href="index.html">Back to the customer site</a></section>`;
+      $("demo-content").innerHTML = `<section style="text-align:center"><h2>Customer first</h2><p>Complete a demo ${bookingEnabled ? "booking" : "checkout"} before building your daily dashboard.</p><a class="book-button" href="index.html">Back to the customer site</a></section>`;
       return;
     }
     const seeded = state;
