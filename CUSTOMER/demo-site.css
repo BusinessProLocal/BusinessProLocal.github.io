@@ -567,3 +567,6 @@ body:not(.demo-owner-open) #demo-app.demo-gift .gift-logo small { font-family: "
 body:not(.demo-owner-open) #demo-app.demo-gift .cart-row button { background: #fff; color: #111; padding: 9px 16px; font-size: 12px; }
 body:not(.demo-owner-open) #demo-app.demo-gift .cart-row button:hover { background: #111; color: #fff; }
 @media (min-width: 601px) and (max-width: 900px) { #demo-app.demo-gift .gift-collection-grid { grid-template-columns: repeat(4, minmax(0,1fr)); } #demo-app.demo-gift .gift-collection-grid.gift-count-3 { grid-template-columns: repeat(3, minmax(0,1fr)); } body:not(.demo-owner-open) #demo-app.demo-gift .gift-collection span { font-size: 15px; } #demo-app.demo-gift #store .card-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+
+/* 11/22 (Tom): odd number of service or barber cards: the last one sits centered under the others (pyramid), never lopsided */
+@media(min-width:601px) { #services .card-grid > :last-child:nth-child(odd), #barbers .card-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 9px); } }

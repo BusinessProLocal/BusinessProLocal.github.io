@@ -460,7 +460,7 @@
         `<article class="card"><h3>${escape(service.name)}</h3><p>${escape(service.description)}</p><p>${money(service.price * 100)}</p></article>`).join("")}</div></section>` : ""}
       ${extraPhotos.length && !storeEnabled ? `<section id="photos"><h2>A Look Around</h2><div class="demo-gallery">
       ${extraPhotos.map(photo => image(photo.src, photo.alt)).join("")}</div></section>` : ""}
-      ${bookingEnabled ? `<section id="barbers"><h2>Meet the Barbers</h2><div class="card-grid">${config.barbers.map((staff, index) =>
+      ${bookingEnabled ? `<section id="barbers"><h2>${config.barbers.length === 1 ? "Meet the Barber" : "Meet the Barbers"}</h2><div class="card-grid">${config.barbers.map((staff, index) =>
         `<article class="card barber-card" data-barber-card="${escape(staff.id)}"><h3>${escape(staff.name)}</h3><p>${escape(staff.cardSpecialty)}</p><p>${escape(staff.bio)}</p>
         ${barberPhotoControl(staff, index, state)}
         <button type="button" class="book-with-barber" data-book-with="${escape(staff.id)}">Book with ${escape(staff.name.split(" ")[0])}</button></article>`).join("")}</div></section>
