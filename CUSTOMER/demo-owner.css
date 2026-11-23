@@ -1717,3 +1717,20 @@ html body #daily-dashboard table.color-head thead th:empty { background: #e8eaed
 #daily-dashboard .add-text-ok { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; font-weight: 600; font-size: 14px; }
 #daily-dashboard .add-text-ok input { width: 18px; height: 18px; margin: 0; }
 #daily-dashboard .owner-grid-slot .hand-ticket { outline: 2px dashed rgba(255,255,255,.75); outline-offset: -5px; }
+
+/* 11/23 (Tom): START · $ tip · FINISH — three boxes the same size, no ✓ (Enter or FINISH moves on).
+   Matches the real owner portal's calendar card. */
+html body #daily-dashboard .month-appointment .calendar-card-actions { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 3px !important; }
+html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor { display: block !important; width: 100% !important; min-width: 0 !important; height: 26px !important; padding: 0 !important; gap: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none; }
+html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor input {
+  display: block; box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; height: 26px !important; min-height: 26px !important;
+  margin: 0; padding: 0 2px !important; background: #fff !important; color: #000 !important; border: 1px solid #111 !important; border-radius: 5px !important;
+  font-size: 13px !important; font-weight: 700; line-height: 1 !important; text-align: center !important;
+}
+html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor input::placeholder { color: #555; font-weight: 600; }
+html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor.saved input { box-shadow: 0 0 0 2px #4ade80; }
+html body #daily-dashboard .month-appointment .calendar-card-actions > button[data-calendar-status] { height: 26px !important; min-height: 26px !important; }
+@media (max-width: 640px) {
+  html body #daily-dashboard .month-appointment .calendar-card-actions { gap: 2px !important; }
+  html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor input { font-size: 10px !important; padding: 0 1px !important; }
+}

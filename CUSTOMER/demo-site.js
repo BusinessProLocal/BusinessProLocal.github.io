@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261122p";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123a";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -1500,8 +1500,8 @@
           ${ownerCalendarView === "week" && config.barbers.length > 1 ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
           ${item.sample ? `<span class="ticket-stage">${escape(ticketStatus(item))}${item.status === "Finished" && item.tipCents ? ` · ${money(item.priceCents + item.tipCents)}` : item.lateFeeCents ? ` · ${money(item.lateFeeCents)} fee` : ""}</span>` : item.status !== "Canceled" ? `<div class="calendar-card-actions">
           <button type="button" class="cal-start${item.status === "Started" || item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Started" data-id="${escape(item.id)}"${item.status === "Started" || item.status === "Finished" ? ' disabled title="Started"' : ""}>Start</button>
-          <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><span aria-hidden="true">$</span><input type="text" inputmode="numeric" maxlength="6" autocomplete="off"
-            aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="0.00" value="${item.tipCents ? Math.round(item.tipCents / 100) + ".00" : ""}"><button type="button" aria-label="Save tip">&#10003;</button></span>
+          <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><input type="text" inputmode="numeric" maxlength="7" autocomplete="off"
+            aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="$ tip" value="${item.tipCents ? "$" + Math.round(item.tipCents / 100) + ".00" : ""}"></span>
           <button type="button" class="cal-finish${item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Finished" data-id="${escape(item.id)}"${item.status === "Started" ? "" : " disabled"}>${item.status === "Finished" ? "Done" : "Finish"}</button></div>` : ""}</div>`).join("")}</div>`;
       }).join("");
     }
@@ -1632,13 +1632,14 @@
   }
   function setupAppointmentDetails() {
     document.querySelectorAll(".calendar-tip-editor[data-calendar-tip]").forEach(editor => {
-      const id = editor.dataset.calendarTip, input = editor.querySelector("input"), check = editor.querySelector("button");
+      // 11/23 (Tom): no ✓ — type the tip, then Enter or FINISH moves on (leaving the box saves it too)
+      const id = editor.dataset.calendarTip, input = editor.querySelector("input");
       ["click", "keydown", "pointerdown", "mousedown", "touchstart"].forEach(type => editor.addEventListener(type, inner => inner.stopPropagation()));
       input.addEventListener("input", () => {
         let digits = input.value.split(".")[0].replace(/\D/g, "").replace(/^0+/, "").slice(0, 3);
         if (Number(digits) > 100) digits = "100";
-        input.value = digits ? digits + ".00" : "";
-        input.setSelectionRange(digits.length, digits.length);
+        input.value = digits ? "$" + digits + ".00" : "";
+        input.setSelectionRange(digits.length + (digits ? 1 : 0), digits.length + (digits ? 1 : 0));
       });
       input.addEventListener("focus", () => setTimeout(() => {
         const end = input.value.split(".")[0].length;
@@ -1647,12 +1648,11 @@
       const save = () => {
         try {
           const saved = api.setTip(localStorage, config, id, input.value);
-          input.value = saved.tipCents ? Math.round(saved.tipCents / 100) + ".00" : "";
+          input.value = saved.tipCents ? "$" + Math.round(saved.tipCents / 100) + ".00" : "";
           editor.classList.add("saved");
           setTimeout(() => editor.classList.remove("saved"), 900);
         } catch (failure) { input.setCustomValidity(failure.message); input.reportValidity(); input.setCustomValidity(""); }
       };
-      check.addEventListener("click", save);
       input.addEventListener("keydown", key => { if (key.key === "Enter") { key.preventDefault(); save(); input.blur(); } });
       input.addEventListener("change", save);
     });
@@ -1703,7 +1703,7 @@
           $("appointment-tip-total").textContent = `Total: ${money(price * 100 + (saved.tipCents || 0))}${saved.tipCents ? ` (tip ${money(saved.tipCents)})` : ""}`;
           $("appointment-tip-error").textContent = "";
           const blockTip = document.querySelector(`[data-calendar-tip="${booking.id}"] input`);
-          if (blockTip) blockTip.value = saved.tipCents ? Math.round(saved.tipCents / 100) + ".00" : "";
+          if (blockTip) blockTip.value = saved.tipCents ? "$" + Math.round(saved.tipCents / 100) + ".00" : "";
           return true;
         } catch (failure) { $("appointment-tip-error").textContent = failure.message; return false; }
       };
