@@ -516,7 +516,8 @@
       change.status = "No-show";
       change.closedOut = true;
     } else if (act === "closeout") {
-      if (!["No-show", "Canceled"].includes(status) || ticket.closedOut) throw new Error("This appointment is already closed out.");
+      // 11/23 (Tom): paid ones can come off the calendar too
+      if (!["No-show", "Canceled", "Finished"].includes(status) || ticket.closedOut) throw new Error("This appointment is already closed out.");
       change.closedOut = true;
     } else throw new Error("Unknown action.");
     change.workedAt = now.toISOString();
@@ -524,6 +525,17 @@
     state.sampleWork = { ...work, [id]: { ...(work[id] || {}), ...change } };
     write(storage, config, state);
     return { ...ticket, ...change };
+  }
+  // the visitor's own (or a hand-entered) appointment comes off the calendar once it's paid or canceled
+  function clearBooking(storage, config, id, now = new Date()) {
+    if (config.demo.tier !== "professional") throw new Error("Schedule is only available in the booking demo.");
+    const state = read(storage, config), booking = state.bookings.find(item => item.id === id);
+    if (!booking) throw new Error("This demo appointment was not found.");
+    if (!["Finished", "Canceled"].includes(booking.status) || booking.closedOut) throw new Error("Finish or cancel this appointment first.");
+    booking.closedOut = true;
+    booking.workedAt = now.toISOString();
+    write(storage, config, state);
+    return booking;
   }
   function setTip(storage, config, id, input) {
     if (config.demo.tier !== "professional") throw new Error("Tips are only part of the booking demo.");
@@ -610,7 +622,7 @@
   }
   const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, sampleDay, book, setQuantity, clearCart, total, taxCents, grandTotal, checkout,
     parseAddress, addressText, shippingTo, shippingFrom, isPickup, savePacking, printLabel, setCarrier, markShipped,
-    dashboard, bookingStatus, setTip, workSample, applySampleWork, visitorBooking, openTimes, nextTicketNumber, addAppointment, workingTimes, shipBox, shipBoxes, savePhoto, removePhoto };
+    dashboard, bookingStatus, setTip, workSample, applySampleWork, clearBooking, visitorBooking, openTimes, nextTicketNumber, addAppointment, workingTimes, shipBox, shipBoxes, savePhoto, removePhoto };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.BusinessProDemo = api;
 })(globalThis);

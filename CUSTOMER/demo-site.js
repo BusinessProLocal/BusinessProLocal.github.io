@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123b";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123d";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -1498,12 +1498,12 @@
         if (openStaff.length) return `<div class="owner-grid-slot"><button type="button" class="slot-add" data-add-date="${column.date}" data-add-time="${time}"
           data-add-staff="${escape(openStaff[0].id)}" aria-label="Open time ${api.timeLabel(time)}. Add an appointment">+ Add</button></div>`;
         return `<div class="owner-grid-slot">${bookings.map(item => `<div role="button" tabindex="0" class="month-appointment confirmed ${item.status === "Finished" ? "completed" : ""}${item.sample ? " sample-ticket" : " own-ticket"}${item.manual ? " hand-ticket" : ""}"
-          style="background:${item.sample ? ticketColor(item) : item.status === "Canceled" ? "#6b7280" : employeeColor(item.staffId)}"
+          style="background:${item.sample || ["Finished", "Started", "Canceled"].includes(item.status) ? ticketColor(item) : employeeColor(item.staffId)}"
           aria-label="${escape(item.name)} - ${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)} - ${escape(item.status || "Scheduled")}. Open appointment details."
           data-calendar-booking="${escape(item.id)}">
-          <div class="calendar-card-summary"><strong>${ticketNo(item) ? `<span class="ticket-no">${ticketNo(item)}</span> ` : ""}${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
+          <div class="calendar-card-summary"><strong>${ticketNo(item) ? `<span class="ticket-no">${ticketNo(item)}</span> ` : ""}${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}${item.status === "Started" ? " · In the chair" : ""}</span></div>
           ${ownerCalendarView === "week" && config.barbers.length > 1 ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
-          ${item.sample ? sampleCardActions(item) : item.status !== "Canceled" ? `<div class="calendar-card-actions">
+          ${item.sample ? sampleCardActions(item) : ["Finished", "Canceled"].includes(item.status) ? clearButton(item, "data-own-clear") : item.status !== "Canceled" ? `<div class="calendar-card-actions">
           <button type="button" class="cal-start${item.status === "Started" || item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Started" data-id="${escape(item.id)}"${item.status === "Started" || item.status === "Finished" ? ' disabled title="Started"' : ""}>Start</button>
           <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><input type="text" inputmode="numeric" maxlength="7" autocomplete="off"
             aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="$ tip" value="${item.tipCents ? "$" + Math.round(item.tipCents / 100) + ".00" : ""}"></span>
@@ -1526,6 +1526,7 @@
       </div><h1 class="calendar-month-title">${escape(label)}</h1><label class="calendar-filter">Employee:
       <select id="owner-employee"><option value="all">All Employees</option>${config.barbers.map(staff =>
         `<option value="${escape(staff.id)}" ${employeeFilter === staff.id ? "selected" : ""}>${escape(staff.name)}</option>`).join("")}</select></label></div>
+      ${sampleInfo() ? stagesLegend() : ""}
       <div class="calendar-legend">${config.barbers.map(staff => `<span class="legend-item"><span class="legend-box" style="background:${employeeColor(staff.id)}"></span>${escape(staff.name)}</span>`).join("")}</div>
       <div class="month-calendar"><div class="calendar-top-scroll" id="demo-calendar-top"><div class="calendar-top-scroll-inner"></div></div>
       <div class="month-grid-scroll" tabindex="0" role="region" aria-label="Appointment calendar, scroll to browse">
@@ -1546,9 +1547,16 @@
         <button type="button" class="cal-finish" data-sample-action="finish" data-id="${id}"${started ? "" : " disabled"}>Finish</button></div>`;
     }
     // the status rides in the button so it fits the card on one line
+    if (item.status === "Finished" && !item.closedOut) return clearButton(item, 'data-sample-action="closeout"');
     if ((item.status === "No-show" || item.status === "Canceled") && !item.closedOut) return `<div class="calendar-card-actions sample-one">
-      <button type="button" class="cal-closeout" data-sample-action="closeout" data-id="${id}">${item.status === "No-show" ? "No-show · Close out" : item.lateFeeCents ? `Late cancel ${money(item.lateFeeCents)} · Clear` : "Canceled · Clear"}</button></div>`;
+      <button type="button" class="cal-closeout" data-sample-action="closeout" data-id="${id}">${item.status === "No-show" ? "No-show · Close out" : item.lateFeeCents ? "Late cancel · Clear" : "Canceled · Clear"}</button></div>`;
     return sampleStage(item);
+  }
+  // one wide button with the status in it: "Paid $27.00 · Clear", "Canceled · Clear"
+  function clearButton(item, attr) {
+    const words = item.status === "Finished" ? `Paid ${money(ticketListPrice(item) + (item.tipCents || 0))} · Clear`
+      : item.lateFeeCents ? "Late cancel · Clear" : "Canceled · Clear";
+    return `<div class="calendar-card-actions sample-one"><button type="button" class="cal-closeout" ${attr} data-id="${escape(item.id)}">${words}</button></div>`;
   }
   // what happened to the ticket, and every place it shows up from here on
   function whereItWent(item, act) {
@@ -1569,6 +1577,12 @@
       steps = ["It leaves Uncompleted Appointments and the Dashboard's \"Finish these first.\"", "Cancellations: listed as a no-show.",
         "No money in, and nothing is added to the barber's pay."];
       show = ["cancellations", "Cancellations"];
+    } else if (act === "closeout" && item.status === "Finished") {
+      title = `Cleared: ${who} · paid ${money(total)}`;
+      steps = ["Calendar: the card comes off, so the day shows only what's left to do.", "Completed Appointments: it stays there with its price, tip and total.",
+        `Financials: its money still counts in Income and under By Barber for ${barber}.`, `Dashboard: still counted in "Earned Today."`,
+        "Tonight: it's in the Daily Save (the PDF and the spreadsheet for the bookkeeper)."];
+      show = ["completed", "Completed Appointments"];
     } else if (act === "closeout" && item.status === "No-show") {
       title = `Closed out: ${who}, no-show`;
       steps = ["Calendar: the card comes off.", "Cancellations: listed as a no-show, with the barber and time.",
@@ -1638,6 +1652,14 @@
     setupAppointmentDetails();
     document.querySelectorAll("[data-add-date]").forEach(button => button.addEventListener("click", () =>
       openAddAppointment(button.dataset.addDate, button.dataset.addTime, button.dataset.addStaff)));
+    document.querySelectorAll("[data-own-clear]").forEach(button => button.addEventListener("click", event => {
+      event.stopPropagation();
+      action(() => {
+        const booking = api.clearBooking(localStorage, config, button.dataset.id);
+        renderKeepingPlace();
+        whereItWent(booking, "closeout");
+      });
+    }));
     document.querySelectorAll("[data-sample-action]").forEach(button => button.addEventListener("click", event => {
       event.stopPropagation();
       action(() => workSampleTicket(button.dataset.id, button.dataset.sampleAction));
@@ -1645,8 +1667,9 @@
     document.querySelectorAll("[data-calendar-status]").forEach(button => button.addEventListener("click", event => {
       event.stopPropagation();
       action(() => {
-        api.bookingStatus(localStorage, config, button.dataset.id, button.dataset.calendarStatus);
+        const booking = api.bookingStatus(localStorage, config, button.dataset.id, button.dataset.calendarStatus);
         renderKeepingPlace();
+        if (booking.status === "Finished") whereItWent(booking, "finish"); // 11/23 (Tom): your own cut shows where it went too
       });
     }));
   }
