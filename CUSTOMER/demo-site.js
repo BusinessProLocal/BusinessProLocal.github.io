@@ -92,6 +92,8 @@
     if (/kid|child|boy/.test(name)) return "kids-cut";
     if (/buzz/.test(name)) return beard ? "buzz-beard" : "buzz";
     if (/(cut|hair)/.test(name) && beard) return "hair-beard";
+    // 11/23 (Tom): a straight razor service gets the straight razor, not scissors
+    if (/razor/.test(name) || (/shave/.test(name) && !beard)) return "razor";
     if (beard || /shave/.test(name)) return "beard";
     return "haircut";
   }
