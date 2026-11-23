@@ -155,7 +155,8 @@
       const openStaff = anchored ? anchorStaff : first;
       const firstTimes = workingTimes(config, openStaff, day);
       if (!firstTimes.length) continue;
-      const open = anchored ? anchor.time : firstTimes[firstTimes.length - 1];
+      // 11/23 (Tom): the visitor's spot is the first one of the day (9 AM), so they work the whole day in order
+      const open = anchored ? anchor.time : firstTimes[0];
       if (!anchored && new Date(day + "T" + open) <= now) continue; // the open spot must still be ahead
       const rows = [];
       config.barbers.forEach((staff, staffIndex) => {
@@ -195,17 +196,12 @@
     const date = new Date(day + "T00:00:00");
     const schedule = staff.schedule;
     if (!schedule.workingDays.includes(date.getDay())) return [];
-    const minutes = value => Number(value.slice(0, 2)) * 60 + Number(value.slice(3));
-    const duration = config.booking.appointmentLengthMinutes;
-    const sample = sampleDay(config, now);
-    const result = [];
-    for (let minute = minutes(schedule.startTime); minute + duration <= minutes(schedule.endTime); minute += duration) {
-      const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
-      if (new Date(day + "T" + time) <= now) continue;
-      if (sample && sample.date === day && sample.tickets.some(item => item.staffId === staffId && item.time === time)) continue;
-      if (!state.bookings.some(item => item.status !== "Canceled" && item.staffId === staffId && item.date === day && item.time === time)) result.push(time);
-    }
-    return result;
+    // 11/23 (Tom): the demo books only the day's first spot (9 AM). The sample day is then built around it,
+    // so the visitor's appointment is first and every sample after it can be worked in order.
+    const first = workingTimes(config, staff, day)[0];
+    if (!first || new Date(day + "T" + first) <= now) return [];
+    if (state.bookings.some(item => item.status !== "Canceled" && item.staffId === staffId && item.date === day && item.time === first)) return [];
+    return [first];
   }
   function book(storage, config, input, now = new Date()) {
     if (config.demo.tier !== "professional") throw new Error("Booking is only included in Professional, not Basic or the store-only demo.");
@@ -480,6 +476,55 @@
     write(storage, config, state);
     return booking;
   }
+  // ---- 11/23 (Tom): every sample appointment can be worked (start, tip, finish, close out) ----
+  // Sample tickets are built fresh each time; what the visitor did to them is kept in state.sampleWork.
+  function parseTip(input) {
+    const text = String(input ?? "").replace(/[$,\s]/g, "");
+    if (text === "") return 0;
+    if (!/^\d+(\.\d{0,2})?$/.test(text)) throw new Error("Type the tip as dollars and cents, like 5 or 5.50.");
+    const cents = Math.round(Number(text) * 100);
+    if (cents > 10000) throw new Error("Tips top out at $100. Double-check the amount.");
+    return cents;
+  }
+  function applySampleWork(sample, state) {
+    if (!sample) return sample;
+    const work = (state && state.sampleWork) || {};
+    const fix = ticket => (ticket && work[ticket.id] ? { ...ticket, ...work[ticket.id] } : ticket);
+    return { ...sample, tickets: sample.tickets.map(fix), leftover: fix(sample.leftover) };
+  }
+  function workSample(storage, config, id, act, input, now = new Date()) {
+    if (config.demo.tier !== "professional") throw new Error("Sample appointments are only part of the booking demo.");
+    const state = read(storage, config);
+    const own = state.bookings.filter(item => !item.example && !item.manual).at(-1);
+    const sample = applySampleWork(sampleDay(config, now, own && own.status !== "Canceled" ? own : null), state);
+    const ticket = sample && [sample.leftover, ...sample.tickets].find(item => item && item.id === id);
+    if (!ticket) throw new Error("This sample appointment was not found.");
+    const status = ticket.status, change = {};
+    if (act === "start") {
+      if (status !== "Scheduled" || ticket.leftover) throw new Error("Only a booked appointment can be started.");
+      change.status = "Started";
+    } else if (act === "finish") {
+      if (!(status === "Started" || (ticket.leftover && status === "Scheduled" && !ticket.closedOut))) throw new Error("Tap START first, then FINISH.");
+      change.status = "Finished";
+      if (input !== undefined) change.tipCents = parseTip(input);
+      if (ticket.leftover) change.closedOut = true;
+    } else if (act === "tip") {
+      if (!["Scheduled", "Started"].includes(status)) throw new Error("This appointment can't take a tip.");
+      change.tipCents = parseTip(input);
+    } else if (act === "noshow") {
+      if (!ticket.leftover || status !== "Scheduled" || ticket.closedOut) throw new Error("Only yesterday's open appointment can be marked a no-show here.");
+      change.status = "No-show";
+      change.closedOut = true;
+    } else if (act === "closeout") {
+      if (!["No-show", "Canceled"].includes(status) || ticket.closedOut) throw new Error("This appointment is already closed out.");
+      change.closedOut = true;
+    } else throw new Error("Unknown action.");
+    change.workedAt = now.toISOString();
+    const work = state.sampleWork && typeof state.sampleWork === "object" ? state.sampleWork : {};
+    state.sampleWork = { ...work, [id]: { ...(work[id] || {}), ...change } };
+    write(storage, config, state);
+    return { ...ticket, ...change };
+  }
   function setTip(storage, config, id, input) {
     if (config.demo.tier !== "professional") throw new Error("Tips are only part of the booking demo.");
     const state = read(storage, config), booking = state.bookings.find(item => item.id === id);
@@ -565,7 +610,7 @@
   }
   const api = { key, read, lead, personalize, timeLabel, stock, resetStoreVisit, dates, slots, sampleDay, book, setQuantity, clearCart, total, taxCents, grandTotal, checkout,
     parseAddress, addressText, shippingTo, shippingFrom, isPickup, savePacking, printLabel, setCarrier, markShipped,
-    dashboard, bookingStatus, setTip, visitorBooking, openTimes, nextTicketNumber, addAppointment, workingTimes, shipBox, shipBoxes, savePhoto, removePhoto };
+    dashboard, bookingStatus, setTip, workSample, applySampleWork, visitorBooking, openTimes, nextTicketNumber, addAppointment, workingTimes, shipBox, shipBoxes, savePhoto, removePhoto };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.BusinessProDemo = api;
 })(globalThis);

@@ -19,7 +19,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123a";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123b";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -1140,9 +1140,11 @@
         break;
       case "cancellations": {
         // 11/22 (Tom): the sample day's real tickets — look only
-        const canceled = allTickets(api.read(localStorage, config)).filter(item => item.status === "Canceled");
-        content = panel("Cancellation History", canceled.length ? table(["Ticket", "Date", "Time", "Customer", "Service", "Employee", "Canceled By", "Late fee"],
-          canceled.map(item => [ticketNo(item), item.date, api.timeLabel(item.time), item.name, serviceName(item), staffName(item), item.canceledBy || "Shop", item.lateFeeCents ? money(item.lateFeeCents) : "—"])) : "<p>No cancellations.</p>") +
+        // 11/23 (Tom): no-shows land here too once they're closed out
+        const canceled = allTickets(api.read(localStorage, config)).filter(item => item.status === "Canceled" || item.status === "No-show");
+        content = panel("Cancellation History", canceled.length ? table(["Ticket", "Date", "Time", "Customer", "Service", "Employee", "Type", "Canceled By", "Late fee", "Calendar"],
+          canceled.map(item => [ticketNo(item), item.date, api.timeLabel(item.time), item.name, serviceName(item), staffName(item), item.status === "No-show" ? "No-show" : item.lateFeeCents ? "Late cancel" : "Canceled",
+            item.status === "No-show" ? "—" : item.canceledBy || "Shop", item.lateFeeCents ? money(item.lateFeeCents) : "—", item.closedOut ? "Cleared" : "Still on it"])) : "<p>No cancellations.</p>") +
           panel("Late Cancel – 20% Fee", "<p>Customers who cancel inside 24 hours owe 20% of the service. The fee shows up in Financials.</p>");
         break;
       }
@@ -1157,7 +1159,7 @@
       }
       case "uncompleted": {
         const tickets = allTickets(api.read(localStorage, config));
-        const leftover = tickets.filter(item => item.leftover), late = tickets.filter(item => item.lateFeeCents);
+        const leftover = tickets.filter(item => item.leftover && !item.closedOut), late = tickets.filter(item => item.lateFeeCents);
         content = panel("Uncompleted Appointments", `<p>Appointments from past days that were never marked done or no-show. Close each one out.</p>` +
           (leftover.length ? table(["Ticket", "Date", "Time", "Customer", "Service", "Barber"], leftover.map(item => [ticketNo(item), item.date, api.timeLabel(item.time), item.name, serviceName(item), staffName(item)])) : "<p>Everything is closed out.</p>") +
           periods(["Complete", "No-show", "Owner override"])) +
@@ -1370,8 +1372,10 @@
   // built around the visitor's own booking once they have one (a whole day of work around their spot, on their day)
   function sampleInfo() {
     if (!bookingEnabled) return null;
-    const own = api.read(localStorage, config).bookings.filter(item => !item.example && !item.manual).at(-1);
-    return api.sampleDay(config, new Date(), own && own.status !== "Canceled" ? own : null);
+    const state = api.read(localStorage, config);
+    const own = state.bookings.filter(item => !item.example && !item.manual).at(-1);
+    // 11/23 (Tom): every sample can be worked — what the visitor did to it rides along
+    return api.applySampleWork(api.sampleDay(config, new Date(), own && own.status !== "Canceled" ? own : null), state);
   }
   function ownBooking(state) { return state.bookings.filter(item => !item.example && !item.manual).at(-1); }
   // every ticket the owner pages show: the sample day (+ yesterday's leftover) and the visitor's own booking
@@ -1411,10 +1415,11 @@
     const earned = dayTickets.reduce((sum, item) => sum + (item.status === "Finished" ? ticketListPrice(item) + (item.tipCents || 0) : 0) + (item.lateFeeCents || 0), 0);
     const booked = live.filter(item => item.status !== "No-show").reduce((sum, item) => sum + ticketListPrice(item), 0);
     const remaining = dayTickets.filter(item => !item.status || item.status === "Scheduled" || item.status === "Started").length;
-    const todo = 1 + (sample ? 1 : 0);
+    const leftoverOpen = sample && !sample.leftover.closedOut;
+    const todo = 1 + (leftoverOpen ? 1 : 0);
     const dayWords = new Date(day + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
-    return `<div class="section-heading"><h2>Good morning. Here's your day, in order.</h2>${sample ? `<p class="sample-day-note">Sample day: ${escape(dayWords)}. Every ticket below is a sample except yours (NEW).</p>` : ""}</div>
-      ${step(1, "Finish these first", `${todo} to do`)}${timeOffPanel()}${sample ? closeoutPanel(sample.leftover) : ""}
+    return `<div class="section-heading"><h2>Good morning. Here's your day, in order.</h2>${sample ? `<p class="sample-day-note">Sample day: ${escape(dayWords)}. Every ticket below is a sample except yours (NEW). Work any of them in Appointments: START, tip, FINISH, or CLOSE OUT, and see where each one goes.</p>` : ""}</div>
+      ${step(1, "Finish these first", `${todo} to do`)}${timeOffPanel()}${leftoverOpen ? closeoutPanel(sample.leftover) : ""}
       ${step(2, "Today's appointments")}${schedulePanel(dayTickets, state)}
       ${step(3, "Done today &amp; money")}
       <div class="cards"><div class="card"><span>Today's Appointments</span><strong>${live.length}</strong><small>${remaining} still to go</small></div>
@@ -1485,7 +1490,7 @@
     for (let minute = 9 * 60; minute < 17 * 60; minute += 30) {
       const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${minute % 60 ? "30" : "00"}`;
       grid += `<div class="owner-grid-time">${api.timeLabel(time)}</div>` + columns.map(column => {
-        const bookings = [...(sampleInfo()?.tickets || []), sampleInfo()?.leftover, latest, ...handEntered].filter(Boolean).filter(item => item.date === column.date && item.time === time &&
+        const bookings = [...(sampleInfo()?.tickets || []), sampleInfo()?.leftover, latest, ...handEntered].filter(Boolean).filter(item => !item.closedOut && item.date === column.date && item.time === time &&
           (employeeFilter === "all" || item.staffId === employeeFilter) && (!column.staff || item.staffId === column.staff.id));
         // an open time: tap it to put in an appointment by hand (walk-in or phone call)
         const openStaff = bookings.length ? [] : (column.staff ? [column.staff] : config.barbers.filter(staff => employeeFilter === "all" || staff.id === employeeFilter))
@@ -1498,7 +1503,7 @@
           data-calendar-booking="${escape(item.id)}">
           <div class="calendar-card-summary"><strong>${ticketNo(item) ? `<span class="ticket-no">${ticketNo(item)}</span> ` : ""}${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}</span></div>
           ${ownerCalendarView === "week" && config.barbers.length > 1 ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
-          ${item.sample ? `<span class="ticket-stage">${escape(ticketStatus(item))}${item.status === "Finished" && item.tipCents ? ` · ${money(item.priceCents + item.tipCents)}` : item.lateFeeCents ? ` · ${money(item.lateFeeCents)} fee` : ""}</span>` : item.status !== "Canceled" ? `<div class="calendar-card-actions">
+          ${item.sample ? sampleCardActions(item) : item.status !== "Canceled" ? `<div class="calendar-card-actions">
           <button type="button" class="cal-start${item.status === "Started" || item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Started" data-id="${escape(item.id)}"${item.status === "Started" || item.status === "Finished" ? ' disabled title="Started"' : ""}>Start</button>
           <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><input type="text" inputmode="numeric" maxlength="7" autocomplete="off"
             aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="$ tip" value="${item.tipCents ? "$" + Math.round(item.tipCents / 100) + ".00" : ""}"></span>
@@ -1525,6 +1530,73 @@
       <div class="month-calendar"><div class="calendar-top-scroll" id="demo-calendar-top"><div class="calendar-top-scroll-inner"></div></div>
       <div class="month-grid-scroll" tabindex="0" role="region" aria-label="Appointment calendar, scroll to browse">
       <div class="month-grid" style="grid-template-columns:90px repeat(${columns.length},minmax(${minimum}px,1fr));grid-template-rows:58px repeat(16,90px);min-width:${90 + columns.length * minimum}px;width:100%">${grid}</div></div></div></div></section>`;
+  }
+  // ---- 11/23 (Tom): work every sample ticket, then see where it went ----
+  const sampleStage = item => `<span class="ticket-stage">${escape(ticketStatus(item))}${item.status === "Finished" && item.tipCents ? ` · ${money(item.priceCents + item.tipCents)}` : item.lateFeeCents ? ` · ${money(item.lateFeeCents)} fee` : ""}</span>`;
+  function sampleCardActions(item) {
+    const id = escape(item.id);
+    if (item.leftover && item.status === "Scheduled") return `<div class="calendar-card-actions sample-two">
+      <button type="button" class="cal-finish" data-sample-action="finish" data-id="${id}">Paid</button><button type="button" class="cal-closeout" data-sample-action="noshow" data-id="${id}">No-show</button></div>`;
+    if (item.status === "Scheduled" || item.status === "Started") {
+      const started = item.status === "Started";
+      return `<div class="calendar-card-actions">
+        <button type="button" class="cal-start${started ? " is-done" : ""}" data-sample-action="start" data-id="${id}"${started ? ' disabled title="Started"' : ""}>Start</button>
+        <span class="calendar-tip-editor" data-calendar-tip="${id}"><input type="text" inputmode="numeric" maxlength="7" autocomplete="off"
+          aria-label="Tip in whole dollars for ${escape(item.name)}" placeholder="$ tip" value="${item.tipCents ? "$" + Math.round(item.tipCents / 100) + ".00" : ""}"></span>
+        <button type="button" class="cal-finish" data-sample-action="finish" data-id="${id}"${started ? "" : " disabled"}>Finish</button></div>`;
+    }
+    // the status rides in the button so it fits the card on one line
+    if ((item.status === "No-show" || item.status === "Canceled") && !item.closedOut) return `<div class="calendar-card-actions sample-one">
+      <button type="button" class="cal-closeout" data-sample-action="closeout" data-id="${id}">${item.status === "No-show" ? "No-show · Close out" : item.lateFeeCents ? `Late cancel ${money(item.lateFeeCents)} · Clear` : "Canceled · Clear"}</button></div>`;
+    return sampleStage(item);
+  }
+  // what happened to the ticket, and every place it shows up from here on
+  function whereItWent(item, act) {
+    const total = ticketListPrice(item) + (item.tipCents || 0), who = `${ticketNo(item)} ${item.name}`;
+    const named = staffName(item), barber = /^(barber|stylist|staff)$/i.test(String(named).trim()) ? `the ${String(named).toLowerCase()}` : named;
+    let title = "", steps = [], show = null;
+    if (act === "finish") {
+      title = `✓ Paid: ${who} · ${money(total)}${item.tipCents ? ` (${money(ticketListPrice(item))} + ${money(item.tipCents)} tip)` : ""}`;
+      steps = item.leftover
+        ? ["It leaves Uncompleted Appointments and the Dashboard's \"Finish these first.\"", "Completed Appointments: the ticket with its price, tip and total.",
+          `Financials: yesterday's income, and ${barber}'s pay under By Barber.`, "Yesterday's Daily Save is updated, so the bookkeeper's copy is right."]
+        : ["Calendar: the card turns green (Paid) and its time is done for the day.", "Completed Appointments: the ticket with its price, tip and total.",
+          `Financials: Income, and ${barber}'s total under By Barber.`, `Dashboard: "Earned Today" goes up ${money(total)}.`,
+          "Tonight: it's in the Daily Save (the PDF and the spreadsheet for the bookkeeper)."];
+      show = ["completed", "Completed Appointments"];
+    } else if (act === "noshow") {
+      title = `No-show: ${who} (yesterday)`;
+      steps = ["It leaves Uncompleted Appointments and the Dashboard's \"Finish these first.\"", "Cancellations: listed as a no-show.",
+        "No money in, and nothing is added to the barber's pay."];
+      show = ["cancellations", "Cancellations"];
+    } else if (act === "closeout" && item.status === "No-show") {
+      title = `Closed out: ${who}, no-show`;
+      steps = ["Calendar: the card comes off.", "Cancellations: listed as a no-show, with the barber and time.",
+        "No money in, and nothing is added to the barber's pay.", "Tonight's Daily Save counts it as a no-show."];
+      show = ["cancellations", "Cancellations"];
+    } else if (act === "closeout") {
+      title = `Cleared: ${who}, ${item.lateFeeCents ? "late cancel" : "canceled"}`;
+      steps = ["Calendar: the card comes off.", `Cancellations: listed with who canceled (${item.canceledBy || "Shop"}).`,
+        ...(item.lateFeeCents ? [`Late fee: ${money(item.lateFeeCents)} (20%) goes to Financials as a late-cancel fee, and shows under Uncompleted → Late Cancel.`]
+          : ["No fee: they canceled more than 24 hours ahead."]),
+        "Tonight's Daily Save counts it as canceled."];
+      show = ["cancellations", "Cancellations"];
+    } else return;
+    let dialog = document.getElementById("where-it-went");
+    if (!dialog) { dialog = document.createElement("dialog"); dialog.id = "where-it-went"; dialog.className = "where-it-went"; document.body.appendChild(dialog); }
+    dialog.innerHTML = `<h3>${escape(title)}</h3><p class="where-lead">Where it went:</p><ol>${steps.map(step => `<li>${escape(step)}</li>`).join("")}</ol>
+      <div class="where-actions">${show ? `<button type="button" class="where-show">SHOW ME ${escape(show[1]).toUpperCase()}</button>` : ""}<button type="button" class="where-keep">KEEP GOING</button></div>`;
+    dialog.querySelector(".where-keep").addEventListener("click", () => dialog.close());
+    dialog.querySelector(".where-show")?.addEventListener("click", () => { dialog.close(); action(() => openOwnerTab(show[0])); });
+    dialog.showModal();
+  }
+  function workSampleTicket(id, act) {
+    const tipBox = document.querySelector(`[data-calendar-tip="${CSS.escape(id)}"] input`);
+    const ticket = api.workSample(localStorage, config, id, act, act === "finish" && tipBox ? tipBox.value : undefined);
+    $("appointment-popup")?.classList.remove("open");
+    if ($("appointment-popup")) $("appointment-popup").hidden = true;
+    if (dashboardView === "appointments") renderKeepingPlace(); else renderDashboard();
+    whereItWent(ticket, act);
   }
   function renderKeepingPlace() {
     const pageX = window.scrollX, pageY = window.scrollY;
@@ -1566,6 +1638,10 @@
     setupAppointmentDetails();
     document.querySelectorAll("[data-add-date]").forEach(button => button.addEventListener("click", () =>
       openAddAppointment(button.dataset.addDate, button.dataset.addTime, button.dataset.addStaff)));
+    document.querySelectorAll("[data-sample-action]").forEach(button => button.addEventListener("click", event => {
+      event.stopPropagation();
+      action(() => workSampleTicket(button.dataset.id, button.dataset.sampleAction));
+    }));
     document.querySelectorAll("[data-calendar-status]").forEach(button => button.addEventListener("click", event => {
       event.stopPropagation();
       action(() => {
@@ -1647,7 +1723,7 @@
       }, 0));
       const save = () => {
         try {
-          const saved = api.setTip(localStorage, config, id, input.value);
+          const saved = id.startsWith("SAMPLE-") ? api.workSample(localStorage, config, id, "tip", input.value) : api.setTip(localStorage, config, id, input.value);
           input.value = saved.tipCents ? "$" + Math.round(saved.tipCents / 100) + ".00" : "";
           editor.classList.add("saved");
           setTimeout(() => editor.classList.remove("saved"), 900);
@@ -1668,8 +1744,15 @@
           ["Price", money(ticketListPrice(booking))], ["Tip", money(booking.tipCents || 0)],
           ...(booking.lateFeeCents ? [["Late-cancel fee (20%)", money(booking.lateFeeCents)]] : []),
           ["Total", money(booking.status === "Finished" ? booking.priceCents + (booking.tipCents || 0) : booking.lateFeeCents || 0)]];
-        $("appointment-popup-content").innerHTML = `<p class="sample-ticket-note">Sample ticket: look only. Your own booking is the one you can work.</p>
-          <div class="appointment-detail-grid">${rows.map(([label, value]) => `<div class="appointment-detail"><label>${label}</label><strong>${escape(value)}</strong></div>`).join("")}</div>`;
+        const id = escape(booking.id), btn = (act, label) => `<button type="button" class="modal-action-btn" data-sample-action="${act}" data-id="${id}">${label}</button>`;
+        const acts = booking.leftover && booking.status === "Scheduled" && !booking.closedOut ? btn("finish", "Paid") + btn("noshow", "No-show")
+          : booking.status === "Scheduled" ? btn("start", "Start") : booking.status === "Started" ? btn("finish", "Finish")
+          : ["No-show", "Canceled"].includes(booking.status) && !booking.closedOut ? btn("closeout", booking.status === "No-show" ? "Close out" : "Clear") : "";
+        $("appointment-popup-content").innerHTML = `<p class="sample-ticket-note">Sample ticket: work it and see where it goes.${booking.status === "Scheduled" || booking.status === "Started" ? " Put the tip in the $ box on the calendar card." : ""}</p>
+          <div class="appointment-detail-grid">${rows.map(([label, value]) => `<div class="appointment-detail"><label>${label}</label><strong>${escape(value)}</strong></div>`).join("")}</div>
+          ${acts ? `<div class="modal-actions">${acts}</div>` : ""}`;
+        $("appointment-popup-content").querySelectorAll("[data-sample-action]").forEach(button => button.addEventListener("click", () =>
+          action(() => workSampleTicket(button.dataset.id, button.dataset.sampleAction))));
         const popup = $("appointment-popup");
         popup.hidden = false; popup.classList.add("open");
         $("close-appointment").focus();

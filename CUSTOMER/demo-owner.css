@@ -1734,3 +1734,23 @@ html body #daily-dashboard .month-appointment .calendar-card-actions > button[da
   html body #daily-dashboard .month-appointment .calendar-card-actions { gap: 2px !important; }
   html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor input { font-size: 10px !important; padding: 0 1px !important; }
 }
+
+/* 11/23 (Tom): every sample ticket can be worked — CLOSE OUT / CLEAR / Paid · No-show buttons */
+html body #daily-dashboard .month-appointment .calendar-card-actions.sample-one { grid-template-columns: minmax(0, 1fr) !important; }
+html body #daily-dashboard .month-appointment .calendar-card-actions.sample-two { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+html body #daily-dashboard .month-appointment .calendar-card-actions > button.cal-closeout {
+  width: 100% !important; min-width: 0 !important; height: 26px; padding: 0 4px !important; background: #fff !important; color: #111 !important;
+  border: 1px solid #111 !important; border-radius: 5px !important; font-weight: 800; white-space: nowrap !important; overflow: hidden; cursor: pointer;
+}
+
+/* "Where it went" — shows after a ticket is finished or closed out */
+dialog.where-it-went { box-sizing: border-box; width: min(520px, calc(100vw - 24px)); max-height: calc(100vh - 40px); overflow: auto; padding: 22px 20px 18px;
+  border: 2px solid #000; border-radius: 12px; background: #fff; color: #000; font-family: inherit; text-align: left; }
+dialog.where-it-went::backdrop { background: rgba(0, 0, 0, .55); }
+dialog.where-it-went h3 { margin: 0 0 10px; font-size: 20px; line-height: 1.25; overflow-wrap: break-word; }
+dialog.where-it-went .where-lead { margin: 0 0 6px; font-weight: 800; }
+dialog.where-it-went ol { margin: 0 0 16px; padding-left: 22px; display: grid; gap: 7px; font-size: 16px; line-height: 1.35; }
+dialog.where-it-went .where-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+dialog.where-it-went .where-actions button { min-height: 44px; padding: 0 16px; border: 2px solid #000; border-radius: 8px; font-weight: 800; cursor: pointer; }
+dialog.where-it-went .where-show { background: #000; color: #fff; }
+dialog.where-it-went .where-keep { background: #fff; color: #000; }
