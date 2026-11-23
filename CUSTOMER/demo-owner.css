@@ -1660,17 +1660,17 @@ html body.demo-owner-open #daily-dashboard .owner-demo-submenu button { border-r
 html body.demo-owner-open #daily-dashboard .owner-demo-submenu { border-radius: 8px !important; overflow: hidden; }
 html body.demo-owner-open #daily-dashboard .nav > button { border-left-width: 0 !important; }
 html body.demo-owner-open #daily-dashboard .month-appointment .calendar-card-actions > button[data-calendar-status] { border-radius: 5px !important; }
-/* 11/22 (Tom): START and FINISH both sit on the card, on one line with the tip box, the same width as each other
+/* 11/22 (Tom): START · $ tip · FINISH on one line (tip box in the middle), the same width as each other
    at every screen size. A very narrow card (week view on a small screen) puts the tip box on its own line under them. */
 #daily-dashboard .month-appointment { container-type: inline-size; }
-html body #daily-dashboard .month-appointment .calendar-card-actions { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.5fr) !important; gap: 4px !important; align-items: stretch !important; width: 100%; }
+html body #daily-dashboard .month-appointment .calendar-card-actions { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr) !important; gap: 4px !important; align-items: stretch !important; width: 100%; }
 html body #daily-dashboard .month-appointment .calendar-card-actions > button[data-calendar-status] { width: 100% !important; min-width: 0 !important; height: 26px; padding: 0 4px !important; justify-content: center; text-align: center; white-space: nowrap !important; overflow: hidden; text-overflow: clip; }
 html body #daily-dashboard .month-appointment .calendar-card-actions > button.cal-finish { background: #fff !important; color: #111 !important; border: 1px solid #111 !important; }
 html body #daily-dashboard .month-appointment .calendar-card-actions > button[disabled] { opacity: .45; cursor: default; }
 html body #daily-dashboard .month-appointment .calendar-card-actions > button.is-done { opacity: .8; background: #15803d !important; color: #fff !important; border-color: #15803d !important; }
 html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor { min-width: 0 !important; width: 100% !important; height: 26px; }
 @container (max-width: 200px) {
-  html body #daily-dashboard .month-appointment .calendar-card-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr) !important; gap: 2px !important; }
+  html body #daily-dashboard .month-appointment .calendar-card-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr) !important; gap: 2px !important; }
   html body #daily-dashboard .month-appointment .calendar-card-actions > button[data-calendar-status] { padding: 0 1px !important; font-size: 10px !important; letter-spacing: 0 !important; }
   html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor { gap: 0 !important; }
   html body #daily-dashboard .month-appointment .calendar-card-actions > .calendar-tip-editor > span { font-size: 9px !important; }
