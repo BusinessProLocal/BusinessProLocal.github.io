@@ -6,9 +6,9 @@ window.SHOP_CONFIG = {
   ownerTabs: [
     // 11/23 (Tom): Dashboard ▾ 1 · 2 · 3 — each opens just that part of the day
     { id: "dashboard", label: "Dashboard", live: true, children: [
-      { id: "dash-1", label: "1 Finish These First", live: true },
-      { id: "dash-2", label: "2 Today's Appointments", live: true },
-      { id: "dash-3", label: "3 Done Today & Money", live: true }
+      { id: "dash-1", label: "Finish These First", live: true },
+      { id: "dash-2", label: "Today's Appointments", live: true },
+      { id: "dash-3", label: "Done Today & Money", live: true }
     ] },
     { id: "business-status", label: "Open / Close" },
     { id: "appointments", label: "Appointments", live: true, children: [

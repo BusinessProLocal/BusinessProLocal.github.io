@@ -1797,3 +1797,9 @@ body.demo-owner-open #daily-dashboard .owner-demo-submenu button .owner-tab-tag 
 #daily-dashboard .sales-report-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 14px 0 6px; }
 #daily-dashboard .sales-report-note { text-align: center; color: #52525b; font-size: 13px; margin: 0 0 14px; }
 #daily-dashboard .sales-report-sheet h3 { text-align: center; margin: 10px 0; }
+
+/* 11/23 (Tom): Dashboard ▾ items get a colored dot (the same color as that part of the dashboard), not 1 · 2 · 3 */
+body.demo-owner-open #daily-dashboard [data-owner-tab^="dash-"] > span:first-child::before { content: "●"; margin-right: 7px; font-size: 11px; vertical-align: 1px; }
+body.demo-owner-open #daily-dashboard [data-owner-tab="dash-1"] > span:first-child::before { color: #b45309; }
+body.demo-owner-open #daily-dashboard [data-owner-tab="dash-2"] > span:first-child::before { color: #1f6fd1; }
+body.demo-owner-open #daily-dashboard [data-owner-tab="dash-3"] > span:first-child::before { color: #15803d; }
