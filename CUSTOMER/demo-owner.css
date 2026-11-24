@@ -1800,6 +1800,6 @@ body.demo-owner-open #daily-dashboard .owner-demo-submenu button .owner-tab-tag 
 
 /* 11/23 (Tom): Dashboard ▾ items get a colored dot (the same color as that part of the dashboard), not 1 · 2 · 3 */
 body.demo-owner-open #daily-dashboard [data-owner-tab^="dash-"] > span:first-child::before { content: "●"; margin-right: 7px; font-size: 11px; vertical-align: 1px; }
-body.demo-owner-open #daily-dashboard [data-owner-tab="dash-1"] > span:first-child::before { color: #b45309; }
-body.demo-owner-open #daily-dashboard [data-owner-tab="dash-2"] > span:first-child::before { color: #1f6fd1; }
-body.demo-owner-open #daily-dashboard [data-owner-tab="dash-3"] > span:first-child::before { color: #15803d; }
+body.demo-owner-open #daily-dashboard [data-owner-tab="dash-1"] > span:first-child::before { color: #b45309 !important; -webkit-text-fill-color: #b45309 !important; }
+body.demo-owner-open #daily-dashboard [data-owner-tab="dash-2"] > span:first-child::before { color: #1f6fd1 !important; -webkit-text-fill-color: #1f6fd1 !important; }
+body.demo-owner-open #daily-dashboard [data-owner-tab="dash-3"] > span:first-child::before { color: #15803d !important; -webkit-text-fill-color: #15803d !important; }
