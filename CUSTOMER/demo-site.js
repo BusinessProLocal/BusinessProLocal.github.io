@@ -1069,10 +1069,17 @@
             <label>Show: <select aria-label="Performance period"><option selected>Today</option><option>Past Week</option>
               <option>Past Month</option><option>Past Year</option></select></label></header><div>${select("Employee", employees)}</div></article>` :
             periods(["Today", "Past Week", "Past Month", "Past Year"]) + panel("Employee Performance", select("Employee", employees))) +
-          cards(bookingEnabled ? [["Completed Appointments", "6"], ["Completed Service Hours", "3.0"], ["Service Revenue", "$168.00"], ["Tips", "$24.00"], ["Total Collected", "$192.00"]] :
+          cards(bookingEnabled ? (() => {
+            const done = allTickets(api.read(localStorage, config)).filter(item => item.status === "Finished" && counted(item));
+            const revenue = done.reduce((sum, item) => sum + ticketListPrice(item), 0), tips = done.reduce((sum, item) => sum + (item.tipCents || 0), 0);
+            return [["Completed Appointments", String(done.length)], ["Completed Service Hours", (done.length * 0.5).toFixed(1)], ["Service Revenue", money(revenue)], ["Tips", money(tips)], ["Total Collected", money(revenue + tips)]];
+          })() :
             [["Orders Packed", "6"], ["Hours Worked", "8.0"], ["Order Revenue", "$168.00"], ["Items Received", "24"], ["Orders Shipped", "5"]]) +
           panel("Completed Transactions - Today", table(["Employee", "Customer", bookingEnabled ? "Service" : "Order", "Revenue"],
-            [[employees[0], "Demo Guest", bookingEnabled ? "Sample service" : "DEMO-EXAMPLE", "$28.00"]]) + button("View transaction"));
+            bookingEnabled ? (() => {
+              const done = allTickets(api.read(localStorage, config)).filter(item => item.status === "Finished" && counted(item));
+              return done.length ? done.map(item => [staffName(item), item.name, serviceName(item), money(ticketListPrice(item) + (item.tipCents || 0))]) : [["—", "Nothing closed out yet", "—", "$0.00"]];
+            })() : [[employees[0], "Demo Guest", "DEMO-EXAMPLE", "$28.00"]]) + button("View transaction"));
         break;
       case "customers":
         content = panel("Customer List", field("Search customers", "") +
@@ -1112,21 +1119,23 @@
           break;
         }
         // 11/22 (Tom): follow the money — the same tickets as the calendar and Completed Appointments
-        const tickets = allTickets(api.read(localStorage, config)).filter(item => !item.leftover);
+        // 11/23 (Tom): like his first day ever — only what he's closed out on the calendar counts
+        const tickets = allTickets(api.read(localStorage, config)).filter(item => !item.leftover && counted(item));
         const done = tickets.filter(item => item.status === "Finished");
         const services = done.reduce((sum, item) => sum + ticketListPrice(item), 0), tips = done.reduce((sum, item) => sum + (item.tipCents || 0), 0);
-        const fees = tickets.reduce((sum, item) => sum + (item.lateFeeCents || 0), 0), outgoing = 4500;
+        const fees = tickets.reduce((sum, item) => sum + (item.lateFeeCents || 0), 0), outgoing = 0;
         const sheet = (headers, rows) => `<div class="preview-table-scroll"><table class="preview-sheet color-head"><thead><tr>${headers.map(value => `<th style="--head:${headColor(value)}">${escape(value)}</th>`).join("")}</tr></thead>
           <tbody>${rows.map(row => `<tr${row.total ? ' class="sheet-total"' : ""}>${row.cells.map(value => `<td>${escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
         content = periods(["Day", "Week", "Month", "Year", "💾 Save Today", "📊 Spreadsheet"]) +
           panel("Summary — the sample day", sheet(["", "Amount"], [
-            { cells: [`Services (${done.length} paid tickets)`, money(services)] }, { cells: ["Tips", money(tips)] }, { cells: ["Late-cancel fees", money(fees)] },
-            { cells: ["Money in", money(services + tips + fees)], total: true }, { cells: ["Money out (paid today: supplies)", money(outgoing)] },
+            { cells: [`Services (${done.length} paid tickets)`, money(services)] }, { cells: ["Tips", money(tips)] }, { cells: ["Late-cancel & no-show fees (20%)", money(fees)] },
+            { cells: ["Money in", money(services + tips + fees)], total: true }, { cells: ["Money out (paid today)", money(outgoing)] },
             { cells: ["Net for the day", money(services + tips + fees - outgoing)], total: true }])) +
           panel("Income — every paid ticket", sheet(["Ticket", "Time", "Customer", "Barber", "Service", "Price", "Tip", "Total"], [
             ...done.map(item => ({ cells: [ticketNo(item), api.timeLabel(item.time), item.name, staffName(item), serviceName(item), money(ticketListPrice(item)), money(item.tipCents || 0), money(ticketListPrice(item) + (item.tipCents || 0))] })),
             { cells: ["", "", "", "", "", money(services), money(tips), money(services + tips)], total: true }])) +
-          panel("Expenses", sheet(["Expense", "Amount", "Status"], [{ cells: ["Supplies (clipper oil, towels)", money(outgoing), "Paid"] }, { cells: ["Rent", "$800.00", "Due the 1st"] }]));
+          (done.length || fees ? "" : `<p class="fresh-start-note">Nothing closed out yet. In Appointments, tap a ticket's Clear or Close out button and watch it land here.</p>`) +
+          panel("Expenses", sheet(["Expense", "Amount", "Status"], [{ cells: ["Rent", "$800.00", "Due the 1st"] }]));
         break;
       }
       case "photos":
@@ -1147,25 +1156,26 @@
       case "cancellations": {
         // 11/22 (Tom): the sample day's real tickets — look only
         // 11/23 (Tom): no-shows land here too once they're closed out
-        const canceled = allTickets(api.read(localStorage, config)).filter(item => item.status === "Canceled" || item.status === "No-show");
-        content = panel("Cancellation History", canceled.length ? table(["Ticket", "Date", "Time", "Customer", "Service", "Employee", "Type", "Canceled By", "Late fee", "Calendar"],
+        // 11/23 (Tom): they land here once they're closed out on the calendar
+        const canceled = allTickets(api.read(localStorage, config)).filter(item => (item.status === "Canceled" || item.status === "No-show") && counted(item));
+        content = panel("Cancellation History", canceled.length ? table(["Ticket", "Date", "Time", "Customer", "Service", "Employee", "Type", "Canceled By", "20% fee", "Refunded"],
           canceled.map(item => [ticketNo(item), item.date, api.timeLabel(item.time), item.name, serviceName(item), staffName(item), item.status === "No-show" ? "No-show" : item.lateFeeCents ? "Late cancel" : "Canceled",
-            item.status === "No-show" ? "—" : item.canceledBy || "Shop", item.lateFeeCents ? money(item.lateFeeCents) : "—", item.closedOut ? "Cleared" : "Still on it"])) : "<p>No cancellations.</p>") +
+            item.status === "No-show" ? "—" : item.canceledBy || "Shop", item.lateFeeCents ? money(item.lateFeeCents) : "—", item.refundCents ? money(item.refundCents) : "—"])) : "<p>No cancellations yet. Close out a no-show or a canceled ticket in Appointments and it lands here.</p>") +
           panel("Late Cancel – 20% Fee", "<p>Customers who cancel inside 24 hours owe 20% of the service. The fee shows up in Financials.</p>");
         break;
       }
       case "completed": {
-        const done = allTickets(api.read(localStorage, config)).filter(item => item.status === "Finished");
+        const done = allTickets(api.read(localStorage, config)).filter(item => item.status === "Finished" && counted(item));
         const total = done.reduce((sum, item) => sum + ticketListPrice(item) + (item.tipCents || 0), 0);
         content = panel("Completed Appointments", done.length ? table(["Ticket", "Time", "Customer", "Barber", "Service", "Paid", "Price", "Tip", "Total"],
           [...done.map(item => [ticketNo(item), api.timeLabel(item.time), item.name, staffName(item), serviceName(item), item.paidOnline ? "Online" : "At the shop",
             money(ticketListPrice(item)), money(item.tipCents || 0), money(ticketListPrice(item) + (item.tipCents || 0))]),
-           ["", "", "", "", "", "", "", "Total", money(total)]]) : "<p>Nothing finished yet.</p>");
+           ["", "", "", "", "", "", "", "Total", money(total)]]) : "<p>Nothing here yet. Finish a ticket in Appointments, then tap its Clear button, and it lands here.</p>");
         break;
       }
       case "uncompleted": {
         const tickets = allTickets(api.read(localStorage, config));
-        const leftover = tickets.filter(item => item.leftover && !item.closedOut), late = tickets.filter(item => item.lateFeeCents);
+        const leftover = tickets.filter(item => item.leftover && !item.closedOut), late = tickets.filter(item => item.lateFeeCents && item.status === "Canceled" && counted(item));
         content = panel("Uncompleted Appointments", `<p>Appointments from past days that were never marked done or no-show. Close each one out.</p>` +
           (leftover.length ? table(["Ticket", "Date", "Time", "Customer", "Service", "Barber"], leftover.map(item => [ticketNo(item), item.date, api.timeLabel(item.time), item.name, serviceName(item), staffName(item)])) : "<p>Everything is closed out.</p>") +
           periods(["Complete", "No-show", "Owner override"])) +
@@ -1383,6 +1393,9 @@
     // 11/23 (Tom): every sample can be worked — what the visitor did to it rides along
     return api.applySampleWork(api.sampleDay(config, new Date(), own && own.status !== "Canceled" ? own : null), state);
   }
+  // 11/23 (Tom): the demo starts like his first day ever: a ticket only counts (money, Completed, Cancellations)
+  // once he closes it out on the calendar
+  const counted = item => Boolean(item && item.closedOut);
   function ownBooking(state) { return state.bookings.filter(item => !item.example && !item.manual).at(-1); }
   // every ticket the owner pages show: the sample day (+ yesterday's leftover) and the visitor's own booking
   function allTickets(state) {
@@ -1418,7 +1431,8 @@
     // 11/22 (Tom): the whole sample day, every stage, plus the visitor's own booking — follow the money to the end
     const dayTickets = allTickets(state).filter(item => !item.leftover && (item.date === day || item === own));
     const live = dayTickets.filter(item => item.status !== "Canceled");
-    const earned = dayTickets.reduce((sum, item) => sum + (item.status === "Finished" ? ticketListPrice(item) + (item.tipCents || 0) : 0) + (item.lateFeeCents || 0), 0);
+    // 11/23 (Tom): starts at $0 — a ticket counts once it's closed out (Clear / Close out) on the calendar
+    const earned = dayTickets.filter(counted).reduce((sum, item) => sum + (item.status === "Finished" ? ticketListPrice(item) + (item.tipCents || 0) : 0) + (item.lateFeeCents || 0), 0);
     const booked = live.filter(item => item.status !== "No-show").reduce((sum, item) => sum + ticketListPrice(item), 0);
     const remaining = dayTickets.filter(item => !item.status || item.status === "Scheduled" || item.status === "Started").length;
     const leftoverOpen = sample && !sample.leftover.closedOut;
@@ -1563,42 +1577,34 @@
     const total = ticketListPrice(item) + (item.tipCents || 0), who = `${ticketNo(item)} ${item.name}`;
     const named = staffName(item), barber = /^(barber|stylist|staff)$/i.test(String(named).trim()) ? `the ${String(named).toLowerCase()}` : named;
     let title = "", steps = [], show = null;
+    // 11/23 (Tom): short — two lines each
     if (act === "finish") {
-      title = `✓ Paid: ${who} · ${money(total)}${item.tipCents ? ` (${money(ticketListPrice(item))} + ${money(item.tipCents)} tip)` : ""}`;
-      steps = item.leftover
-        ? ["It leaves Uncompleted Appointments and the Dashboard's \"Finish these first.\"", "Completed Appointments: the ticket with its price, tip and total.",
-          `Financials: yesterday's income, and ${barber}'s pay under By Barber.`, "Yesterday's Daily Save is updated, so the bookkeeper's copy is right."]
-        : ["Calendar: the card turns green (Paid) and its time is done for the day.", "Completed Appointments: the ticket with its price, tip and total.",
-          `Financials: Income, and ${barber}'s total under By Barber.`, `Dashboard: "Earned Today" goes up ${money(total)}.`,
-          "Tonight: it's in the Daily Save (the PDF and the spreadsheet for the bookkeeper)."];
-      show = ["completed", "Completed Appointments"];
+      title = `✓ Paid: ${who} · ${money(total)}${item.tipCents ? ` (${money(item.tipCents)} tip)` : ""}`;
+      steps = item.leftover ? ["Off the Dashboard's \"Finish these first.\"", `In Completed Appointments and Financials (${barber}'s pay).`]
+        : ["The card turns green.", `Tap "Paid ${money(total)} · Clear" to close it out and put it in the books.`];
+      show = item.leftover ? ["completed", "Completed Appointments"] : null;
     } else if (act === "noshow") {
       title = `No-show: ${who} (yesterday)`;
-      steps = ["It leaves Uncompleted Appointments and the Dashboard's \"Finish these first.\"", "Cancellations: listed as a no-show.",
-        "No money in, and nothing is added to the barber's pay."];
+      steps = ["In Cancellations as a no-show.", "No money in."];
       show = ["cancellations", "Cancellations"];
     } else if (act === "closeout" && item.status === "Finished") {
-      title = `Cleared: ${who} · paid ${money(total)}`;
-      steps = ["Calendar: the card comes off, so the day shows only what's left to do.", "Completed Appointments: it stays there with its price, tip and total.",
-        `Financials: its money still counts in Income and under By Barber for ${barber}.`, `Dashboard: still counted in "Earned Today."`,
-        "Tonight: it's in the Daily Save (the PDF and the spreadsheet for the bookkeeper)."];
+      title = `Cleared: ${who} · ${money(total)}`;
+      steps = ["Off the calendar.", `In Completed Appointments and Financials. "Earned Today" +${money(total)}.`];
       show = ["completed", "Completed Appointments"];
     } else if (act === "closeout" && item.status === "No-show") {
       title = `Closed out: ${who}, no-show`;
-      steps = ["Calendar: the card comes off.", "Cancellations: listed as a no-show, with the barber and time.",
-        "No money in, and nothing is added to the barber's pay.", "Tonight's Daily Save counts it as a no-show."];
+      steps = item.refundCents ? [`Paid online: refunded ${money(item.refundCents)}. The shop keeps the 20% (${money(item.lateFeeCents)}).`,
+        `In Cancellations. "Earned Today" +${money(item.lateFeeCents)}.`] : ["In Cancellations as a no-show.", "No money in."];
       show = ["cancellations", "Cancellations"];
     } else if (act === "closeout") {
       title = `Cleared: ${who}, ${item.lateFeeCents ? "late cancel" : "canceled"}`;
-      steps = ["Calendar: the card comes off.", `Cancellations: listed with who canceled (${item.canceledBy || "Shop"}).`,
-        ...(item.lateFeeCents ? [`Late fee: ${money(item.lateFeeCents)} (20%) goes to Financials as a late-cancel fee, and shows under Uncompleted → Late Cancel.`]
-          : ["No fee: they canceled more than 24 hours ahead."]),
-        "Tonight's Daily Save counts it as canceled."];
+      steps = item.lateFeeCents ? [`Canceled inside 24 hours: the shop keeps the 20% fee (${money(item.lateFeeCents)}).`, `In Cancellations. "Earned Today" +${money(item.lateFeeCents)}.`]
+        : ["In Cancellations.", "No fee: they canceled more than 24 hours ahead."];
       show = ["cancellations", "Cancellations"];
     } else return;
     let dialog = document.getElementById("where-it-went");
     if (!dialog) { dialog = document.createElement("dialog"); dialog.id = "where-it-went"; dialog.className = "where-it-went"; document.body.appendChild(dialog); }
-    dialog.innerHTML = `<h3>${escape(title)}</h3><p class="where-lead">Where it went:</p><ol>${steps.map(step => `<li>${escape(step)}</li>`).join("")}</ol>
+    dialog.innerHTML = `<h3>${escape(title)}</h3><p class="where-lead">${act === "finish" && !item.leftover ? "Next:" : "Where it went:"}</p><ol>${steps.map(step => `<li>${escape(step)}</li>`).join("")}</ol>
       <div class="where-actions">${show ? `<button type="button" class="where-show">SHOW ME ${escape(show[1]).toUpperCase()}</button>` : ""}<button type="button" class="where-keep">KEEP GOING</button></div>`;
     dialog.querySelector(".where-keep").addEventListener("click", () => dialog.close());
     dialog.querySelector(".where-show")?.addEventListener("click", () => { dialog.close(); action(() => openOwnerTab(show[0])); });

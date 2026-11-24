@@ -128,7 +128,7 @@
     "Ben Roy", "Logan Michaud", "Nate Ouellette", "Evan Thibodeau", "Cody Bouchard", "Luke Morin", "Owen Lavoie",
     "Jason Fortin", "Matt Leblanc", "Kevin Poirier", "Adam Caron", "Dylan Martin", "Shawn Theriault", "Eric Lambert", "Noah Dion"];
   const SAMPLE_PATTERN = [
-    { status: "Finished", tip: 5 }, { status: "Finished", tip: 3, paidOnline: true }, { status: "No-show" },
+    { status: "Finished", tip: 5 }, { status: "Finished", tip: 3, paidOnline: true }, { status: "No-show", paidOnline: true, noShowFee: true },
     { status: "Finished", tip: 4 }, { status: "Canceled", canceledBy: "Customer" }, { status: "Finished", tip: 6 },
     { status: "Finished", tip: 2, paidOnline: true }, { status: "Finished", tip: 5 }, { status: "Started" },
     { status: "Scheduled", paidOnline: true }, { status: "Canceled", canceledBy: "Customer", lateFee: true },
@@ -177,7 +177,9 @@
         name: SAMPLE_NAMES[(index + row.staffIndex * 7) % SAMPLE_NAMES.length], staffId: row.staffId, serviceId: row.serviceId,
         date: day, time: row.time, status: row.look.status, tipCents: row.look.tip ? row.look.tip * 100 : 0,
         paidOnline: Boolean(row.look.paidOnline), canceledBy: row.look.canceledBy || "",
-        lateFeeCents: row.look.lateFee ? Math.round(row.price * 0.2) : 0, priceCents: row.price
+        lateFeeCents: row.look.lateFee || row.look.noShowFee ? Math.round(row.price * 0.2) : 0, priceCents: row.price,
+        // 11/23 (Tom): paid online and never showed — closing it out refunds them, minus the shop's 20%
+        refundCents: row.look.noShowFee && row.look.paidOnline ? row.price - Math.round(row.price * 0.2) : 0
       })).filter(Boolean);
       // one appointment from the day before that nobody closed out (it shows under Uncompleted)
       const before = new Date(day + "T12:00:00"); before.setDate(before.getDate() - 1);
