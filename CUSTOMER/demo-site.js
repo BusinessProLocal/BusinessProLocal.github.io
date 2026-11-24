@@ -23,7 +23,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123i";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123j";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -315,9 +315,13 @@
       ${CLASSIC || GIFT ? "" : '<p class="demo-notice">Demo only. Saved on this device. No real texts, emails, payments or shipping; no shop server connections.</p>'}
       <p id="demo-error" class="demo-error" role="alert"></p><p id="demo-status" role="status" aria-live="polite"></p>
       <main id="demo-content"></main>
-      <div class="demo-pricing"><a class="book-button" href="../../get-started/">Like what you see? Get Started &rarr;</a></div>
+      <!-- 11/23 (Tom): Design C — three next-step tiles, words only, a thin color line on top of each -->
+      <nav class="demo-next-steps" aria-label="Next steps">
+        <a class="demo-next demo-next-start" href="../../get-started/"><strong>Get started</strong><span>Pick your plan</span></a>
+        <a class="demo-next demo-next-check" href="../../website-check/"><strong>Free website check</strong><span>See how yours scores</span></a>
+        <a class="demo-next demo-next-home" href="../../index.html#"><strong>Business Pro home</strong><span>See every plan</span></a>
+      </nav>
       <footer><span class="demo-footer-label">${escape(config.shop.name)} &middot; ${escape(config.demo.label)} demo${config.demo.label === "Business Pro" ? "" : " by Business Pro"}</span>
-        <div class="demo-home"><a class="book-button" href="../../index.html#">Back to Business Pro Home</a></div>
         <p class="bp-credit"><a href="https://businessprolocal.com/" target="_blank" rel="noopener">Website by Business Pro Local</a></p></footer>`;
     if (GIFT) setupGiftMenu(); setupClassicMenu();
     if (pageName === "home") renderAds();

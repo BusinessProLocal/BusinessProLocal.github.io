@@ -1798,8 +1798,11 @@ body.demo-owner-open #daily-dashboard .owner-demo-submenu button .owner-tab-tag 
 #daily-dashboard .sales-report-note { text-align: center; color: #52525b; font-size: 13px; margin: 0 0 14px; }
 #daily-dashboard .sales-report-sheet h3 { text-align: center; margin: 10px 0; }
 
-/* 11/23 (Tom): Dashboard ▾ items get a colored dot (the same color as that part of the dashboard), not 1 · 2 · 3 */
-body.demo-owner-open #daily-dashboard [data-owner-tab^="dash-"] > span:first-child::before { content: "●"; margin-right: 7px; font-size: 11px; vertical-align: 1px; }
-body.demo-owner-open #daily-dashboard [data-owner-tab="dash-1"] > span:first-child::before { color: #b45309 !important; -webkit-text-fill-color: #b45309 !important; }
-body.demo-owner-open #daily-dashboard [data-owner-tab="dash-2"] > span:first-child::before { color: #1f6fd1 !important; -webkit-text-fill-color: #1f6fd1 !important; }
-body.demo-owner-open #daily-dashboard [data-owner-tab="dash-3"] > span:first-child::before { color: #15803d !important; -webkit-text-fill-color: #15803d !important; }
+/* 11/23 (Tom): every drop-down item gets a colored dot (amber, blue, green, purple, teal, red, then again) */
+body.demo-owner-open #daily-dashboard .owner-demo-submenu > button > span:first-child::before { content: "●"; margin-right: 7px; font-size: 12px; vertical-align: 1px; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+1) > span:first-child::before { color: #b45309 !important; -webkit-text-fill-color: #b45309 !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+2) > span:first-child::before { color: #1f6fd1 !important; -webkit-text-fill-color: #1f6fd1 !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+3) > span:first-child::before { color: #15803d !important; -webkit-text-fill-color: #15803d !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+4) > span:first-child::before { color: #6d28d9 !important; -webkit-text-fill-color: #6d28d9 !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+5) > span:first-child::before { color: #0f766e !important; -webkit-text-fill-color: #0f766e !important; }
+body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+6) > span:first-child::before { color: #b91c1c !important; -webkit-text-fill-color: #b91c1c !important; }

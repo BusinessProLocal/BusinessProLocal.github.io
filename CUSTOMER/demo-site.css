@@ -653,3 +653,19 @@ body:not(.demo-owner-open) #demo-app .booking-service-option[style*="--svc-color
   body:not(.demo-owner-open) #demo-app.demo-gift .gift-menu-toggle { display: inline-block; margin-right: 6px; }
   #demo-app.demo-gift .gift-menu { position: absolute; z-index: 40; left: 16px; width: 240px; background: #fff; border: 1px solid #ddd; box-shadow: 0 10px 24px rgba(0,0,0,.12); }
 }
+
+/* 11/23 (Tom): Design C — the bottom of every demo is three next-step tiles: words only, a thin color line on top */
+.demo-next-steps { border: 0 !important; background: transparent !important; box-shadow: none !important; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 900px; margin: 28px auto 8px; padding: 0 16px; box-sizing: border-box; }
+.demo-next-steps .demo-next { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 92px; padding: 16px 12px; box-sizing: border-box;
+  background: #fff !important; border: 1px solid #e4e4e7 !important; border-top: 4px solid var(--next-line) !important; border-radius: 0 !important;
+  color: #111 !important; -webkit-text-fill-color: #111 !important; text-align: center; text-decoration: none !important; box-shadow: none !important; }
+.demo-next-steps .demo-next:hover, .demo-next-steps .demo-next:focus-visible { background: #f8f8f9 !important; }
+.demo-next-steps .demo-next strong { font-size: 16px; font-weight: 700; color: #111 !important; -webkit-text-fill-color: #111 !important; }
+.demo-next-steps .demo-next span { font-size: 13px; color: #52525b !important; -webkit-text-fill-color: #52525b !important; }
+.demo-next-start { --next-line: #1f6fd1; }
+.demo-next-check { --next-line: #15803d; }
+.demo-next-home { --next-line: #b45309; }
+@media (max-width: 640px) {
+  .demo-next-steps { grid-template-columns: 1fr; max-width: 360px; }
+  .demo-next-steps .demo-next { min-height: 74px; }
+}
