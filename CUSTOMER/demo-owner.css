@@ -1754,3 +1754,16 @@ dialog.where-it-went .where-actions { display: flex; flex-wrap: wrap; gap: 8px; 
 dialog.where-it-went .where-actions button { min-height: 44px; padding: 0 16px; border: 2px solid #000; border-radius: 8px; font-weight: 800; cursor: pointer; }
 dialog.where-it-went .where-show { background: #000; color: #fff; }
 dialog.where-it-went .where-keep { background: #fff; color: #000; }
+
+/* 11/23 (Tom): the calendar is one strip of days side by side — drag / swipe and the days slide by.
+   Each day is only as wide as a ticket needs (name, then START · tip · FINISH under it); the times stay put on the left. */
+#daily-dashboard .month-grid.day-strip { width: max-content; min-width: 0; }
+#daily-dashboard .day-strip .owner-grid-slot, #daily-dashboard .day-strip .owner-grid-time { height: var(--strip-row, 82px); min-height: var(--strip-row, 82px); max-height: var(--strip-row, 82px); }
+#daily-dashboard .day-strip .owner-grid-heading { height: 52px; display: flex; flex-direction: column; justify-content: center; }
+#daily-dashboard .day-strip .owner-grid-heading.is-today { background: #000; color: #fff; }
+#daily-dashboard .day-strip .owner-grid-time, #daily-dashboard .day-strip > .owner-grid-heading:first-child { position: sticky; left: 0; z-index: 3; }
+#daily-dashboard .day-strip > .owner-grid-heading:first-child { z-index: 4; }
+@media (max-width: 760px) {
+  #daily-dashboard .month-grid.day-strip { --strip-time: 62px; }
+  #daily-dashboard .day-strip .owner-grid-time { font-size: 11px; padding: 8px 4px; }
+}

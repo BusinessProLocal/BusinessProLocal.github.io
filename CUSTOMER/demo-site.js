@@ -12,14 +12,17 @@
   let visitor, dashboardOpen = false, dashboardView = "dashboard", ownerMenuOpen = false, ownerMenuShown = false;
   let selectedOrderNumber = null, orderListOpen = false, timeListOpen = false, openBarberInBooking = () => {};
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  let ownerCalendarDate = null, ownerCalendarView = "day", employeeFilter = "all", ownerWeekFromDay = true;
+  // 11/23 (Tom): the calendar is one strip of days side by side (Sat, Sun, Mon, Tue…) you drag through;
+  // ownerCalendarAnchor = the day it started on — DAY VIEW jumps back to it.
+  let ownerCalendarDate = null, ownerCalendarAnchor = null, employeeFilter = "all";
+  const STRIP_DAYS = 14, STRIP_COLUMN = 210;
   let ownerCalendarObserver = null;
   let adLayoutRunning = false;
   let adLayoutReady = false;
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123d";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123e";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -48,11 +51,9 @@
     dashboardView = id;
     if (id === "appointments" && bookingEnabled) {
       const own = api.read(localStorage, config).bookings.filter(item => !item.example && !item.manual).at(-1);
-      // 11/22 (Tom): a computer has room for the week — start on the day being worked, through the end of that week.
-      // Phones keep one day at a time.
-      ownerCalendarView = window.matchMedia("(min-width: 900px)").matches ? "week" : "day";
+      // 11/23 (Tom): the strip starts on the day being worked; DAY VIEW comes back to it
       ownerCalendarDate = new Date(own.date + "T12:00:00");
-      ownerWeekFromDay = true;
+      ownerCalendarAnchor = new Date(ownerCalendarDate);
     }
     renderDashboard();
     document.querySelector("#daily-dashboard .content")?.scrollIntoView({ block: "start", behavior: "instant" });
@@ -1471,27 +1472,23 @@
       const own = state.bookings.filter(item => !item.example && !item.manual).at(-1);
       ownerCalendarDate = new Date(own.date + "T12:00:00");
     }
-    const monday = new Date(ownerCalendarDate);
-    monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
-    // week view: from the worked day (or a Monday after Next / Previous Week) to Saturday
-    const weekIndex = (ownerCalendarDate.getDay() + 6) % 7; // Mon 0 … Sun 6
-    const weekStart = ownerWeekFromDay && weekIndex < 6 ? new Date(ownerCalendarDate) : monday;
-    const weekDays = ownerWeekFromDay && weekIndex < 6 ? 6 - weekIndex : 6;
+    if (!ownerCalendarAnchor) ownerCalendarAnchor = new Date(ownerCalendarDate);
+    // 11/23 (Tom): one strip of days in a row from the day we're on — drag / swipe and the days slide by
+    const weekStart = new Date(ownerCalendarDate), weekDays = STRIP_DAYS;
     const dateKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
     const selectedStaff = config.barbers;
-    const columns = ownerCalendarView === "day" ? selectedStaff.map(staff => ({ date: dateKey(ownerCalendarDate), staff,
-      label: staff.name })) : Array.from({ length: weekDays }, (_, index) => {
+    const columns = Array.from({ length: weekDays }, (_, index) => {
       const day = new Date(weekStart);
       day.setDate(day.getDate() + index);
       return { date: dateKey(day), label: day.toLocaleDateString("en-US", { weekday: "long" }),
-        shortDate: day.toLocaleDateString("en-US", { month: "short", day: "numeric" }) };
+        shortDate: day.toLocaleDateString("en-US", { month: "short", day: "numeric" }), today: dateKey(day) === dateKey(new Date()) };
     });
     const latest = state.bookings.filter(item => !item.example && !item.manual).at(-1);
     const handEntered = state.bookings.filter(item => item.manual);
     const todayKey = dateKey(new Date()), openCache = {};
     const openFor = (staffId, date) => (openCache[staffId + date] ??= date < todayKey ? [] : api.openTimes(config, state, staffId, date));
     let grid = '<div class="owner-grid-heading">Time</div>' + columns.map(column =>
-      `<div class="owner-grid-heading"><div>${escape(column.label)}</div>${column.shortDate ? `<small>${escape(column.shortDate)}</small>` : ""}</div>`).join("");
+      `<div class="owner-grid-heading${column.today ? " is-today" : ""}"><div>${escape(column.label)}</div>${column.shortDate ? `<small>${escape(column.shortDate)}</small>` : ""}</div>`).join("");
     for (let minute = 9 * 60; minute < 17 * 60; minute += 30) {
       const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${minute % 60 ? "30" : "00"}`;
       grid += `<div class="owner-grid-time">${api.timeLabel(time)}</div>` + columns.map(column => {
@@ -1507,7 +1504,7 @@
           aria-label="${escape(item.name)} - ${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)} - ${escape(item.status || "Scheduled")}. Open appointment details."
           data-calendar-booking="${escape(item.id)}">
           <div class="calendar-card-summary"><strong>${ticketNo(item) ? `<span class="ticket-no">${ticketNo(item)}</span> ` : ""}${escape(item.name)}</strong><span>${escape(config.services.find(service => service.id === item.serviceId)?.name || item.serviceId)}${item.status === "Started" ? " · In the chair" : ""}</span></div>
-          ${ownerCalendarView === "week" && config.barbers.length > 1 ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
+          ${config.barbers.length > 1 ? `<small class="calendar-card-barber">${escape(config.barbers.find(staff => staff.id === item.staffId)?.name || item.staffId)}</small>` : ""}
           ${item.sample ? sampleCardActions(item) : ["Finished", "Canceled"].includes(item.status) ? clearButton(item, "data-own-clear") : item.status !== "Canceled" ? `<div class="calendar-card-actions">
           <button type="button" class="cal-start${item.status === "Started" || item.status === "Finished" ? " is-done" : ""}" data-calendar-status="Started" data-id="${escape(item.id)}"${item.status === "Started" || item.status === "Finished" ? ' disabled title="Started"' : ""}>Start</button>
           <span class="calendar-tip-editor" data-calendar-tip="${escape(item.id)}"><input type="text" inputmode="numeric" maxlength="7" autocomplete="off"
@@ -1517,17 +1514,15 @@
     }
     const end = new Date(weekStart);
     end.setDate(end.getDate() + weekDays - 1);
-    const label = ownerCalendarView === "day" ? ownerCalendarDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric" }) :
-      `${weekStart.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
-    const minimum = ownerCalendarView === "day" ? 190 : 150;
+    const label = `${weekStart.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })} - ${end.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" })}`;
     return `<section id="appointments" class="page active appointments-workspace"><div id="owner-calendar"><div class="appointments-topbar">
       <button type="button" id="close-appointments" class="close-appointments" aria-label="Back to Dashboard">&times;</button>
       <div class="appointments-title"><h2>Appointments</h2><p>Owner View &mdash; All Employees. Open any appointment to manage or cancel it.</p></div></div>
       <div class="month-toolbar"><div class="month-navigation">
-      <button type="button" id="owner-previous" class="calendar-btn">&larr; ${ownerCalendarView === "day" ? "Previous Day" : "Previous Week"}</button>
+      <button type="button" id="owner-previous" class="calendar-btn">&larr; Previous Day</button>
       <button type="button" id="owner-today" class="calendar-btn">Today</button>
-      <button type="button" id="owner-next" class="calendar-btn">${ownerCalendarView === "day" ? "Next Day" : "Next Week"} &rarr;</button>
-      <button type="button" id="owner-view-toggle" class="calendar-btn" aria-pressed="${ownerCalendarView === "day"}">${ownerCalendarView === "day" ? "Week View" : "Day View"}</button>
+      <button type="button" id="owner-next" class="calendar-btn">Next Day &rarr;</button>
+      <button type="button" id="owner-view-toggle" class="calendar-btn" title="Back to the day you started on">Day View</button>
       </div><h1 class="calendar-month-title">${escape(label)}</h1><label class="calendar-filter">Employee:
       <select id="owner-employee"><option value="all">All Employees</option>${config.barbers.map(staff =>
         `<option value="${escape(staff.id)}" ${employeeFilter === staff.id ? "selected" : ""}>${escape(staff.name)}</option>`).join("")}</select></label></div>
@@ -1535,7 +1530,7 @@
       <div class="calendar-legend">${config.barbers.map(staff => `<span class="legend-item"><span class="legend-box" style="background:${employeeColor(staff.id)}"></span>${escape(staff.name)}</span>`).join("")}</div>
       <div class="month-calendar" data-swipe-prev="#owner-previous" data-swipe-next="#owner-next"><div class="calendar-top-scroll" id="demo-calendar-top"><div class="calendar-top-scroll-inner"></div></div>
       <div class="month-grid-scroll" tabindex="0" role="region" aria-label="Appointment calendar, scroll to browse">
-      <div class="month-grid" style="grid-template-columns:90px repeat(${columns.length},minmax(${minimum}px,1fr));grid-template-rows:58px repeat(16,90px);min-width:${90 + columns.length * minimum}px;width:100%">${grid}</div></div></div></div></section>`;
+      <div class="month-grid day-strip" style="grid-template-columns:var(--strip-time,90px) repeat(${columns.length},${STRIP_COLUMN}px);grid-template-rows:52px repeat(16,var(--strip-row,82px))">${grid}</div></div></div></div></section>`;
   }
   // ---- 11/23 (Tom): work every sample ticket, then see where it went ----
   const sampleStage = item => `<span class="ticket-stage">${escape(ticketStatus(item))}${item.status === "Finished" && item.tipCents ? ` · ${money(item.priceCents + item.tipCents)}` : item.lateFeeCents ? ` · ${money(item.lateFeeCents)} fee` : ""}</span>`;
@@ -1628,24 +1623,22 @@
   }
   function setupOwnerCalendar() {
     $("close-appointments").addEventListener("click", () => action(() => { dashboardView = "dashboard"; renderDashboard(); }));
+    // ← / → move the strip one day (a drag past either end of the strip does the same, day after day)
     [["owner-previous", -1], ["owner-next", 1]].forEach(([id, delta]) => $(id).addEventListener("click", () => action(() => {
-      if (ownerCalendarView === "day") ownerCalendarDate.setDate(ownerCalendarDate.getDate() + delta);
-      else {
-        // Next / Previous Week: a whole week, Monday to Saturday
-        ownerCalendarDate.setDate(ownerCalendarDate.getDate() - (ownerCalendarDate.getDay() + 6) % 7 + delta * 7);
-        ownerWeekFromDay = false;
-      }
-      renderDashboard();
+      ownerCalendarDate.setDate(ownerCalendarDate.getDate() + delta);
+      renderKeepingPlace();
     })));
-    $("owner-today").addEventListener("click", () => action(() => { ownerCalendarDate = new Date(); ownerWeekFromDay = true; renderDashboard(); }));
+    $("owner-today").addEventListener("click", () => action(() => { ownerCalendarDate = new Date(); ownerCalendarAnchor = new Date(); renderDashboard(); }));
+    // DAY VIEW: back to the day it started on, first on the left, the other days lined up after it
     $("owner-view-toggle").addEventListener("click", () => action(() => {
-      ownerCalendarView = ownerCalendarView === "week" ? "day" : "week"; ownerWeekFromDay = true; renderDashboard();
+      ownerCalendarDate = new Date(ownerCalendarAnchor || new Date()); renderDashboard();
     }));
     $("owner-employee").addEventListener("change", event => action(() => { employeeFilter = event.target.value; renderDashboard(); }));
     const scroller = document.querySelector("#owner-calendar .month-grid-scroll");
     const top = $("demo-calendar-top");
     const sync = () => { top.firstElementChild.style.width = scroller.scrollWidth + "px"; };
-    top.addEventListener("scroll", () => { scroller.scrollLeft = top.scrollLeft; });
+    // while a finger / mouse is dragging the days, the grid leads and the top bar only follows
+    top.addEventListener("scroll", () => { if (!document.documentElement.classList.contains("bp-swipe-on")) scroller.scrollLeft = top.scrollLeft; });
     scroller.addEventListener("scroll", () => { top.scrollLeft = scroller.scrollLeft; });
     const observer = new ResizeObserver(() => {
       if (!scroller.isConnected) { observer.disconnect(); return; }
