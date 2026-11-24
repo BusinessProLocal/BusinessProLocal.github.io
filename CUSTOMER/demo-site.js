@@ -94,6 +94,7 @@
     if (/(cut|hair|fade)/.test(name) && beard) return "hair-beard";
     if (/fade/.test(name)) return "fade"; // 11/23 (Tom): skin fade = foil shaver
     if (/senior/.test(name)) return "senior-cut"; // 11/23 (Tom): senior cut = comb
+    if (/line.?up|edge.?up/.test(name) && !beard) return "lineup"; // 11/23 (Tom): line-up = T-blade trimmer
     // 11/23 (Tom): a straight razor service gets the straight razor, not scissors
     if (/razor/.test(name) || (/shave/.test(name) && !beard)) return "razor";
     if (beard || /shave/.test(name)) return "beard";
