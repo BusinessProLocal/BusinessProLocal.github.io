@@ -1806,3 +1806,11 @@ body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6
 body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+4) > span:first-child::before { color: #6d28d9 !important; -webkit-text-fill-color: #6d28d9 !important; }
 body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+5) > span:first-child::before { color: #0f766e !important; -webkit-text-fill-color: #0f766e !important; }
 body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6n+6) > span:first-child::before { color: #b91c1c !important; -webkit-text-fill-color: #b91c1c !important; }
+
+/* 11/23 (Tom): New Booking Texts on Business Info */
+.booking-alert-row { align-items: end; }
+#daily-dashboard .booking-alert-row .booking-alert-check { align-self: end !important; min-height: 42px; margin: 0 !important; }
+.booking-alert-check { display: flex !important; flex-direction: row !important; align-items: center; gap: 10px; font-weight: 800; }
+.booking-alert-check input { width: 22px !important; height: 22px !important; min-height: 0 !important; padding: 0 !important; flex: 0 0 auto; }
+.booking-alert-name { margin: 16px 0 0; font-weight: 900; }
+.booking-alert-msg { margin: 8px 0 0; font-size: .9rem; }

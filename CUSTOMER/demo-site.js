@@ -23,7 +23,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123j";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123k";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -689,6 +689,43 @@
       `${service.name} with ${staff.name} on ${new Date($("demo-date").value + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })} at ${api.timeLabel($("demo-time").value)}. ${money(service.price * 100)}; nothing charged in this demo. ` +
       [$("demo-name").value, $("demo-phone").value, $("demo-email").value].filter(Boolean).join(" · ") : "";
   }
+  // 11/23 (Tom): New Booking Texts — the owner (and the booked barber) get a text on every online booking.
+  // Same message the real server sends (lib/bookingAlerts.js). Settings live on Business Info.
+  const BOOKING_ALERTS_KEY = `bpDemoBookingAlerts:${config.shop.name}`;
+  function readBookingAlerts() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(BOOKING_ALERTS_KEY) || "{}") || {}; } catch { saved = {}; }
+    return { owner: { phone: "", on: true, ...(saved.owner || {}) }, staff: { ...(saved.staff || {}) } };
+  }
+  function alertDigits(value) {
+    let digits = String(value || "").replace(/\D/g, "");
+    if (digits.length === 11 && digits.startsWith("1")) digits = digits.slice(1);
+    return digits;
+  }
+  function alertPhone(value) {
+    const d = alertDigits(value);
+    return d.length === 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : String(value || "").trim();
+  }
+  function bookingAlertMessage(booking, shop) {
+    const service = config.services.find(item => item.id === booking.serviceId);
+    const staff = config.barbers.find(item => item.id === booking.staffId);
+    const day = new Date(booking.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "numeric", day: "numeric" });
+    return `${shop}: New booking${booking.number ? ` #${booking.number}` : ""}. ${String(booking.name || "").trim()} ${alertPhone(booking.phone)}. ` +
+      `${service?.name || "Appointment"}, ${day} ${api.timeLabel(booking.time)}${staff ? ` with ${staff.name}` : ""}.`;
+  }
+  // One click listener for the whole page (capture, so the owner panel's own click handling can't swallow it).
+  document.addEventListener("click", event => {
+    if (event.target?.closest?.("#demo-alert-save")) saveBookingAlerts();
+  }, true);
+  // Who got it: "you" (owner turned on) and the booked barber (turned on). An owner who cuts is just "you".
+  function bookingAlertWho(booking) {
+    const alerts = readBookingAlerts();
+    const who = [];
+    if (alerts.owner.on) who.push("you");
+    const staff = config.barbers.find(item => item.id === booking.staffId);
+    if (staff && staff.id !== "owner" && alerts.staff[staff.id]?.on) who.push(staff.name);
+    return who;
+  }
   function showTextPreview(booking) {
     const service = config.services.find(item => item.id === booking.serviceId);
     const staff = config.barbers.find(item => item.id === booking.staffId);
@@ -716,6 +753,16 @@
         </div>
         <p class="text-preview-time">Delivered · just now</p>
       </div>
+      ${(() => {
+        const who = bookingAlertWho(booking);
+        if (!who.length) return `<p class="text-preview-intro">Want a text every time someone books? Turn on New Booking Texts in Business Info.</p>`;
+        return `<p class="text-preview-intro" id="text-preview-owner-intro">At the same time, ${escape(who.join(" and "))} got this one:</p>
+      <div class="text-preview-phone text-preview-owner" aria-label="New booking text to the shop">
+        <p class="text-preview-from">Business Pro</p>
+        <div class="text-preview-bubble"><p>${escape(bookingAlertMessage(booking, shop))}</p></div>
+        <p class="text-preview-time">Delivered · just now</p>
+      </div>`;
+      })()}
       <p class="text-preview-note">Demo only. No text was actually sent. If they cancel or reschedule, they get a text for that too, and you get notified.</p>
       <button type="button" id="text-preview-go" class="text-preview-go">Go to my dashboard</button>`;
     $("text-preview-go").addEventListener("click", () => { dialog.close(); jumpToDashboard(); });
@@ -1183,7 +1230,17 @@
         break;
       case "business":
         content = panel("Customer-facing business details", `<div class="preview-fields">${field("Business name", config.shop.name)}${field("Phone", config.shop.phoneDisplay)}
-          ${field("Address line 1", config.shop.addressLine1)}${field("Address line 2", config.shop.addressLine2)}${field("Customer contact email", config.shop.email)}</div>${button("Save business info")}`);
+          ${field("Address line 1", config.shop.addressLine1)}${field("Address line 2", config.shop.addressLine2)}${field("Customer contact email", config.shop.email)}</div>${button("Save business info")}`) +
+          panel("New Booking Texts", (() => {
+            const alerts = readBookingAlerts();
+            const staffRows = config.barbers.filter(staff => staff.id !== "owner").map(staff => `<p class="booking-alert-name">${escape(staff.name)}</p>
+              <div class="preview-fields booking-alert-row" data-alert-staff="${escape(staff.id)}"><label>Their cell number<input type="tel" inputmode="tel" placeholder="207-555-0123" value="${escape(alerts.staff[staff.id]?.phone || "")}" data-alert-phone></label>
+              <label class="booking-alert-check"><input type="checkbox" data-alert-on${alerts.staff[staff.id]?.on ? " checked" : ""}> Text them their new bookings (they said OK)</label></div>`).join("");
+            return `<p>Get a text the moment a customer books online: ticket #, name, phone, service, day and time. Only turn it on for people who said OK to the texts.</p>
+              <div class="preview-fields booking-alert-row"><label>Your cell number<input type="tel" inputmode="tel" placeholder="207-555-0123" id="demo-alert-owner-phone" value="${escape(alerts.owner.phone || "")}"></label>
+              <label class="booking-alert-check"><input type="checkbox" id="demo-alert-owner-on"${alerts.owner.on ? " checked" : ""}> Text me every new booking</label></div>${staffRows}
+              <button type="button" id="demo-alert-save">Save new booking texts</button><p class="booking-alert-msg" id="demo-alert-msg" role="status"></p>`;
+          })());
         break;
       case "cancellations": {
         // 11/22 (Tom): the sample day's real tickets — look only
@@ -1279,6 +1336,25 @@
       ${panel("Month by month", table(["Month", "Visits", "Services", "Tips", "Fees", "Refunds", "Money in", "Money out", "Net"],
         rows.map(row => [row.month, String(row.visits), money(row.services), money(row.tips), money(row.fees), money(row.refunds), money(monthIn(row)), money(monthOut(row)), money(monthIn(row) - monthOut(row))])))}
       </div></div>`;
+  }
+  function saveBookingAlerts() {
+    {
+      const msg = $("demo-alert-msg");
+      const owner = { phone: $("demo-alert-owner-phone").value.trim(), on: $("demo-alert-owner-on").checked };
+      const bad = [];
+      if (owner.on && owner.phone && alertDigits(owner.phone).length !== 10) bad.push("your cell number");
+      const staff = {};
+      document.querySelectorAll("[data-alert-staff]").forEach(row => {
+        const entry = { phone: row.querySelector("[data-alert-phone]").value.trim(), on: row.querySelector("[data-alert-on]").checked };
+        const person = config.barbers.find(item => item.id === row.dataset.alertStaff);
+        if (entry.on && alertDigits(entry.phone).length !== 10) bad.push(`${person?.name || "a staff member"}'s cell number`);
+        staff[row.dataset.alertStaff] = entry;
+      });
+      if (bad.length) { msg.textContent = `Type a 10-digit number for ${bad.join(" and ")}.`; return; }
+      try { localStorage.setItem(BOOKING_ALERTS_KEY, JSON.stringify({ owner, staff })); } catch { /* private mode */ }
+      msg.textContent = owner.on || Object.values(staff).some(item => item.on)
+        ? "Saved. Book a cut on your site and you'll see the text you'd get." : "Saved. New booking texts are off.";
+    }
   }
   function setupSalesReport() {
     const sheet = $("sales-report-sheet");
