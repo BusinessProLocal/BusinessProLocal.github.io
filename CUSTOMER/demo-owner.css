@@ -1812,5 +1812,7 @@ body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6
 #daily-dashboard .booking-alert-row .booking-alert-check { align-self: end !important; min-height: 42px; margin: 0 !important; }
 .booking-alert-check { display: flex !important; flex-direction: row !important; align-items: center; gap: 10px; font-weight: 800; }
 .booking-alert-check input { width: 22px !important; height: 22px !important; min-height: 0 !important; padding: 0 !important; flex: 0 0 auto; }
+/* 11/24 (Tom): texting rule — every text opt-in says "Reply STOP to opt out" */
+.booking-alert-check small { display: block; font-size: .82em; font-weight: 600; opacity: .75; }
 .booking-alert-name { margin: 16px 0 0; font-weight: 900; }
 .booking-alert-msg { margin: 8px 0 0; font-size: .9rem; }

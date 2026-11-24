@@ -1235,10 +1235,10 @@
             const alerts = readBookingAlerts();
             const staffRows = config.barbers.filter(staff => staff.id !== "owner").map(staff => `<p class="booking-alert-name">${escape(staff.name)}</p>
               <div class="preview-fields booking-alert-row" data-alert-staff="${escape(staff.id)}"><label>Their cell number<input type="tel" inputmode="tel" placeholder="207-555-0123" value="${escape(alerts.staff[staff.id]?.phone || "")}" data-alert-phone></label>
-              <label class="booking-alert-check"><input type="checkbox" data-alert-on${alerts.staff[staff.id]?.on ? " checked" : ""}> Text them their new bookings (they said OK)</label></div>`).join("");
+              <label class="booking-alert-check"><input type="checkbox" data-alert-on${alerts.staff[staff.id]?.on ? " checked" : ""}> <span>Text them their new bookings (they said OK) <small>Reply STOP to opt out</small></span></label></div>`).join("");
             return `<p>Get a text the moment a customer books online: ticket #, name, phone, service, day and time. Only turn it on for people who said OK to the texts.</p>
               <div class="preview-fields booking-alert-row"><label>Your cell number<input type="tel" inputmode="tel" placeholder="207-555-0123" id="demo-alert-owner-phone" value="${escape(alerts.owner.phone || "")}"></label>
-              <label class="booking-alert-check"><input type="checkbox" id="demo-alert-owner-on"${alerts.owner.on ? " checked" : ""}> Text me every new booking</label></div>${staffRows}
+              <label class="booking-alert-check"><input type="checkbox" id="demo-alert-owner-on"${alerts.owner.on ? " checked" : ""}> <span>Text me every new booking <small>Reply STOP to opt out</small></span></label></div>${staffRows}
               <button type="button" id="demo-alert-save">Save new booking texts</button><p class="booking-alert-msg" id="demo-alert-msg" role="status"></p>`;
           })());
         break;
