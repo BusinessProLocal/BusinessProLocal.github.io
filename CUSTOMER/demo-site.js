@@ -22,7 +22,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123e";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123f";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -496,7 +496,7 @@
         `<article><h3><span>${escape(group.name)}</span></h3><ul class="menu-items">${group.items.map(item =>
           `<li>${image(item.photo, item.text.split("$")[0].trim(), "menu-thumbnail")}<span>${escape(item.text)}</span></li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="services"><h2>Our Services</h2><div class="card-grid">${config.services.map(service =>
-        CLASSIC ? `<article class="card classic-service" ${bookService(service)}><h3>${escape(service.name)}</h3><img class="classic-service-icon" src="${SERVICE_ICON_DIR}${serviceIcon(service)}.png" alt="" loading="lazy" onerror="this.onerror=null;this.src='${SERVICE_ICON_DIR}haircut.png'"><p class="classic-service-price">${money(service.price * 100)}</p></article>`
+        CLASSIC ? `<article class="card classic-service" ${bookService(service)}><h3>${escape(service.name)}</h3><img class="classic-service-icon" src="${SERVICE_ICON_DIR}${serviceIcon(service)}.png?v=20261123b" alt="" loading="lazy" onerror="this.onerror=null;this.src='${SERVICE_ICON_DIR}haircut.png'"><p class="classic-service-price">${money(service.price * 100)}</p></article>`
           : `<article class="card" ${bookService(service)}><h3>${escape(service.name)}</h3><p>${escape(service.description)}</p><p>${money(service.price * 100)}</p></article>`).join("")}</div></section>` : ""}
       ${extraPhotos.length && !storeEnabled ? `<section id="photos"><h2>A Look Around</h2><div class="demo-gallery">
       ${extraPhotos.map(photo => image(photo.src, photo.alt)).join("")}</div></section>` : ""}
@@ -1081,6 +1081,22 @@
               return done.length ? done.map(item => [staffName(item), item.name, serviceName(item), money(ticketListPrice(item) + (item.tipCents || 0))]) : [["—", "Nothing closed out yet", "—", "$0.00"]];
             })() : [[employees[0], "Demo Guest", "DEMO-EXAMPLE", "$28.00"]]) + button("View transaction"));
         break;
+      case "performance": {
+        // 11/23 (Tom): its own tab under Employees — what each barber did, and how they run the chair
+        const all = allTickets(api.read(localStorage, config)).filter(counted);
+        const done = all.filter(item => item.status === "Finished");
+        const revenue = done.reduce((sum, item) => sum + ticketListPrice(item), 0), tips = done.reduce((sum, item) => sum + (item.tipCents || 0), 0);
+        content = `<article class="preview-panel preview-performance"><header><h3>Employee Performance</h3>
+            <label>Show: <select aria-label="Performance period"><option selected>Today</option><option>Past Week</option>
+              <option>Past Month</option><option>Past Year</option></select></label></header><div>${select("Employee", employees)}</div></article>` +
+          cards([["Completed Appointments", String(done.length)], ["Completed Service Hours", (done.length * 0.5).toFixed(1)], ["Service Revenue", money(revenue)], ["Tips", money(tips)], ["Total Collected", money(revenue + tips)]]) +
+          `<h3 class="employee-ontime-heading">On Time &amp; Pace</h3>` +
+          cards([["Average Cut Time", done.length ? "30 min" : "—"], ["Started Late", "0"], ["Ran Long", "0"],
+            ["No-Shows", String(all.filter(item => item.status === "No-show").length)], ["Canceled", String(all.filter(item => item.status === "Canceled").length)]]) +
+          panel("Completed Transactions - Today", done.length ? table(["Employee", "Customer", "Service", "Revenue"], done.map(item => [staffName(item), item.name, serviceName(item), money(ticketListPrice(item) + (item.tipCents || 0))]))
+            : "<p>Nothing closed out yet. Clear a paid ticket in Appointments and it shows here.</p>");
+        break;
+      }
       case "customers":
         content = panel("Customer List", field("Search customers", "") +
           table(["Customer", bookingEnabled ? "Visits" : "Orders", "Last activity", "Total spent"], [

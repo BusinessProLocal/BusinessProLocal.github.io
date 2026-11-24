@@ -14,6 +14,7 @@ window.SHOP_CONFIG = {
     { id: "schedule", label: "Schedule" },
     { id: "services", label: "Services" },
     { id: "employees", label: "Employees", children: [
+      { id: "performance", label: "Performance" },
       { id: "employee-book", label: "Owner View - All Appointments" },
       { id: "employee-riley", label: "Appointment Book", staffId: "riley" },
       { id: "employee-casey", label: "Appointment Book", staffId: "casey" }

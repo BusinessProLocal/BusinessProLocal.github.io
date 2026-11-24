@@ -1767,3 +1767,6 @@ dialog.where-it-went .where-keep { background: #fff; color: #000; }
   #daily-dashboard .month-grid.day-strip { --strip-time: 62px; }
   #daily-dashboard .day-strip .owner-grid-time { font-size: 11px; padding: 8px 4px; }
 }
+
+/* 11/23 (Tom): Employees ▾ Performance — the On Time & Pace row */
+#daily-dashboard .employee-ontime-heading { margin: 22px 0 10px; font-size: 18px; text-align: center; }
