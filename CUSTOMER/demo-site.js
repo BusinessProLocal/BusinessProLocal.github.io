@@ -1365,6 +1365,9 @@
     const finished = own.status === "Finished";
     const price = bookingEnabled ? own.status === "Canceled" ? 0 : (config.services.find(service => service.id === own.serviceId)?.price || 0) * 100 : own.totalCents;
     const complete = bookingEnabled ? finished || own.status === "Canceled" : ["Shipped", "Ready for pickup"].includes(own.status);
+    // 11/23 (Tom): picking a tab redraws the portal — keep the side menu scrolled where it was (it jumped back to Dashboard)
+    const menuScroll = document.querySelector("#daily-dashboard .sidebar")?.scrollTop || 0;
+    requestAnimationFrame(() => { const menu = document.querySelector("#daily-dashboard .sidebar"); if (menu) menu.scrollTop = menuScroll; });
     $("demo-content").innerHTML = `<section id="daily-dashboard"><div class="app"><aside class="sidebar${ownerMenuOpen ? " owner-menu-open" : ""}${ownerMenuCollapsed ? " owner-menu-collapsed" : ""}">
       <button type="button" class="mobile-menu-toggle${ownerTabs.some(tab => tab.live && tab.id !== "dashboard" && !visitedLiveTabs.has(tab.id)) ? " owner-live-blink" : ""}" id="owner-menu-toggle" aria-expanded="${ownerMenuOpen}" aria-controls="owner-tabs">
         &#9776; Menu &middot; <span>${escape(title)}</span></button><div class="brand">
