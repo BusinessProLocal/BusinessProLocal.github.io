@@ -1452,9 +1452,9 @@
       <button type="button" class="mobile-menu-toggle${ownerTabs.some(tab => tab.live && tab.id !== "dashboard" && !visitedLiveTabs.has(tab.id)) ? " owner-live-blink" : ""}" id="owner-menu-toggle" aria-expanded="${ownerMenuOpen}" aria-controls="owner-tabs">
         &#9776; Menu &middot; <span>${escape(title)}</span></button><div class="brand">
       <div class="business-name"><strong>${escape(visitor?.business || config.shop.name)}</strong></div>
-      <h1>BUSINESS PRO</h1><p>${bookingEnabled ? escape(config.demo.label) : "Business Pro"} Owner Portal</p></div>
-      <nav class="nav" id="owner-tabs" aria-label="Owner portal menu">${ownerNavigation()}</nav>
-      <div class="support-box"><h3>Need Help?</h3><p>Having a problem with your website or owner portal? Contact Business Pro directly.</p>
+      <h1>BUSINESS PRO</h1><p>Office</p></div>
+      <nav class="nav" id="owner-tabs" aria-label="Business Pro Office menu">${ownerNavigation()}</nav>
+      <div class="support-box"><h3>Need Help?</h3><p>Having a problem with your website or Business Pro Office? Contact Business Pro directly.</p>
       <div class="support-buttons"><button type="button" aria-disabled="true">&#9993; Email Me</button><button type="button" aria-disabled="true">&#128172; Text Me</button></div></div></aside>
       <main class="main"><header class="topbar"><div><h2>${title}</h2><div class="note" style="font-size:12px;color:#777">Business: ${escape(visitor?.business || config.shop.name)} - demo mode</div></div>
       <div class="access-controls"><span class="signed-in-badge">Signed in: Owner</span><div class="date">${escape(new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }))}</div>
