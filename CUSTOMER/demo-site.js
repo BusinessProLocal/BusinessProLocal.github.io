@@ -9,6 +9,7 @@
   const $ = id => document.getElementById(id);
   const bookingEnabled = config.demo.tier === "professional", storeEnabled = config.demo.tier === "business-pro";
   const pageName = document.body.dataset.page || "home";
+  let ownerMenuCollapsed = false; // 11/23 (Tom): ☰ on computers folds the side tabs away
   let visitor, dashboardOpen = false, dashboardView = "dashboard", ownerMenuOpen = false, ownerMenuShown = false;
   let selectedOrderNumber = null, orderListOpen = false, timeListOpen = false, openBarberInBooking = () => {};
   let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -22,7 +23,7 @@
   let adResizeTimer;
   const ownerStyles = document.createElement("link");
   ownerStyles.rel = "stylesheet";
-  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123f";
+  ownerStyles.href = "../../CUSTOMER/demo-owner.css?v=20261123g";
   document.head.appendChild(ownerStyles);
   // 11/19 (Tom): the owner view wears the real owner portal's new look (white and black, square corners)
   const ownerNewLook = document.createElement("script");
@@ -119,6 +120,9 @@
       const open = menu.hidden;
       menu.hidden = !open;
       toggle.setAttribute("aria-expanded", String(open));
+      // 11/23 (Tom): ☰ on computers too — the list drops down right under the ☰ button
+      const header = toggle.closest(".classic-header");
+      menu.style.left = window.innerWidth > 760 && header ? `${Math.round(toggle.getBoundingClientRect().left - header.getBoundingClientRect().left)}px` : "";
     });
     menu.addEventListener("click", event => {
       if (event.target.closest("a")) { menu.hidden = true; toggle.setAttribute("aria-expanded", "false"); }
@@ -617,7 +621,10 @@
     for (let day = 1; day <= count; day++) {
       const key = `${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       const available = picking ? previewSlots(key) : api.slots(config, state, $("demo-staff").value, $("demo-service").value, key);
-      html += `<button type="button" class="booking-date-day ${$("demo-date").value === key ? "is-selected" : ""}" data-day="${key}"
+      // 11/23 (Tom): color — open days green, picked day blue, today gold ring, off/full light red, past days faded
+      const look = available.length ? "is-open" : days.includes(key) ? "is-off" : "is-past";
+      const now = new Date(), todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      html += `<button type="button" class="booking-date-day ${look}${key === todayKey ? " is-today" : ""} ${$("demo-date").value === key ? "is-selected" : ""}" data-day="${key}"
         aria-pressed="${$("demo-date").value === key}" aria-label="${key}${available.length ? " available" : " unavailable"}" ${available.length ? "" : "disabled"}>
         ${day}${!available.length && days.includes(key) ? "<small>OFF/<wbr>FULL</small>" : ""}</button>`;
     }
@@ -735,7 +742,7 @@
       $("booking-with").querySelector("[data-change-barber]").addEventListener("click", () => {
         document.querySelector(".booking-barber-list").hidden = false; $("booking-with").hidden = true;
       });
-      $("booking-date-note").textContent = "Tap a day to see open times. Grayed-out days are off or full.";
+      $("booking-date-note").textContent = "Tap a day to see open times. Green days are open; red days are off or full.";
       $("booking-date-note").classList.remove("booking-need-service");
       $("booking-pick-first").hidden = true;
       renderCalendar(); refreshTimes();
@@ -1110,6 +1117,7 @@
             ]) + button("Open history"));
         break;
       case "sales-reports":
+        if (bookingEnabled) { content = salesReportPage({ panel, table, cards }); break; }
         content = periods(["Day", "Week", "Month", "Year"]) +
           cards([[bookingEnabled ? "Completed Visits" : "Completed Orders", "12"], ["Gross Sales", "$480.00"],
             ["Discounts", "$24.00"], ["Net Sales", "$456.00"], ["Average Sale", "$38.00"]]) +
@@ -1128,6 +1136,8 @@
             ${field("Pickup instructions", "Collect your order during shop hours.")}${field("Sample tax rate (%)", "5.5", "number")}</div>
             <p>Sample settings only. Demo checkout adds 5.5% Maine sales tax.</p>`) : "") + periods(["Save settings"]);
         break;
+      case "fin-income":
+      case "fin-expenses":
       case "financials": {
         if (!bookingEnabled) {
           content = periods(["Day", "Week", "Month", "Year"]) + cards([["Total Income", "$450.00"], ["Order Revenue", "$450.00"], ["Outgoing", "$120.00"], ["Net", "$330.00"]]) +
@@ -1142,16 +1152,18 @@
         const fees = tickets.reduce((sum, item) => sum + (item.lateFeeCents || 0), 0), outgoing = 0;
         const sheet = (headers, rows) => `<div class="preview-table-scroll"><table class="preview-sheet color-head"><thead><tr>${headers.map(value => `<th style="--head:${headColor(value)}">${escape(value)}</th>`).join("")}</tr></thead>
           <tbody>${rows.map(row => `<tr${row.total ? ' class="sheet-total"' : ""}>${row.cells.map(value => `<td>${escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
-        content = periods(["Day", "Week", "Month", "Year", "💾 Save Today", "📊 Spreadsheet"]) +
+        // 11/23 (Tom): Summary, Income and Expenses are each their own page
+        const summaryPage = periods(["Day", "Week", "Month", "Year", "💾 Save Today", "📊 Spreadsheet"]) +
           panel("Summary — the sample day", sheet(["", "Amount"], [
             { cells: [`Services (${done.length} paid tickets)`, money(services)] }, { cells: ["Tips", money(tips)] }, { cells: ["Late-cancel & no-show fees (20%)", money(fees)] },
             { cells: ["Money in", money(services + tips + fees)], total: true }, { cells: ["Money out (paid today)", money(outgoing)] },
-            { cells: ["Net for the day", money(services + tips + fees - outgoing)], total: true }])) +
-          panel("Income — every paid ticket", sheet(["Ticket", "Time", "Customer", "Barber", "Service", "Price", "Tip", "Total"], [
+            { cells: ["Net for the day", money(services + tips + fees - outgoing)], total: true }]));
+        const incomePage = panel("Income — every paid ticket", sheet(["Ticket", "Time", "Customer", "Barber", "Service", "Price", "Tip", "Total"], [
             ...done.map(item => ({ cells: [ticketNo(item), api.timeLabel(item.time), item.name, staffName(item), serviceName(item), money(ticketListPrice(item)), money(item.tipCents || 0), money(ticketListPrice(item) + (item.tipCents || 0))] })),
             { cells: ["", "", "", "", "", money(services), money(tips), money(services + tips)], total: true }])) +
-          (done.length || fees ? "" : `<p class="fresh-start-note">Nothing closed out yet. In Appointments, tap a ticket's Clear or Close out button and watch it land here.</p>`) +
-          panel("Expenses", sheet(["Expense", "Amount", "Status"], [{ cells: ["Rent", "$800.00", "Due the 1st"] }]));
+          (done.length || fees ? "" : `<p class="fresh-start-note">Nothing closed out yet. In Appointments, tap a ticket's Clear or Close out button and watch it land here.</p>`);
+        const expensesPage = panel("Expenses", sheet(["Expense", "Amount", "Status"], [{ cells: ["Rent", "$800.00", "Due the 1st"] }])) + periods(["Add Bill / Expense", "Mark paid"]);
+        content = tab.id === "fin-income" ? incomePage : tab.id === "fin-expenses" ? expensesPage : summaryPage;
         break;
       }
       case "photos":
@@ -1218,11 +1230,94 @@
       previewPopupTimer = setTimeout(() => { popup.hidden = true; }, 300);
     }, 5000);
   }
+  // ---- 11/23 (Tom): Sales Reports that work — the year a tax person needs, to view and to download ----
+  // Sample shop numbers for the months so far this year, plus whatever the visitor closes out on the calendar.
+  function salesYear() {
+    const now = new Date(), year = now.getFullYear(), months = now.getMonth() + 1;
+    const visits = [182, 171, 204, 215, 228, 246, 251, 247, 219, 212, 196, 188];
+    const avg = Math.round(config.services.reduce((sum, service) => sum + Number(service.price || 0), 0) / Math.max(1, config.services.length) * 100);
+    const done = allTickets(api.read(localStorage, config)).filter(item => counted(item));
+    return Array.from({ length: months }, (_, index) => {
+      const thisMonth = index === months - 1;
+      const count = Math.round(visits[index] * (thisMonth ? now.getDate() / 30 : 1));
+      const extra = thisMonth ? done.filter(item => item.status === "Finished") : [];
+      const services = count * avg + extra.reduce((sum, item) => sum + ticketListPrice(item), 0);
+      const tips = Math.round(count * avg * 0.14) + extra.reduce((sum, item) => sum + (item.tipCents || 0), 0);
+      const fees = Math.round(count / 40) * Math.round(avg * 0.2) + (thisMonth ? done.reduce((sum, item) => sum + (item.lateFeeCents || 0), 0) : 0);
+      const refunds = (thisMonth ? done.reduce((sum, item) => sum + (item.refundCents || 0), 0) : 0) + Math.round(count / 60) * avg;
+      const expenses = { Rent: 80000, Utilities: 13500 + (index % 3) * 1200, Supplies: 6000 + (index % 4) * 1500, "Business Pro plan": 8900, "Card processing": Math.round((services + tips) * 0.6 * 0.029) };
+      return { month: new Date(year, index, 1).toLocaleDateString("en-US", { month: "long" }), visits: count + extra.length, services, tips, fees, refunds, expenses };
+    });
+  }
+  function salesTotals(rows) {
+    const sum = key => rows.reduce((total, row) => total + row[key], 0);
+    const expenseNames = Object.keys(rows[0].expenses);
+    const expenses = Object.fromEntries(expenseNames.map(name => [name, rows.reduce((total, row) => total + row.expenses[name], 0)]));
+    const out = Object.values(expenses).reduce((total, value) => total + value, 0);
+    const income = sum("services") + sum("tips") + sum("fees") - sum("refunds");
+    return { visits: sum("visits"), services: sum("services"), tips: sum("tips"), fees: sum("fees"), refunds: sum("refunds"), income, expenses, out, net: income - out };
+  }
+  function salesReportPage({ panel, table, cards }) {
+    const rows = salesYear(), total = salesTotals(rows), year = new Date().getFullYear();
+    const monthOut = row => Object.values(row.expenses).reduce((sum, value) => sum + value, 0);
+    const monthIn = row => row.services + row.tips + row.fees - row.refunds;
+    return `<div class="sales-report-live">${cards([["Visits this year", String(total.visits)], ["Money in", money(total.income)], ["Money out", money(total.out)], ["Net profit", money(total.net)]])}
+      <div class="preview-actions sales-report-buttons"><button type="button" data-sales-report="view">View Report</button>
+      <button type="button" data-sales-report="csv">📊 Export Spreadsheet</button><button type="button" data-sales-report="pdf">📄 Export PDF</button></div>
+      <p class="sales-report-note">Sample numbers for the demo shop's year so far, plus anything you've closed out in Appointments. This is the page you hand your tax person.</p>
+      <div class="sales-report-sheet" id="sales-report-sheet" hidden>
+      <h3>${escape(config.shop.name)} — ${year} Year-to-Date Report</h3>
+      ${panel("Income", table(["", "Amount"], [["Services", money(total.services)], ["Tips", money(total.tips)], ["No-show & late-cancel fees (20%)", money(total.fees)],
+        ["Refunds given back", `−${money(total.refunds)}`], ["Total money in", money(total.income)]]))}
+      ${panel("Expenses (write-offs)", table(["Expense", "Amount"], [...Object.entries(total.expenses).map(([name, value]) => [name, money(value)]), ["Total money out", money(total.out)]]))}
+      ${panel("Net profit", table(["", "Amount"], [["Money in", money(total.income)], ["Money out", money(total.out)], ["Net profit", money(total.net)],
+        ["Sales tax collected", "$0.00 (no products sold)"]]))}
+      ${panel("Month by month", table(["Month", "Visits", "Services", "Tips", "Fees", "Refunds", "Money in", "Money out", "Net"],
+        rows.map(row => [row.month, String(row.visits), money(row.services), money(row.tips), money(row.fees), money(row.refunds), money(monthIn(row)), money(monthOut(row)), money(monthIn(row) - monthOut(row))])))}
+      </div></div>`;
+  }
+  function setupSalesReport() {
+    const sheet = $("sales-report-sheet");
+    document.querySelectorAll("[data-sales-report]").forEach(button => button.addEventListener("click", event => {
+      event.preventDefault(); event.stopPropagation();
+      const kind = button.dataset.salesReport, rows = salesYear(), total = salesTotals(rows), year = new Date().getFullYear();
+      const name = `${config.shop.name.replace(/[^A-Za-z0-9]+/g, "-")}-${year}-report`;
+      if (kind === "view") {
+        sheet.hidden = !sheet.hidden;
+        button.textContent = sheet.hidden ? "View Report" : "Hide Report";
+        if (!sheet.hidden) sheet.scrollIntoView({ block: "start", behavior: "smooth" });
+        return;
+      }
+      if (kind === "csv") {
+        const dollars = cents => (cents / 100).toFixed(2), expenseNames = Object.keys(total.expenses);
+        const lines = [[`${config.shop.name} ${year} year-to-date report (demo numbers)`], [],
+          ["Month", "Visits", "Services", "Tips", "Fees", "Refunds", ...expenseNames, "Net"],
+          ...rows.map(row => [row.month, row.visits, dollars(row.services), dollars(row.tips), dollars(row.fees), dollars(row.refunds), ...expenseNames.map(n => dollars(row.expenses[n])),
+            dollars(row.services + row.tips + row.fees - row.refunds - Object.values(row.expenses).reduce((sum, value) => sum + value, 0))]),
+          ["Total", total.visits, dollars(total.services), dollars(total.tips), dollars(total.fees), dollars(total.refunds), ...expenseNames.map(n => dollars(total.expenses[n])), dollars(total.net)]];
+        const csv = lines.map(line => line.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\r\n");
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+        link.download = `${name}.csv`;
+        document.body.appendChild(link); link.click(); link.remove();
+        return;
+      }
+      // PDF: the report on its own page, then the print box (pick "Save as PDF")
+      const win = window.open("", "_blank");
+      if (!win) { sheet.hidden = false; window.print(); return; }
+      win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escape(name)}</title><style>body{font-family:Arial,sans-serif;padding:24px;color:#111}
+        table{border-collapse:collapse;width:100%;margin:6px 0 18px}th,td{border:1px solid #bbb;padding:6px 8px;text-align:left;font-size:13px}h3{margin:18px 0 6px}
+        .preview-panel h3{font-size:16px}</style></head><body>${sheet.innerHTML}<p style="font-size:12px;color:#555">Demo numbers — Business Pro Local</p></body></html>`);
+      win.document.close();
+      win.focus();
+      setTimeout(() => win.print(), 300);
+    }));
+  }
   function setupOwnerPreview() {
     const controls = document.querySelector(".owner-preview-controls");
     if (!controls) return;
     const block = event => {
-      if (event.target.closest(".staff-photo-controls")) return;
+      if (event.target.closest(".staff-photo-controls, .sales-report-live")) return;
       if (!event.target.closest("button, input, select, textarea, label, a")) return;
       event.preventDefault();
       event.stopPropagation();
@@ -1270,7 +1365,7 @@
     const finished = own.status === "Finished";
     const price = bookingEnabled ? own.status === "Canceled" ? 0 : (config.services.find(service => service.id === own.serviceId)?.price || 0) * 100 : own.totalCents;
     const complete = bookingEnabled ? finished || own.status === "Canceled" : ["Shipped", "Ready for pickup"].includes(own.status);
-    $("demo-content").innerHTML = `<section id="daily-dashboard"><div class="app"><aside class="sidebar${ownerMenuOpen ? " owner-menu-open" : ""}">
+    $("demo-content").innerHTML = `<section id="daily-dashboard"><div class="app"><aside class="sidebar${ownerMenuOpen ? " owner-menu-open" : ""}${ownerMenuCollapsed ? " owner-menu-collapsed" : ""}">
       <button type="button" class="mobile-menu-toggle${ownerTabs.some(tab => tab.live && tab.id !== "dashboard" && !visitedLiveTabs.has(tab.id)) ? " owner-live-blink" : ""}" id="owner-menu-toggle" aria-expanded="${ownerMenuOpen}" aria-controls="owner-tabs">
         &#9776; Menu &middot; <span>${escape(title)}</span></button><div class="brand">
       <div class="business-name"><strong>${escape(visitor?.business || config.shop.name)}</strong></div>
@@ -1281,7 +1376,7 @@
       <main class="main"><header class="topbar"><div><h2>${title}</h2><div class="note" style="font-size:12px;color:#777">Business: ${escape(visitor?.business || config.shop.name)} - demo mode</div></div>
       <div class="access-controls"><span class="signed-in-badge">Signed in: Owner</span><div class="date">${escape(new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }))}</div>
       <button type="button" class="lock-btn" id="demo-lock">Lock</button></div></header>
-      <div class="content">${dashboardView !== "dashboard" ? `<button type="button" class="back-to-dashboard" id="back-to-dashboard">&#8592; Go back to Dashboard</button>` : ""}${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
+      <div class="content">${dashboardView !== "dashboard" && !/^dash-[123]$/.test(dashboardView) ? `<button type="button" class="back-to-dashboard" id="back-to-dashboard">&#8592; Go back to Dashboard</button>` : ""}${preview ? ownerPreview(activeTab) : dashboardView === "appointments" && bookingEnabled ? ownerCalendarPanel(seeded) :
         dashboardView === "orders" ? `<section class="page active" id="dashboard">${orderLookupPanel(own)}${selectedOrderNumber === orderNumber(own) ? ordersPanel(records, seeded) + shippingPanel(records, seeded) : sampleOrderPanel(selectedOrderNumber)}</section>` : `<section class="page active${bookingEnabled ? " barber-owner-dashboard" : ""}" id="dashboard">
       ${bookingEnabled ? `<div class="shop-owner-banner" role="note"><strong>SHOP OWNER VIEW</strong><span>Here's what the shop sees the second a customer books.</span></div>` : ""}
       ${bookingEnabled ? morningBrief(records, seeded, complete, price) : `<div class="section-heading"><h2>Good Morning</h2><p>Here is what is happening at your shop today.</p></div>
@@ -1311,6 +1406,12 @@
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }));
     $("owner-menu-toggle").addEventListener("click", () => {
+      if (window.matchMedia("(min-width: 901px)").matches) { // computers: fold the side tabs away / back
+        ownerMenuCollapsed = !ownerMenuCollapsed;
+        document.querySelector("#daily-dashboard .sidebar")?.classList.toggle("owner-menu-collapsed", ownerMenuCollapsed);
+        $("owner-menu-toggle").setAttribute("aria-expanded", String(!ownerMenuCollapsed));
+        return;
+      }
       clearTimeout(ownerMenuTimer);
       setOwnerMenuOpen(!ownerMenuOpen);
     });
@@ -1327,6 +1428,7 @@
     document.querySelectorAll("[data-preview-live]").forEach(button => button.addEventListener("click", () => action(() => openOwnerTab(button.dataset.previewLive))));
     if (preview) {
       setupOwnerPreview();
+      if (bookingEnabled && activeTab.id === "sales-reports") setupSalesReport();
       if (bookingEnabled && activeTab.id === "employees") config.barbers.forEach((staff, index) =>
         photoInput(`barber-photo-${staff.id}`, index === 0 ? "barberPhoto" : `barberPhoto:${staff.id}`));
       return;
@@ -1454,14 +1556,17 @@
     const leftoverOpen = sample && !sample.leftover.closedOut;
     const todo = 1 + (leftoverOpen ? 1 : 0);
     const dayWords = new Date(day + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
-    return `<div class="section-heading"><h2>Good morning. Here's your day, in order.</h2>${sample ? `<p class="sample-day-note">Sample day: ${escape(dayWords)}. Every ticket below is a sample except yours (NEW). Work any of them in Appointments: START, tip, FINISH, or CLOSE OUT, and see where each one goes.</p>` : ""}</div>
-      ${step(1, "Finish these first", `${todo} to do`)}${timeOffPanel()}${leftoverOpen ? closeoutPanel(sample.leftover) : ""}
-      ${step(2, "Today's appointments")}${schedulePanel(dayTickets, state)}
-      ${step(3, "Done today &amp; money")}
+    // 11/23 (Tom): Dashboard ▾ 1 · 2 · 3 opens just that part
+    const only = /^dash-[123]$/.test(dashboardView) ? Number(dashboardView.slice(5)) : 0;
+    const part = (number, html) => !only || only === number ? html : "";
+    return `<div class="section-heading"><h2>Good morning. Here's your day, in order.</h2>${sample && !only ? `<p class="sample-day-note">Sample day: ${escape(dayWords)}. Every ticket below is a sample except yours (NEW). Work any of them in Appointments: START, tip, FINISH, or CLOSE OUT, and see where each one goes.</p>` : ""}</div>
+      ${part(1, `${step(1, "Finish these first", `${todo} to do`)}${timeOffPanel()}${leftoverOpen ? closeoutPanel(sample.leftover) : ""}`)}
+      ${part(2, `${step(2, "Today's appointments")}${schedulePanel(dayTickets, state)}`)}
+      ${part(3, `${step(3, "Done today &amp; money")}
       <div class="cards"><div class="card"><span>Today's Appointments</span><strong>${live.length}</strong><small>${remaining} still to go</small></div>
       <div class="card"><span>Barbers Working</span><strong>${config.barbers.length}</strong><small>${config.barbers.length} scheduled today</small></div>
-      <div class="card"><span>Earned Today</span><strong>${money(earned)}</strong><small>of ${money(booked)} booked</small></div></div>
-      ${sample ? stagesLegend() : ""}`;
+      <div class="card"><span>Earned Today</span><strong>${money(earned)}</strong><small>of ${money(booked)} booked</small></div></div>`)}
+      ${sample && (!only || only === 2) ? stagesLegend() : ""}`;
   }
   function closeoutPanel(item) {
     return `<div class="panel dashboard-closeout-panel"><div class="panel-header"><h3>Needs Close-Out</h3></div><div class="panel-body">

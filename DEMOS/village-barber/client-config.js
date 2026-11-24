@@ -4,7 +4,12 @@ window.SHOP_CONFIG = {
   siteStyle: "classic",
   demo: { id: "demo-village-barber", tier: "professional", label: "Professional Plus", staffHeading: "Meet the Barber", staffLabel: "the barber" },
   ownerTabs: [
-    { id: "dashboard", label: "Dashboard", live: true },
+    // 11/23 (Tom): Dashboard ▾ 1 · 2 · 3 — each opens just that part of the day
+    { id: "dashboard", label: "Dashboard", live: true, children: [
+      { id: "dash-1", label: "1 Finish These First", live: true },
+      { id: "dash-2", label: "2 Today's Appointments", live: true },
+      { id: "dash-3", label: "3 Done Today & Money", live: true }
+    ] },
     { id: "business-status", label: "Open / Close" },
     { id: "appointments", label: "Appointments", live: true, children: [
       { id: "appointments", label: "Appointment Calendar", live: true },
@@ -19,7 +24,8 @@ window.SHOP_CONFIG = {
       { id: "employee-book", label: "Owner View - All Appointments" },
       { id: "employee-owner", label: "Appointment Book", staffId: "owner" }
     ] },
-    { id: "financials", label: "Financials", children: [{ id: "financials", label: "Financial Overview" }] },
+    // 11/23 (Tom): Financials ▾ Summary · Income · Expenses — each its own page
+    { id: "financials", label: "Financials", children: [{ id: "financials", label: "Summary" }, { id: "fin-income", label: "Income" }, { id: "fin-expenses", label: "Expenses" }] },
     { id: "photos", label: "Photos" },
     { id: "announcements", label: "Announcements" },
     { id: "business", label: "Business Info" },
