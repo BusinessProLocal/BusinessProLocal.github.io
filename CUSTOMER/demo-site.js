@@ -587,7 +587,7 @@
           <span>${escape(service.name)}</span><span>${money(service.price * 100)}</span></button>`).join("")}</div></div>`).join("")}</div>
       <p id="booking-with" class="booking-choice" hidden></p></fieldset>
       <fieldset><legend>2. Pick a day &amp; time</legend><input id="demo-date" type="hidden">
-      <div class="booking-date-calendar" aria-label="Available appointment dates">
+      <div class="booking-date-calendar" data-swipe-prev="#calendar-prev" data-swipe-next="#calendar-next" aria-label="Available appointment dates">
       <div class="booking-date-calendar-toolbar"><button id="calendar-prev" type="button" aria-label="Previous month">&lt;</button>
       <strong id="calendar-month"></strong><button id="calendar-next" type="button" aria-label="Next month">&gt;</button></div>
       <div class="booking-date-weekdays" aria-hidden="true">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => `<span>${day}</span>`).join("")}</div>
@@ -1533,7 +1533,7 @@
         `<option value="${escape(staff.id)}" ${employeeFilter === staff.id ? "selected" : ""}>${escape(staff.name)}</option>`).join("")}</select></label></div>
       ${sampleInfo() ? stagesLegend() : ""}
       <div class="calendar-legend">${config.barbers.map(staff => `<span class="legend-item"><span class="legend-box" style="background:${employeeColor(staff.id)}"></span>${escape(staff.name)}</span>`).join("")}</div>
-      <div class="month-calendar"><div class="calendar-top-scroll" id="demo-calendar-top"><div class="calendar-top-scroll-inner"></div></div>
+      <div class="month-calendar" data-swipe-prev="#owner-previous" data-swipe-next="#owner-next"><div class="calendar-top-scroll" id="demo-calendar-top"><div class="calendar-top-scroll-inner"></div></div>
       <div class="month-grid-scroll" tabindex="0" role="region" aria-label="Appointment calendar, scroll to browse">
       <div class="month-grid" style="grid-template-columns:90px repeat(${columns.length},minmax(${minimum}px,1fr));grid-template-rows:58px repeat(16,90px);min-width:${90 + columns.length * minimum}px;width:100%">${grid}</div></div></div></div></section>`;
   }
@@ -1995,4 +1995,129 @@
     if ($("demo-error")) error(failure);
     else { app.textContent = "Demo failed to load: " + failure.message; console.error(failure); }
   }
+})();
+// 11/23 (Tom): ENGINE — drag (mouse) or swipe (finger) any calendar side to side to change the day, week or month.
+// Any box with data-swipe-prev / data-swipe-next (the CSS selectors of its ← / → buttons) gets it, on every industry.
+// The calendar follows your finger; let go far enough and its arrow button does the change. Arrows, Today and tapping a day still work.
+// The PAGE never slides sideways: only the calendar box moves, clipped inside its parent, and only while it is being dragged.
+// A calendar that scrolls sideways inside its box scrolls first; at its edge the drag turns into the day/week change.
+(function installSwipeDays() {
+  if (typeof window === "undefined" || typeof document === "undefined" || window.__bpSwipeDays) return;
+  window.__bpSwipeDays = true;
+  const style = document.createElement("style");
+  style.textContent = "[data-swipe-prev]{touch-action:pan-y pinch-zoom;}" +
+    "[data-swipe-prev].bp-swiping{user-select:none;-webkit-user-select:none;cursor:grabbing;}" +
+    ".bp-swipe-clip{overflow-x:clip !important;}" +
+    "html.bp-swipe-on,html.bp-swipe-on body{overscroll-behavior-x:none;}"; // a swipe never turns into the browser's Back
+  (document.head || document.documentElement).appendChild(style);
+  const SKIP = "input, select, textarea, [contenteditable], .no-swipe";
+  let drag = null, blockClickUntil = 0;
+  const arrow = (root, prev) => {
+    const selector = prev ? root.dataset.swipePrev : root.dataset.swipeNext;
+    const button = selector && document.querySelector(selector);
+    return button && !button.disabled && !button.hidden && button.getClientRects().length ? button : null;
+  };
+  // the box under the finger that scrolls sideways (the week grid on a phone), if any
+  function scrollerFor(target, root) {
+    for (let el = target; el; el = el.parentElement) {
+      if (el.scrollWidth > el.clientWidth + 1 && /(auto|scroll)/.test(getComputedStyle(el).overflowX)) return el;
+      if (el === root) break;
+    }
+    return null;
+  }
+  function slide(el, x, after) {
+    let finished = false;
+    const end = () => {
+      if (finished) return;
+      finished = true;
+      el.style.transition = "";
+      if (!x) el.style.transform = "";
+      if (after) after();
+    };
+    el.style.transition = "transform 160ms ease-out";
+    el.style.transform = x ? `translateX(${x}px)` : "";
+    el.addEventListener("transitionend", end, { once: true });
+    setTimeout(end, 230);
+  }
+  const clip = (el, on) => { if (el && el.parentElement) el.parentElement.classList.toggle("bp-swipe-clip", on); };
+  document.addEventListener("pointerdown", event => {
+    if (event.button !== 0 || !event.isPrimary || !event.target.closest) return;
+    const root = event.target.closest("[data-swipe-prev]");
+    if (!root || event.target.closest(SKIP)) return;
+    drag = { root, id: event.pointerId, x: event.clientX, y: event.clientY, lastX: event.clientX, on: false, over: 0,
+      scroller: scrollerFor(event.target, root) };
+  }, true);
+  document.addEventListener("pointermove", event => {
+    if (!drag || event.pointerId !== drag.id) return;
+    const dx = event.clientX - drag.x, dy = event.clientY - drag.y;
+    if (!drag.on) {
+      if (Math.abs(dy) > 10 && Math.abs(dy) >= Math.abs(dx)) { drag = null; return; } // up/down = normal page scroll
+      if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      drag.on = true;
+      drag.lastX = event.clientX;
+      drag.root.classList.add("bp-swiping");
+      document.documentElement.classList.add("bp-swipe-on");
+      clip(drag.root, true);
+      try { drag.root.setPointerCapture(drag.id); } catch (error) { /* the finger is still tracked on the page */ }
+      if (window.getSelection) window.getSelection().removeAllRanges();
+    }
+    event.preventDefault();
+    let move = event.clientX - drag.lastX;
+    drag.lastX = event.clientX;
+    if (drag.over) {
+      const next = drag.over + move;
+      if (next === 0 || Math.sign(next) === Math.sign(drag.over)) { drag.over = next; move = 0; } else { drag.over = 0; move = next; }
+    }
+    if (move && drag.scroller) {
+      const max = drag.scroller.scrollWidth - drag.scroller.clientWidth;
+      const want = drag.scroller.scrollLeft - move;
+      const set = Math.max(0, Math.min(max, want));
+      drag.scroller.scrollLeft = set;
+      move = set - want; // what's left past the edge: + = finger going right (back), - = going left (ahead)
+    }
+    drag.over += move;
+    const shown = arrow(drag.root, drag.over > 0) ? drag.over : drag.over * 0.25; // no day that way: it only gives a little
+    drag.root.style.transform = drag.over ? `translateX(${shown}px)` : "";
+  }, { capture: true, passive: false });
+  function finish(event) {
+    if (!drag || event.pointerId !== drag.id) return;
+    const done = drag;
+    drag = null;
+    if (!done.on) return;
+    blockClickUntil = Date.now() + 350; // letting go over a day or button doesn't also tap it
+    done.root.classList.remove("bp-swiping");
+    document.documentElement.classList.remove("bp-swipe-on");
+    const width = done.root.getBoundingClientRect().width || 300;
+    const button = event.type === "pointerup" && Math.abs(done.over) > Math.min(90, width * 0.2) ? arrow(done.root, done.over > 0) : null;
+    if (!button) { slide(done.root, 0, () => clip(done.root, false)); return; }
+    const sign = done.over > 0 ? 1 : -1;
+    slide(done.root, sign * width, () => {
+      done.root.style.transition = "none";
+      done.root.style.transform = "";
+      clip(done.root, false);
+      blockClickUntil = 0;
+      button.click();
+      // the new day/week slides in from the other side (the page may have drawn a fresh calendar box)
+      const fresh = done.root.isConnected ? done.root : document.querySelector(`[data-swipe-prev="${done.root.dataset.swipePrev}"]`);
+      if (!fresh) return;
+      clip(fresh, true);
+      fresh.style.transition = "none";
+      fresh.style.transform = `translateX(${-sign * Math.min(width * 0.35, 120)}px)`;
+      fresh.getBoundingClientRect();
+      slide(fresh, 0, () => clip(fresh, false));
+    });
+  }
+  // the finger's sideways move belongs to the calendar, not the browser (no Back/Forward page swipe)
+  document.addEventListener("touchmove", event => { if (drag && drag.on && event.cancelable) event.preventDefault(); }, { capture: true, passive: false });
+  document.addEventListener("pointerup", finish, true);
+  document.addEventListener("pointercancel", finish, true);
+  document.addEventListener("click", event => {
+    if (Date.now() >= blockClickUntil) return;
+    blockClickUntil = 0;
+    event.preventDefault();
+    event.stopPropagation();
+  }, true);
+  document.addEventListener("dragstart", event => {
+    if (event.target.closest && event.target.closest("[data-swipe-prev]")) event.preventDefault();
+  }, true);
 })();
