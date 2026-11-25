@@ -178,6 +178,14 @@ nav.site-nav .nav-menu{display:none}
 .faq-list summary::after{content:"+";position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:1.4rem;font-weight:700}
 .faq-list details[open] summary::after{content:"\2212"}
 .faq-list details p{margin:0;padding:0 20px 18px;color:var(--muted)}
+/* 11/24 (Tom): search box at the top of the FAQ — type a question, the best match opens */
+.faq-search{max-width:760px;margin:0 auto 18px;text-align:center}
+.faq-search label{display:block;font-weight:800;margin-bottom:8px}
+.faq-search input{box-sizing:border-box;width:100%;min-height:48px;padding:12px 16px;border:2px solid #111;border-radius:999px;font:inherit;font-size:16px;background:#fff;color:#111}
+.faq-search input:focus{outline:3px solid rgba(212,175,55,.6);outline-offset:2px}
+.faq-search-note{margin:8px 0 0;min-height:1.4em;font-weight:700}
+.faq-search-note a{text-decoration:underline}
+.faq-list details.faq-best{outline:3px solid #d4af37;outline-offset:2px}
 </style>
 <script type="application/ld+json">
 {
@@ -305,6 +313,11 @@ nav.site-nav .nav-menu{display:none}
 <section class="block" id="faq">
   <h2>Questions &amp; Answers</h2>
   <p class="lead">Straight answers about getting your business online.</p>
+  <div class="faq-search">
+    <label for="faqSearch">Search the questions</label>
+    <input id="faqSearch" type="search" placeholder="Type your question, like &quot;how much&quot; or &quot;Google&quot;" autocomplete="off" spellcheck="true" lang="en-US">
+    <p class="faq-search-note" id="faqSearchNote" aria-live="polite"></p>
+  </div>
   <div class="faq-list">
     <details><summary>What does Business Pro do?</summary><p>We build websites for local businesses across Maine. When you&#x27;re ready for more, we also set up online booking, quote requests, online stores, text reminders and bookkeeping.</p></details>
     <details><summary>How much does a website cost?</summary><p>Websites start at $199, one time, with our ProGo plan. Fill out the Get Started form to see every plan and price.</p></details>
@@ -328,5 +341,56 @@ nav.site-nav .nav-menu{display:none}
 </footer>
 
 <script src="../site-menu.js?v=2"></script>
+<script>
+// 11/24 (Tom): FAQ search — the questions that match what they typed come first, the best one opens
+(function () {
+  var box = document.getElementById("faqSearch"), note = document.getElementById("faqSearchNote");
+  var list = document.querySelector(".faq-list");
+  if (!box || !list) return;
+  var items = Array.prototype.slice.call(list.querySelectorAll("details"));
+  var STOP = "a an the is are am do does did i my me we you your our it its to of for on in and or can will how what when where who why with be have has get about any this that there".split(" ");
+  // words people use that mean the same thing as words in the answers
+  var SAME = { price: "cost", prices: "cost", pricing: "cost", much: "cost", charge: "cost", pay: "cost", money: "cost", cheap: "cost", expensive: "cost",
+    long: "fast", quick: "fast", soon: "fast", days: "fast", time: "fast", ready: "fast",
+    mobile: "phones", cell: "phones", iphone: "phones", android: "phones", tablet: "phones",
+    seo: "google", search: "google", found: "google", find: "google", maps: "google", alexa: "voice", siri: "voice",
+    subscription: "monthly", month: "monthly", fee: "monthly", fees: "monthly", hosting: "monthly",
+    appointments: "booking", appointment: "booking", book: "booking", schedule: "booking", calendar: "booking",
+    shop: "store", sell: "store", selling: "store", ecommerce: "store", cart: "store",
+    picture: "photos", pictures: "photos", pics: "photos", images: "photos", brand: "logo", colour: "colors",
+    preview: "approve", change: "changes", edit: "changes", start: "started", begin: "started", signup: "started",
+    person: "working", support: "working", help: "working", contact: "working", human: "working" };
+  function words(text) {
+    return String(text).toLowerCase().replace(/[^a-z0-9$ ]+/g, " ").split(/\s+/)
+      .filter(function (w) { return w && STOP.indexOf(w) < 0; })
+      .map(function (w) { return SAME[w] || w; });
+  }
+  var data = items.map(function (d, i) {
+    var q = d.querySelector("summary").textContent, a = (d.querySelector("p") || {}).textContent || "";
+    return { el: d, at: i, q: words(q), a: words(a) };
+  });
+  function hit(list, w) { return list.some(function (x) { return x === w || (w.length > 3 && x.indexOf(w.slice(0, 4)) === 0); }); }
+  box.addEventListener("input", function () {
+    var asked = words(box.value);
+    data.forEach(function (d) {
+      d.el.classList.remove("faq-best");
+      d.score = asked.reduce(function (sum, w) { return sum + (hit(d.q, w) ? 3 : hit(d.a, w) ? 1 : 0); }, 0);
+    });
+    if (!asked.length) {
+      data.sort(function (x, y) { return x.at - y.at; }).forEach(function (d) { d.el.hidden = false; d.el.open = false; list.appendChild(d.el); });
+      note.textContent = ""; return;
+    }
+    var ranked = data.slice().sort(function (x, y) { return y.score - x.score || x.at - y.at; });
+    var found = ranked.filter(function (d) { return d.score > 0; });
+    ranked.forEach(function (d) { d.el.hidden = d.score === 0; d.el.open = false; list.appendChild(d.el); });
+    if (found.length) {
+      found[0].el.open = true; found[0].el.classList.add("faq-best");
+      note.textContent = found.length === 1 ? "Here's the best answer:" : "Best answer first, then " + (found.length - 1) + " more that may help:";
+    } else {
+      note.innerHTML = 'No answer for that yet. <a href="sms:+12075604262">Text us your question</a> and we\'ll answer it.';
+    }
+  });
+})();
+</script>
 </body>
 </html>
