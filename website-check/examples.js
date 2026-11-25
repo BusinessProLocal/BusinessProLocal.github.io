@@ -76,6 +76,11 @@
       without: phone(search("cedar shingles") + '<div class="mx-imgs"><span style="background:#8d6e63"></span><span style="background:#a1887f"></span><span style="background:#6d4c41"></span><span style="background:#bcaaa4"></span><span style="background:#795548"></span><span style="background:#8d6e63"></span></div><div class="mx-note">Image results: none of your photos show up. Google can\'t tell what they are.</div>'),
       with: phone(search("cedar shingles") + '<div class="mx-imgs"><span class="yours">Your photo<small>' + HOST + '</small></span><span style="background:#a1887f"></span><span style="background:#6d4c41"></span><span style="background:#bcaaa4"></span><span style="background:#795548"></span><span style="background:#8d6e63"></span></div><div class="mx-note good">Labeled "new cedar shake roof in York, Maine," so Google shows it.</div>')
     } } },
+    // 11/24 (Tom): H1 = the big headline at the very top — business name + what you do, in words Google can read
+    headline: { views: { "Computer example": {
+      without: pc(tab(mark, BIZ, true), HOST, '<div class="mx-hero">' + mark + '<p>Welcome!</p></div>') + '<div class="mx-note">The top is just a logo picture and "Welcome!" Google reads no headline, so it can\'t tell what you do.</div>',
+      with: pc(tab(mark, BIZ, true), HOST, '<div class="mx-hero"><b>' + BIZ + '</b><p>What you do, in your town, Maine</p></div>') + '<div class="mx-note good">Google reads: "' + BIZ + ', what you do, in your town." Now it knows who to show you to.</div>'
+    } } },
     icon: { views: {
       "Phone example": {
         without: phone(search("roofer near me") + result(globe, BIZ, HOST, BIZ + " | Roofing", "", "", "hl-bad") + COMP) + zoom(globe, false),
