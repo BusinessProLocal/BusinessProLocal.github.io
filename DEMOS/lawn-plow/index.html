@@ -38,7 +38,7 @@ button{font:inherit;cursor:pointer}
 .bp-demo-bar a{color:#000}
 .steps{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 8px;padding:10px 12px;background:#111;font-family:var(--ui);font-size:.8rem}
 .steps span{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;border:1px solid #444;color:#aaa;white-space:nowrap}
-.steps span b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#333;color:#ddd;font-size:.72rem}
+.steps span b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#333;color:#ddd;font-size:.75rem}
 .steps span.on{border-color:var(--gold);color:#fff}
 .steps span.on b{background:var(--goldfill);color:#000}
 .steps span.done{color:#cfcfcf}
@@ -73,7 +73,7 @@ section.block h2{margin:0 0 22px;font-weight:900;color:var(--green-dk);font-size
 .season{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/3;min-height:260px;display:flex;align-items:flex-end;justify-content:center;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.15)}
 .season img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .season::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(11,42,28,.88) 100%)}
-.season div{position:relative;z-index:1;padding:0 14px 22px}
+.season div{position:relative;z-index:1;padding:12px 14px 18px;width:100%;text-align:center;background-color:rgba(11,42,28,.86)} /* 11/24 (TEST ALL): white words sit on dark green, never on a light spot of the photo */
 .season h3{margin:0;font-weight:900;font-size:clamp(1.6rem,3vw,2.3rem)}
 .season p{margin:4px 0 0;font-size:clamp(.9rem,1.5vw,1.05rem)}
 .how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
@@ -173,7 +173,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
 .btn-dark[disabled]{opacity:.5;cursor:not-allowed}
 .toast{position:fixed;left:50%;top:14px;transform:translate(-50%,-140%);z-index:60;width:min(420px,calc(100% - 24px));background:rgba(28,28,30,.96);color:#fff;border-radius:18px;padding:12px 16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center;box-shadow:0 12px 30px rgba(0,0,0,.35);transition:transform .45s cubic-bezier(.2,.9,.3,1.2);font-family:var(--ui)}
 .toast.show{transform:translate(-50%,0)}
-.toast .ico{grid-row:span 2;width:38px;height:38px;border-radius:10px;background:#34c759;display:grid;place-items:center;font-size:1.2rem}
+.toast .ico{grid-row:span 2;width:38px;height:38px;border-radius:10px;background:#1e7e34;display:grid;place-items:center;font-size:1.2rem}
 .toast b{font-size:.9rem}
 .toast span{font-size:.85rem;color:#ddd}
 .note-pop{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;background:#111;color:#fff;border:1px solid var(--gold);border-radius:14px;padding:12px 18px;font-family:var(--ui);font-weight:600;text-align:center;width:min(440px,calc(100% - 24px));box-shadow:0 10px 26px rgba(0,0,0,.35)}
@@ -228,7 +228,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
 }
 @media(max-width:760px){
   .steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:8px 10px}
-  .steps span{justify-content:center;font-size:.74rem;padding:4px 6px;white-space:normal;text-align:center}
+  .steps span{justify-content:center;font-size:.78rem;padding:4px 6px;white-space:normal;text-align:center} /* 11/24 (TEST ALL): 12px+ on phones */
   nav.site{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:10px 8px;gap:0 8px;border-radius:0}
   .nav-side{flex-direction:column;align-items:stretch}
   .nav-side.left a{text-align:right}
@@ -307,7 +307,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
 <div id="view-site">
   <nav class="site" aria-label="Main">
     <div class="nav-side left"><a href="#services" data-go="site">Services</a><a href="#gallery" data-go="site">Gallery</a></div>
-    <a class="nav-logo" href="#top" data-go="site" aria-label="Birch Hollow Lawn &amp; Plow home"><img class="full" src="images/logo.png" width="900" height="300" alt="Birch Hollow Lawn &amp; Plow"><img class="emblem" src="images/emblem.png" width="128" height="128" alt=""></a>
+    <a class="nav-logo" href="#top" data-go="site" aria-label="Birch Hollow Lawn &amp; Plow home"><img class="full" src="images/logo.png" width="900" height="300" alt="Birch Hollow Lawn &amp; Plow"><img class="emblem" src="images/emblem.png" width="128" height="128" alt="Birch Hollow Lawn &amp; Plow emblem"></a>
     <div class="nav-side right"><a href="#about" data-go="site">About</a><a href="#contact" data-go="site">Contact</a><a class="quote-tab" href="#quote" data-go="quote">Free Quote</a></div>
   </nav>
   <a class="quote-bar" href="#quote" data-go="quote">Get a Free Quote</a>
@@ -421,7 +421,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
   <div class="owner-banner" role="note"><strong>SHOP OWNER VIEW</strong><span>Here's what you see the second a customer asks.</span></div>
   <div class="portal">
     <aside class="side">
-      <div class="brand"><img src="images/emblem.png" width="58" height="58" alt=""><b>Birch Hollow<br>Lawn &amp; Plow</b><small>BUSINESS PRO OFFICE</small></div>
+      <div class="brand"><img src="images/emblem.png" width="58" height="58" alt="Birch Hollow Lawn &amp; Plow emblem"><b>Birch Hollow<br>Lawn &amp; Plow</b><small>BUSINESS PRO OFFICE</small></div>
       <div class="tabs" id="tabs-wide"></div>
       <details class="side-menu"><summary>☰ Menu · Quote Requests</summary><div class="tabs" id="tabs-menu"></div></details>
     </aside>
@@ -647,7 +647,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
 
   /* ---------- customer phone ---------- */
   function phoneTop(){
-    return '<div class="screen-top"><div class="av"><img src="images/emblem.png" alt=""></div><b>Birch Hollow Lawn &amp; Plow</b></div>';
+    return '<div class="screen-top"><div class="av"><img src="images/emblem.png" alt="Birch Hollow Lawn &amp; Plow"></div><b>Birch Hollow Lawn &amp; Plow</b></div>';
   }
   function openPhone(){
     var r=state.req;

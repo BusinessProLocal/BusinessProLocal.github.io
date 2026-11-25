@@ -4393,3 +4393,25 @@ body.style-luxury .lux-gold-text {
     font-size: 18px;
   }
 }
+
+/* 11/24 (TEST ALL): the salon look on phones and tablets — every word 12px or bigger, every button thumb-size (30px+) */
+@media (max-width: 1199px) {
+  body.style-luxury header nav a { font-size: max(12px, 1.0625vw) !important; }
+  body.style-luxury header .header-call a {
+    font-size: max(12px, 0.94vw) !important;
+    min-height: 30px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+  body.style-luxury .hero-team-member { font-size: max(12px, 0.94vw) !important; }
+  body.style-luxury .hero-team-caption {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 30px !important;
+  }
+}
+@media (max-width: 640px) {
+  body.style-luxury header nav a { font-size: 12px !important; }
+  body.style-luxury .hero.hero-photo .hero-content { width: max(186px, 48vw) !important; }
+  body.style-luxury .hero-team { gap: 4px !important; }
+}

@@ -209,7 +209,7 @@
       <div class="gift-hero-buttons"><a class="book-button" href="#store">Shop Gifts</a><a class="book-button ghost" href="#contact">Visit Us</a></div></div></section>
       ${collections.length ? `<section id="collections" class="gift-collections"><h2>Shop by Collection</h2><p>${escape(shop.collectionsLine || "Find the right gift fast.")}</p>
       <div class="gift-collection-grid gift-count-${collections.length}">${collections.map(item => `<a class="gift-collection" href="#store" data-gift-collection="${escape(item.name)}">
-      ${image(item.photo, "")}<span>${escape(item.name)}</span></a>`).join("")}</div></section>` : ""}
+      ${image(item.photo, item.name)}<span>${escape(item.name)}</span></a>`).join("")}</div></section>` : ""}
       <section class="gift-perks" aria-label="Why shop with us">${perks.map(([title, text]) => `<div><strong>${escape(title)}</strong><span>${escape(text)}</span></div>`).join("")}</section>`;
   }
   function giftStoreFilters() {
@@ -504,7 +504,7 @@
         `<article><h3><span>${escape(group.name)}</span></h3><ul class="menu-items">${group.items.map(item =>
           `<li>${image(item.photo, item.text.split("$")[0].trim(), "menu-thumbnail")}<span>${escape(item.text)}</span></li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
       ${bookingEnabled ? `<section id="services"><h2>Our Services</h2><div class="card-grid">${config.services.map(service =>
-        CLASSIC ? `<article class="card classic-service" ${bookService(service)}><h3>${escape(service.name)}</h3><img class="classic-service-icon" src="${SERVICE_ICON_DIR}${serviceIcon(service)}.png?v=20261123b" alt="" loading="lazy" onerror="this.onerror=null;this.src='${SERVICE_ICON_DIR}haircut.png'"><p class="classic-service-price">${money(service.price * 100)}</p></article>`
+        CLASSIC ? `<article class="card classic-service" ${bookService(service)}><h3>${escape(service.name)}</h3><img class="classic-service-icon" src="${SERVICE_ICON_DIR}${serviceIcon(service)}.png?v=20261123b" alt="${escape(service.name)} tool picture" loading="lazy" onerror="this.onerror=null;this.src='${SERVICE_ICON_DIR}haircut.png'"><p class="classic-service-price">${money(service.price * 100)}</p></article>`
           : `<article class="card" ${bookService(service)}><h3>${escape(service.name)}</h3><p>${escape(service.description)}</p><p>${money(service.price * 100)}</p></article>`).join("")}</div></section>` : ""}
       ${extraPhotos.length && !storeEnabled ? `<section id="photos"><h2>A Look Around</h2><div class="demo-gallery">
       ${extraPhotos.map(photo => image(photo.src, photo.alt)).join("")}</div></section>` : ""}
