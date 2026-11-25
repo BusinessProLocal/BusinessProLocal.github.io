@@ -969,7 +969,7 @@ document.addEventListener("DOMContentLoaded", () => {
     toggle.innerHTML = '<span class="site-menu-icon" aria-hidden="true">☰</span><span class="site-menu-label">Menu</span><span class="site-menu-page"></span>';
     nav.parentNode.insertBefore(toggle, nav);
     header.classList.add("has-site-menu");
-    // 11/25 (Tom): salon look on phones = one row: Home · Call Now · ☰ Menu (the other pages live in the ☰)
+    // 11/25 (Tom): salon look on phones = one row: ☰ Menu · Home · Call Now (the other pages live in the ☰)
     if (document.body.classList.contains("style-luxury") && !header.querySelector(".phone-bar")) {
       const bar = document.createElement("div");
       bar.className = "phone-bar";
@@ -978,7 +978,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const home = header.querySelector('nav a[data-page="home"]') || header.querySelector("nav a");
         if (home) { event.preventDefault(); home.click(); }
       });
-      bar.appendChild(toggle);
+      bar.prepend(toggle); // 11/25 (Tom): order = ☰ Menu · Home · Call Now
       nav.parentNode.insertBefore(bar, nav);
       header.classList.add("has-phone-bar");
     }

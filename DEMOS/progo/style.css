@@ -4419,7 +4419,7 @@ body.style-luxury .lux-gold-text {
 
 /* ============================================================
    11/25 (Tom): salon look on PHONES — one row under the logo:
-   Home · Call Now · ☰ Menu. Stylists, Services & Prices, Gallery and
+   ☰ Menu · Home · Call Now. Stylists, Services & Prices, Gallery and
    Contact open from the ☰. Computers and tablets keep the full tab bar.
 ============================================================ */
 header .phone-bar { display: none; }
@@ -4455,6 +4455,7 @@ header .phone-bar { display: none; }
     white-space: nowrap;
   }
   body.style-luxury header .phone-bar .site-menu-page { display: none; }
+  body.style-luxury header .phone-bar .site-menu-toggle { order: 0 !important; } /* ☰ Menu first, then Home, then Call Now */
   body.style-luxury header .phone-bar .site-menu-icon { font-size: 19px; }
   body.style-luxury header .phone-bar .call-text-buttons { display: inline-flex; margin: 0; }
   body.style-luxury header .phone-bar .call-button {
