@@ -2,6 +2,12 @@ window.SHOP_CONFIG = {
   demo: { id: "demo-coastal-gift-shop", tier: "business-pro", label: "Business Pro" },
   // 11/19 (Tom): Model Gift Shop look (layout B)
   siteStyle: "gift",
+  // 11/24 (TEST ALL): one picture per collection (Bags & Gifts still uses the tote until Bot's picture comes)
+  collectionPhotos: {
+    "Kitchen & Table": "../assets/collections/kitchen-table.jpg",
+    "Home Decor": "../assets/collections/home-decor.jpg",
+    "Maine Made Treats": "../assets/collections/maine-made-treats.jpg"
+  },
   // 11/19 (Tom): gift shop stock owner tabs — the 8 that Shopify, Square and Lightspeed share; the rest folded inside
   ownerTabs: [
     { id: "dashboard", label: "Dashboard", live: true },

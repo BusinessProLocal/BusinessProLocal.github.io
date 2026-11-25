@@ -163,7 +163,8 @@
     const seen = [];
     config.products.forEach(product => {
       const name = String(product.category || "").trim();
-      if (name && !seen.some(item => item.name === name)) seen.push({ name, photo: product.photo });
+      // 11/24 (TEST ALL): each collection gets its own picture (when there is one), not a product photo used twice
+      if (name && !seen.some(item => item.name === name)) seen.push({ name, photo: (config.collectionPhotos || {})[name] || product.photo });
     });
     return seen.slice(0, 4);
   }
