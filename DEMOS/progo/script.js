@@ -1,4 +1,6 @@
 // TEST 2 — card first, then PAY NOW or PAY AT STORE, with manage links
+// 11/25: the site's own folder, read before any page switch changes the address
+const STATIC_ROOT = new URL("./", document.baseURI).pathname;
 document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
@@ -856,8 +858,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // (paths are from the site's top folder; sub-pages carry <base href="../">)
   function siteStatic() { return window.SITE_STATIC === true; }
 
+  // 11/25: STATIC_ROOT (top of file) is the site's own folder, so Home from a sub page goes back
+  // to the site's front address instead of staying on /stylists/
   function pageUrl(key) {
-    if (siteStatic()) return key === "home" ? "./" : `${key}/`;
+    if (siteStatic()) return key === "home" ? STATIC_ROOT : `${STATIC_ROOT}${key}/`;
     const home = siteHome();
     if (!home) return key === "home" ? "#home" : `#${key}`;
     return key === "home" ? home : `${home}/${key}`;
@@ -965,6 +969,19 @@ document.addEventListener("DOMContentLoaded", () => {
     toggle.innerHTML = '<span class="site-menu-icon" aria-hidden="true">☰</span><span class="site-menu-label">Menu</span><span class="site-menu-page"></span>';
     nav.parentNode.insertBefore(toggle, nav);
     header.classList.add("has-site-menu");
+    // 11/25 (Tom): salon look on phones = one row: Home · Call Now · ☰ Menu (the other pages live in the ☰)
+    if (document.body.classList.contains("style-luxury") && !header.querySelector(".phone-bar")) {
+      const bar = document.createElement("div");
+      bar.className = "phone-bar";
+      bar.innerHTML = '<a class="phone-home" href="#home">Home</a><span class="bar-call-slot"></span>';
+      bar.querySelector(".phone-home").addEventListener("click", event => {
+        const home = header.querySelector('nav a[data-page="home"]') || header.querySelector("nav a");
+        if (home) { event.preventDefault(); home.click(); }
+      });
+      bar.appendChild(toggle);
+      nav.parentNode.insertBefore(bar, nav);
+      header.classList.add("has-phone-bar");
+    }
     const setOpen = open => {
       header.classList.toggle("site-menu-open", open);
       toggle.setAttribute("aria-expanded", String(open));
@@ -1137,6 +1154,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     // 11/2 (Tom): Call Now only — no texting (that needs our server)
     swap("header > .book-button", "header-call", false);
+    const barSlot = document.querySelector("header .phone-bar .bar-call-slot");
+    if (barSlot) barSlot.replaceWith(make("bar-call", false));
     swap("#home .hero-content .book-button", "hero-call", false);
     swap(".contact-info .contact-book", "contact-call", false);
     // 11/2 (Tom): Stylists page box — "Not sure who to book with?" with Call Now (opens the Contact

@@ -869,7 +869,19 @@
       else error(failure);
     }
   }
+  // 11/25 (Tom): the phone's Back button steps back inside the demo (owner view -> customer site), never out of it
+  window.addEventListener("popstate", event => {
+    if (!dashboardOpen || event.state?.demo === "owner") return;
+    if (pageName !== "home") { location.href = "index.html"; return; }
+    action(() => {
+      dashboardOpen = false;
+      document.body.classList.remove("demo-owner-open");
+      renderShell(); renderHome(); updateCartLink();
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    });
+  });
   function jumpToDashboard(orderId) {
+    try { if (!dashboardOpen && history.state?.demo !== "owner") history.pushState({ demo: "owner" }, "", location.href); } catch (e) {}
     dashboardOpen = true;
     dashboardView = "dashboard";
     renderDashboard();
@@ -1923,7 +1935,7 @@
       $("add-time").innerHTML = timeOptions(pickedStaff(), keep);
       $("add-service").innerHTML = serviceOptions(pickedStaff());
     });
-    $("add-name").focus();
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches) $("add-name").focus(); /* 11/25 (Tom): on phones the keyboard waits until they tap a box */
     $("add-appointment-cancel").addEventListener("click", () => $("close-appointment").click());
     $("add-appointment-form").addEventListener("submit", event => {
       event.preventDefault();

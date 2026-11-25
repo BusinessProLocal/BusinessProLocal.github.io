@@ -90,6 +90,8 @@ section.block h2{margin:0 0 22px;font-weight:900;color:var(--green-dk);font-size
 .contact b{display:block;color:var(--green-dk);font-size:1.1rem;margin-bottom:4px}
 .contact span{color:var(--muted)}
 .contact a{color:var(--green);font-weight:700}
+.call-text{display:flex;flex-direction:column;align-items:center;gap:8px}
+.call-text a{text-decoration:underline;text-underline-offset:3px;padding:4px 0}
 footer.site{margin:40px auto 0;max-width:1180px;background:var(--charcoal);color:#fff;border-radius:var(--r) var(--r) 0 0;padding:22px 16px;text-align:center}
 footer.site b{font-size:1.15rem}
 footer.site small{display:block;margin-top:4px;color:#cfd3d6;font-family:var(--ui)}
@@ -227,8 +229,10 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
   .hello{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:760px){
-  .steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:8px 10px}
-  .steps span{flex-direction:column;justify-content:center;gap:3px;font-size:.78rem;padding:5px 6px;white-space:normal;text-align:center} /* 11/24 (TEST ALL): 12px+ on phones; number on top, words centered under it */
+  /* 11/25 (Tom): number in a circle as big as the words, words right beside it; 1-2 on top, 3-4 under, packed close and centered */
+  .steps{display:grid;grid-template-columns:repeat(2,auto);justify-content:center;gap:6px;padding:8px 8px}
+  .steps span{flex-direction:row;justify-content:flex-start;gap:6px;font-size:.82rem;padding:5px 10px 5px 5px;white-space:nowrap;text-align:left}
+  .steps span b{width:1.55em;height:1.55em;font-size:1em;flex:none}
   nav.site{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:10px 8px;gap:0 8px;border-radius:0}
   .nav-side{flex-direction:column;align-items:stretch}
   .nav-side.left a{text-align:right}
@@ -292,6 +296,11 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
   .side-menu{padding:0 10px}
   .side-menu summary{color:#000;border:1.5px solid #000;font-weight:700}
 }
+@media(max-width:380px){ /* 11/25: very small phones, let the step words wrap so nothing scrolls sideways */
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps span{white-space:normal;font-size:.78rem}
+}
+html{overflow-x:clip} /* 11/25: a stray half pixel let phones wiggle sideways */
 </style>
 </head>
 <body>
@@ -363,7 +372,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
       <section class="block" id="contact">
         <h2>Contact</h2>
         <div class="contact">
-          <div><b>Call or Text</b><span><a href="tel:+12075550142">207-555-0142</a></span></div>
+          <div><b>Call or Text</b><span class="call-text"><a href="tel:+12075550142">📞 Call 207-555-0142</a><a href="sms:+12075550142">💬 Text 207-555-0142</a></span></div>
           <div><b>Hours</b><span>Mon–Sat, 7 am – 6 pm<br>Storm service 24/7</span></div>
           <div><b>Service Area</b><span>Southern Maine</span></div>
         </div>
@@ -518,12 +527,37 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
     clearTimeout(note.t); note.t=setTimeout(function(){n.hidden=true;},2600);
   }
 
+  /* ---------- Back button (11/25, Tom): Back steps back through the demo, never out of it ---------- */
+  var cur=null, restoring=false;
+  function remember(name){
+    if(restoring||cur===name) return;
+    var first=cur===null; cur=name;
+    var url=name==="home"?location.pathname+location.search:"#"+name;
+    try{ if(first) history.replaceState({demo:name},"",url); else history.pushState({demo:name},"",url); }catch(e){}
+  }
+  window.addEventListener("popstate",function(e){
+    var name=e.state&&e.state.demo; if(!name) return;
+    var r=state.req; restoring=true;
+    try{
+      if(name==="home"){ reset(); openSitePart("home"); }
+      else if(name==="quote"){ openSitePart("quote"); if(r){ $("qform").hidden=true; $("q-sent").hidden=false; setStep(2); } }
+      else if(name==="owner"&&r){ openOwner(true); }
+      else if(name==="detail"&&r&&!r.status){ openOwner(true); openDetail(); }
+      else if(name==="detail"&&r){ openOwner(true); }
+      else if(name==="phone"&&r&&r.lines){ if(r.status==="ok") r.status="sent"; openPhone(); }
+      else if(name==="estimate"&&r&&r.lines){ if(r.status==="ok") r.status="sent"; openPhone(); drawEstimate(); }
+      else { reset(); openSitePart("home"); name="home"; }
+      cur=name;
+    } finally { restoring=false; }
+  });
+
   /* ---------- website + quote page ---------- */
   function openSitePart(part,hash){
+    remember(part);
     show("site");
     $("site-home").hidden = part!=="home";
     $("site-quote").hidden = part!=="quote";
-    if(part==="quote"){ setStep(1); window.scrollTo(0,0); try{$("q-name").focus({preventScroll:true});}catch(e){} }
+    if(part==="quote"){ setStep(1); window.scrollTo(0,0); } /* 11/25 (Tom): no auto-tap into Your name; the keyboard waits until they tap a box */
     else if(hash){ var el=document.querySelector(hash); if(el) setTimeout(function(){el.scrollIntoView({behavior:"smooth",block:"start"});},20); }
   }
   document.querySelectorAll("[data-go]").forEach(function(a){
@@ -605,16 +639,19 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
     $("stat-sent").textContent = r.status==="sent"?2:1;
     $("stat-ok").textContent = r.status==="ok"?2:1;
   }
-  function openOwner(){
+  function openOwner(back){
     var r=state.req;
-    state.newCount=1;
-    show("owner"); setStep(2); greet(); drawTabs(); drawList();
+    remember("owner");
+    state.newCount=r.status?0:1;
+    show("owner"); setStep(r.status?3:2); greet(); drawTabs(); drawList();
     $("req-detail").hidden=true; $("req-list").hidden=false;
+    if(back===true) return;
     setTimeout(function(){ toast("Birch Hollow · New quote request", first(r.name)+" wants "+r.services.map(function(s){return SERVICES[s].name;}).join(" + ")+" in "+town(r.address)+"."); },500);
   }
   function openDetail(){
     var r=state.req;
     if(r.status){ note("Estimate already sent to "+first(r.name)+"."); return; }
+    remember("detail");
     $("req-list").hidden=true; $("req-detail").hidden=false; setStep(3);
     $("detail-title").textContent="Quote Request #"+r.num;
     var g='<div><span>Customer</span>'+esc(r.name)+'</div><div><span>Cell</span>'+esc(r.phone)+'</div>'+
@@ -651,6 +688,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
   }
   function openPhone(){
     var r=state.req;
+    remember("phone");
     show("phone"); setStep(4); $("after-approve").hidden=true;
     $("screen").innerHTML = phoneTop()+'<div class="thread"><span class="stamp">Today</span>'+
       '<div class="bubble">Hi '+esc(first(r.name))+', it\'s Birch Hollow Lawn &amp; Plow. Your free estimate is ready. <a href="#" id="open-est">Tap here to view and approve</a></div></div>';
@@ -658,6 +696,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
   }
   function drawEstimate(){
     var r=state.req;
+    remember("estimate");
     $("screen").innerHTML = '<div class="est"><div class="est-head"><img src="images/logo-dark.png" alt="Birch Hollow Lawn &amp; Plow"><b>Estimate #'+r.num+'</b><small>For '+esc(r.name)+' · '+esc(r.address)+'</small></div>'+
       r.lines.map(function(l){var v=SERVICES[l.svc];return '<div class="est-line"><div><b>'+esc(v.name)+'</b><small>'+esc(v.unit)+'</small></div><b>'+money(l.price)+'</b></div>';}).join("")+
       (r.note?'<div class="est-note">'+esc(r.note)+'</div>':'')+
