@@ -704,7 +704,7 @@
   }
   function alertPhone(value) {
     const d = alertDigits(value);
-    return d.length === 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : String(value || "").trim();
+    return d.length === 10 ? `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}` : String(value || "").trim(); // 11/24 (Tom): dashes
   }
   function bookingAlertMessage(booking, shop) {
     const service = config.services.find(item => item.id === booking.serviceId);

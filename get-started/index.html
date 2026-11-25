@@ -285,12 +285,18 @@ typeSelect.addEventListener("change", function (event) {
   if (!picked) return;
   const match = [...typeSelect.options].find(o => o.value && o.value.toLowerCase() === picked.toLowerCase());
   if (!match) return;
+  // 11/24 (TEST ALL): a form saved earlier filled in another type and the link's type was ignored.
+  // Now the link's type wins until the visitor picks one themselves on this page.
+  let pickedByHand = false;
+  typeSelect.addEventListener("change", event => { if (event.isTrusted) pickedByHand = true; });
   function apply() {
-    if (typeSelect.value) return; // something already picked on this visit wins
+    if (pickedByHand) return;
     typeSelect.value = match.value;
     showCustomType(match.value === "Custom");
   }
   apply();
+  document.addEventListener("DOMContentLoaded", apply); // after form-helpers puts the saved form back
+  window.addEventListener("load", apply);
   // the form helper refills the form after the page shows, so pick again right after it
   window.addEventListener("pageshow", () => requestAnimationFrame(() => requestAnimationFrame(apply)));
 })();
