@@ -1062,7 +1062,7 @@
     const select = (label, values) => `<label>${escape(label)}<select tabindex="0" aria-readonly="true">${values.map(value => `<option>${escape(value)}</option>`).join("")}</select></label>`;
     const button = label => `<button type="button">${escape(label)}</button>`;
     const table = (headers, rows) => `<div class="preview-table-scroll"><table class="color-head"><thead><tr>${headers.map(value => `<th style="--head:${headColor(value)}">${escape(value)}</th>`).join("")}</tr></thead>
-      <tbody>${rows.map(row => `<tr>${row.map(value => `<td>${escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+      <tbody>${rows.map(row => `<tr>${row.map(value => `<td>${value && typeof value === "object" && value.html ? value.html : escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
     const cards = values => `<div class="preview-cards">${values.map(([label, value]) => `<article><span>${escape(label)}</span><strong>${escape(value)}</strong><small>Sample preview data</small></article>`).join("")}</div>`;
     const periods = labels => `<div class="preview-actions">${labels.map(button).join("")}</div>`;
     const employees = bookingEnabled ? config.barbers.map(staff => staff.name) : ["Demo Shop Owner", "Demo Shop Assistant"];
@@ -1192,7 +1192,10 @@
       case "financials": {
         if (!bookingEnabled) {
           content = periods(["Day", "Week", "Month", "Year"]) + cards([["Total Income", "$450.00"], ["Order Revenue", "$450.00"], ["Outgoing", "$120.00"], ["Net", "$330.00"]]) +
-            panel("Outgoing Bills / Expenses", table(["Expense", "Amount", "Due", "Recurring", "Status"], [["Sample rent", "$120.00", "This month", "Monthly", "Unpaid"]]) + periods(["Mark paid", "Delete"]));
+            panel("Outgoing Bills / Expenses", table(["Expense", "Amount", "Due", "Recurring", "Status"], [["Sample rent", "$120.00", "This month",
+              // 11/24 (Tom): same Recurring checkbox + ▾ how often as the real Business Pro Office
+              { html: `<span class="fin-freq-cell"><input type="checkbox" class="fin-rec-box" checked aria-label="Sample rent repeats"><select class="fin-freq" aria-label="How often sample rent repeats">${["Daily", "Weekly", "Monthly", "Yearly"].map(x => `<option${x === "Monthly" ? " selected" : ""}>${x}</option>`).join("")}</select></span>` },
+              "Unpaid"]]) + periods(["Mark paid", "Delete"]));
           break;
         }
         // 11/22 (Tom): follow the money — the same tickets as the calendar and Completed Appointments

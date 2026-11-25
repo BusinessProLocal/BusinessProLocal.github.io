@@ -1816,3 +1816,8 @@ body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6
 .booking-alert-check small { display: block; font-size: .82em; font-weight: 600; opacity: .75; }
 .booking-alert-name { margin: 16px 0 0; font-weight: 900; }
 .booking-alert-msg { margin: 8px 0 0; font-size: .9rem; }
+
+/* 11/24 (Tom): Recurring column — checkbox + ▾ how often (matches Business Pro Office) */
+.fin-freq-cell { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+input.fin-rec-box { width: 20px !important; height: 20px !important; min-height: 0 !important; margin: 0; padding: 0 !important; accent-color: #137333; flex: 0 0 auto; }
+select.fin-freq { width: auto !important; min-width: 0; padding: 3px 4px; font-size: 13px; }
