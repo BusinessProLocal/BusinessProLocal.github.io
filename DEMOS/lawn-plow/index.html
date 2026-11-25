@@ -228,7 +228,7 @@ legend{font-weight:700;font-size:.95rem;margin-bottom:8px}
 }
 @media(max-width:760px){
   .steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:8px 10px}
-  .steps span{justify-content:center;font-size:.78rem;padding:4px 6px;white-space:normal;text-align:center} /* 11/24 (TEST ALL): 12px+ on phones */
+  .steps span{flex-direction:column;justify-content:center;gap:3px;font-size:.78rem;padding:5px 6px;white-space:normal;text-align:center} /* 11/24 (TEST ALL): 12px+ on phones; number on top, words centered under it */
   nav.site{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:10px 8px;gap:0 8px;border-radius:0}
   .nav-side{flex-direction:column;align-items:stretch}
   .nav-side.left a{text-align:right}
