@@ -1194,7 +1194,7 @@
           content = periods(["Day", "Week", "Month", "Year"]) + cards([["Total Income", "$450.00"], ["Order Revenue", "$450.00"], ["Outgoing", "$120.00"], ["Net", "$330.00"]]) +
             panel("Outgoing Bills / Expenses", table(["Expense", "Amount", "Due", "Recurring", "Status"], [["Sample rent", "$120.00", "This month",
               // 11/24 (Tom): same Recurring checkbox + ▾ how often as the real Business Pro Office
-              { html: `<span class="fin-freq-cell"><input type="checkbox" class="fin-rec-box" checked aria-label="Sample rent repeats"><select class="fin-freq" aria-label="How often sample rent repeats">${["Daily", "Weekly", "Monthly", "Yearly"].map(x => `<option${x === "Monthly" ? " selected" : ""}>${x}</option>`).join("")}</select></span>` },
+              { html: `<span class="fin-freq-cell"><input type="checkbox" class="fin-rec-box" checked aria-label="Sample rent repeats"><select class="fin-freq" aria-label="How often sample rent repeats">${["Daily", "Weekly", "Monthly", "Yearly"].map(x => `<option${x === "Monthly" ? " selected" : ""}>${x}</option>`).join("")}</select><button type="button" class="fin-freq-arrow" tabindex="-1" aria-hidden="true" onclick="const s=this.previousElementSibling;s.focus();try{s.showPicker()}catch(e){s.click()}">▾</button></span>` },
               "Unpaid"]]) + periods(["Mark paid", "Delete"]));
           break;
         }

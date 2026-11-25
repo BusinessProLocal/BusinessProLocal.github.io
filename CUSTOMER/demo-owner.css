@@ -1820,4 +1820,5 @@ body.demo-owner-open #daily-dashboard .owner-demo-submenu > button:nth-of-type(6
 /* 11/24 (Tom): Recurring column — checkbox + ▾ how often (matches Business Pro Office) */
 .fin-freq-cell { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 input.fin-rec-box { width: 20px !important; height: 20px !important; min-height: 0 !important; margin: 0; padding: 0 !important; accent-color: #137333; flex: 0 0 auto; }
-select.fin-freq { width: auto !important; min-width: 0; padding: 3px 4px; font-size: 13px; }
+select.fin-freq { -webkit-appearance: none; appearance: none; width: auto !important; min-width: 0; padding: 4px 8px; font-size: 13px; border: 1px solid #c9c9c9; border-radius: 4px; background: #fff; color: #111; }
+.fin-freq-arrow { width: 26px !important; height: 26px !important; min-height: 0 !important; padding: 0 !important; border: 1px solid #c9c9c9; border-radius: 4px; background: #f3f3f3; color: #111; font-size: 13px; line-height: 1; box-shadow: none; }
