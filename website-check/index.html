@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <base href="../">
 <title>Free Website Check | Business Pro Local</title>
-<meta name="description" content="Free Website Check for Maine businesses: see how your website scores on 14 things customers and Google look for, from phone-friendly pages to showing up on Google Maps. Results in seconds.">
+<meta name="description" content="Free Website Check for Maine businesses: see how your website scores on 15 things customers and Google look for, from phone-friendly pages to showing up on Google Maps. Results in seconds.">
 <link rel="canonical" href="https://businessprolocal.com/website-check/">
 <meta property="og:title" content="Free Website Check | Business Pro Local">
-<meta property="og:description" content="How does your business website score? Free check on 14 things customers and Google look for.">
+<meta property="og:description" content="How does your business website score? Free check on 15 things customers and Google look for.">
 <meta property="og:image" content="https://businessprolocal.com/images/hero-day.jpg">
 <meta property="og:url" content="https://businessprolocal.com/website-check/">
 <meta property="og:type" content="website">
@@ -96,7 +96,7 @@ form input:focus{outline:2px solid #000;outline-offset:1px}
 .checks .pass .mark{color:#000}
 .checks .fail .mark{color:#b00020}
 .checks .label{font-weight:800}
-.checks .fix{grid-column:2;color:#1a1a1a}
+.checks .fix{grid-column:2;color:#1a1a1a}.checks .detail{color:#0a7a2f;font-weight:700}.checks .detail a{color:#0a7a2f}
 .message{font-size:1.1rem;font-weight:700;text-align:center;margin:0}
 .next{text-align:center;margin-top:24px}
 .next p{font-weight:800;margin:0 0 6px}
@@ -303,7 +303,7 @@ nav.site-nav .site-burger-panel a:hover{background:#f4f4f5}
         listingPreview(report) +
         '<ul class="checks">' + ordered.map(function (c) {
           return '<li class="' + (c.pass ? "pass" : "fail") + '"><span class="mark">' + (c.pass ? "✓" : "✗") + '</span><span class="label">' + esc(c.label) + '</span>' +
-            (c.pass ? "" : '<span class="fix">' + esc(c.fix) + '</span>' + (window.WebsiteCheckExamples ? WebsiteCheckExamples.buttons(c.id) : "")) + '</li>';
+            (c.pass ? (c.detail ? '<span class="fix detail">' + esc(c.detail) + (c.mapsUrl && /^https:\/\/(maps\.google\.com|www\.google\.com\/maps|goo\.gl\/maps|maps\.app\.goo\.gl)/.test(c.mapsUrl) ? ' <a href="' + esc(c.mapsUrl) + '" target="_blank" rel="noopener">See it on Google Maps</a>' : '') + '</span>' : "") : '<span class="fix">' + esc(c.fix) + '</span>' + (window.WebsiteCheckExamples ? WebsiteCheckExamples.buttons(c.id) : "")) + '</li>';
         }).join("") + '</ul>';
     } else {
       html = '<p class="message">' + esc(report.message) + '</p>';
